@@ -1,0 +1,16 @@
+<% include ../../partials/_Variable.ejs %>
+<% if(!isAuthenticated || !user?.isAdDisabled){ %>
+<!-- _h_fixed_height_90 -->
+<div class="ad-block  mb-2">
+  <div class="center">
+    <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8797542869086956" data-ad-slot="8935838126"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+</div>
+<% } else { %>
+  <% if(showAd.toLowerCase() == "false"){ %>
+  <h3 class="text-200 text-center">ADVERTISEMENT</h3>
+  <%}%>
+<% } %>

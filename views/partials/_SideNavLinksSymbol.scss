@@ -1,0 +1,65 @@
+#sidenavbarVerticalCollapse .navbar-vertical-content .navbar-nav .nav-link.active {
+  --phoenix-bg-opacity: 1;
+  --phoenix-text-opacity: 1;
+  background-color: rgba(var(--phoenix-info-rgb), var(--phoenix-bg-opacity)) !important;
+  // color: rgba(var(--phoenix-200-rgb), var(--phoenix-text-opacity)) !important;
+  ;
+}
+
+.navbar-vertical-collapsed .navbar-vertical.navbar-expand-lg .active .nav-link-text{
+  color: var(--phoenix-black)!important;
+}
+
+.navbar-vertical-collapsed .v-collapsed-none {
+  display: none;
+}
+
+.navbar-vertical .v-collapsed-block {
+  display: none;
+}
+
+.navbar-vertical-collapsed .v-collapsed-block {
+  display: block;
+}
+
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+
+.btn-shadow {
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn-be-fixed {
+  position: fixed;
+  z-index: 99;
+  bottom: 4rem;
+  right: 1rem;
+}
+
+.m-related-page {
+  height: auto!important;
+
+  .rp-icon {
+    margin-right: 0.625rem;
+    min-width: 16px !important;
+    text-align: center;
+    display: inline-block;
+  }
+}

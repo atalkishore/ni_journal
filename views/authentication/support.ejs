@@ -1,0 +1,112 @@
+<div class="row gx-3 pt-3">
+  <div class="col-12 col-xl-4">
+    <%- include('./_sideUserMenu') %>
+  </div>
+  <div class="col-12 col-xl-8">
+    <div class="card ">
+      <div class="card-body mx-2">
+        <h4 class="mb-4">Help & Support</h4>
+
+        <div id="response-message" class="alert" style="display: none;"></div>
+
+        <form id="support-form" class="mt-4">
+          <div class="mb-3">
+            <label for="subject" class="form-label p-0">Subject:</label>
+            <input type="text" id="subject" name="subject" class="form-control" required maxlength="50">
+          </div>
+
+          <div class="mb-3">
+            <label for="message" class="form-label p-0">Message:</label>
+            <textarea id="message" name="message" class="form-control" rows="4" required maxlength="1000"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+    <div id="ticket-list" class="my-4">
+      <h6>Your Support Tickets</h6>
+      <ul id="tickets" class="list-group">
+        <!-- Ticket items will be dynamically inserted here -->
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#support-form').on('submit', function(event) {
+      event.preventDefault();
+
+      const subject = $('#subject').val();
+      const message = $('#message').val();
+      myModal.show();
+      $.post('/user/api/support-tickets', {
+          subject: subject,
+          message: message
+        })
+        .done(async function(data) {
+          // If the request was successful, show success message
+          $('#response-message')
+            .addClass('alert-soft-success')
+            .removeClass('alert-soft-danger')
+            .text(data.message)
+            .show();
+          $('#subject').val('');
+          $('#message').val('');
+          await fetchSupportTickets()
+          setTimeout(() => {
+            myModal.hide();
+          }, 500);
+        })
+        .fail(function(jqXHR) {
+          // If there was an error, show failure message
+          $('#response-message')
+            .addClass('alert-soft-danger')
+            .removeClass('alert-soft-success')
+            .text(jqXHR.responseJSON.message || 'An error occurred while submitting your request.')
+            .show();
+          setTimeout(() => {
+            myModal.hide();
+          }, 500);
+        });
+    });
+  });
+
+  async function fetchSupportTickets() {
+    try {
+      // myModal.show();
+      const response = await $.get('/user/api/support-tickets'); // Fetch tickets from the API
+
+      const tickets = response; // Store the returned tickets
+      tickets.sort((a, b) => b.status.localeCompare(a.status));
+
+      // Check if tickets are returned
+      if (tickets.length > 0) {
+        let ticketItem = '';
+        tickets.forEach(ticket => {
+          // Create a list item for each ticket
+          ticketItem += `
+              <li class="list-group-item mt-3" style="overflow-x:hidden">
+                <h5>${ticket.subject}</h5>
+                <p class="text-wrap" style="max-width: 100%;">${ticket.message}</p>
+                ${ticket.reply ? `<p class="bg-info-100 text-dark p-2 rounded">
+                  <span class="badge badge-phoenix badge-phoenix-warning">Reply:&nbsp;&nbsp;&nbsp;   ${new Date(ticket.updatedAt).toLocaleString()}</span>
+                  <br/> ${ticket.reply}</p>` : ''}
+                <small>Created At: ${new Date(ticket.createdAt).toLocaleString()}</small>
+                <span class="badge bg-${ticket.status === 'open' ? 'warning' : 'success'}">${ticket.status}</span>
+              </li>
+            `;
+        });
+        $('#tickets').html(ticketItem); // Append the ticket item to the list
+      } else {
+        $('#tickets').html('<li class="list-group-item">No support tickets found.</li>'); // Message if no tickets exist
+      }
+    } catch (error) {
+      $('#tickets').html('<li class="list-group-item text-danger">An error occurred while fetching tickets.</li>'); // Error message
+    }
+  }
+
+  // Call the function on page load
+  fetchSupportTickets();
+</script>

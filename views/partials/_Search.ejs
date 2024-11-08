@@ -1,0 +1,19 @@
+<div class="row g-0">
+  <div class="col-sm-12 col-md-8 mb-2">
+    <% if(includeh1heading) {%>
+    <h1 class="page-header align-items-center d-flex text-800 dark__text-300">
+      <%= heading %>
+    </h1>
+    <% } else {%>
+    <h2 class="page-header align-items-center d-flex text-800 dark__text-300">
+      <%= heading %>
+    </h2>
+    <% }%>
+    </blockquote>
+  </div>
+  <% var k = Math.random() %>
+  <div class="col-sm-12 col-md-4 mb-2">
+    <%- include ./_StockSearch.ejs %>
+  </div>
+</div>
+<hr class="blue mt-0">

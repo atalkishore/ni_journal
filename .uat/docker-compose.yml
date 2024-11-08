@@ -1,0 +1,27 @@
+x-niftyinvestui_base: &niftyinvestui_base  # Define a YAML anchor for the common configuration
+  image: uat_ni_ui_img:latest
+  env_file:
+    - env.list
+  volumes:
+    - /var/myprojects/uat/logs/niftyinvestui:/app/logs
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+    interval: 1m
+    start_period: 30s
+    timeout: 10s
+    retries: 3
+  deploy:
+    replicas: 1
+    resources:
+      limits:
+        cpus: '1'
+        memory: 500M
+
+services:
+  uat_0_niftyinvestui:
+    <<: *niftyinvestui_base  # Use YAML reference to include common settings
+    container_name: uat_0_niftyinvestui
+    environment:
+      - DISP_NAME=uat_0_niftyinvestui
+    ports:
+      - "1001:5001"

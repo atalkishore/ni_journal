@@ -1,0 +1,14 @@
+<div class="d-flex flex-wrap g-1 mb-3">
+    <% indexTicker.forEach(function(item){ %>
+    <div class="mb-2 me-2  flex-grow-1" aria-label="show max pain data for NIFTY 50" >
+      <a href="/<%= destLink %>/<%= item.ticker.symbol %>" class="text-decoration-none">
+        <div class="card text-100 bg-gradient bg-soft-primary w-100" style="display: inline-block;">
+          <div class="card-body py-2">
+            <span class="float-end text-warning fs--1"><i class="fas fa-external-link-alt"></i></span>
+            <span class="truncate text-info fw-bold pe-3"><%= item.ticker.symbol %></span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <% }); %>
+</div>

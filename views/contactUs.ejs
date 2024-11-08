@@ -1,0 +1,48 @@
+<main class="main" id="top">
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <div class="mx-auto">
+          <!-- Login/Signup or Guest Option -->
+          <div id="contact-toggle-box" class="mx-auto col-lg-5">
+            <div class="alert  alert-outline-warning text-danger bg-soft-warning  d-flex align-items-center" role="alert">
+              <span class="fas fa-info-circle text-info fs-0 me-3"></span>
+              <div>
+                To keep track of your tickets, please log in or sign up. If you continue as a guest, you will not be able to track your ticket later.
+              </div>
+            </div>
+            <button id="btn-login-signup" class="btn btn-info w-100 mb-3">
+              Login / Sign-up
+            </button>
+            <button id="btn-continue-guest" class="btn btn-phoenix-secondary w-100 mb-3">
+              Continue as Guest >
+            </button>
+          </div>
+
+          <!-- Google Contact Form (Initially Hidden) -->
+          <div id="google-contact-form" style="display: none;">
+            <h1 class="page-header text-center">Contact Us</h1>
+            <hr>
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc-YvBS1-OyihjAjxFxQsHolmmvNjZlmN13oUkeWrjr3zubig/viewform?embedded=true" width="100%" height="850" frameborder="0" marginheight="0" marginwidth="0">Loading…
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  $(document).ready(function() {
+    // Handle 'Continue as Guest' button click
+    $('#btn-continue-guest').on('click', function() {
+      $('#contact-toggle-box').hide(); // Hide the login/signup box
+      $('#google-contact-form').show(); // Show the Google form
+    });
+
+    // Handle 'Login/Signup' button click
+    $('#btn-login-signup').on('click', function() {
+      modalLogin.show(); // Show the modal for login/signup
+    });
+  });
+</script>

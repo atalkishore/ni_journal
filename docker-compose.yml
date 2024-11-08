@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  uat_redisdb:
+    image: redis:latest
+    container_name: uat_redisdb
+    ports:
+      - "1002:6379"
+    command: /bin/sh -c "redis-server --user username --requirepass $$REDISDB_PASSWORD"
+    env_file:
+      - env.list
+    volumes:
+      - /var/myprojects/niftyinvestui_uat/.vscode/data:/data/db
+      - /var/myprojects/niftyinvestui_uat/redis.conf:/etc/redis/redis.conf
+    networks:
+      - app_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+    healthcheck:
+      test: ["CMD", "nc", "-zv", "localhost", "1002"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+networks:
+  app_network:
+    driver: bridge

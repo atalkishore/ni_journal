@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" class="navbar-horizontal">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="<%= description %>">
+  <meta name="keywords" content="<%= keywords %>">
+  <link rel="canonical" href="<%= CANONICAL_URL %>">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= description %>">
+  <meta property="og:url" content="<%= CANONICAL_URL %>">
+  <meta property="og:image" content="https://niftyinvest.com/images/logo.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= title %>">
+  <meta name="twitter:description" content="<%= description %>">
+  <meta name="twitter:image" content="https://niftyinvest.com/images/logo.png">
+  <meta name="robots" content="index, follow">
+  <title><%= title %></title>
+  <!-- External css -->
+  <% include ../partials/_StaticCss.ejs %>
+</head>
+
+<body>
+  <% include ../partials/_Variable.ejs %>
+  <main class=" main" id="top">
+    <%- include('../partials/_Header.ejs',{page: menu}) %>
+    <div class="content px-2 pb-0">
+      <%- body %>
+    </div>
+    <% include ../adsense/google/_h_scrapper_ad_banner_2.ejs %>
+    <div class="modal fade" id="searchBoxModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-phoenix-modal="data-phoenix-modal" style="--phoenix-backdrop-opacity: 1;">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content mt-8 rounded-pill">
+          <div class="modal-header p-0">
+            <h5 class="modal-title badge bg-info ms-0 text-200" id="exampleModalLabel">Search entire website</h5>
+          </div>
+          <div class="modal-body p-0">
+            <button class="btn px-2 p-1 text-100 dark__text-1000 position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info-500" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+            <div id="search_nav">
+              <div class="gcse-search"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% include ../partials/_Footer.ejs %>
+  </main>
+  <!-- External JavaScripts -->
+  <% include ../partials/_StaticJs.ejs %>
+</body>
+
+</html>

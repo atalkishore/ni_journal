@@ -1,0 +1,42 @@
+<div class="text-center">
+  <a class="d-flex flex-center text-decoration-none mb-4" href="/auth/login">
+    <div class="d-flex align-items-center fw-bolder fs-5 d-inline-block"><img src="/images/logo.png" alt="phoenix" width="58" /></div>
+  </a>
+  <h1 class="fs-0 mb-3 text-700">Login</h1>
+  <div class="mx-auto">
+
+    <form action="/auth/google" method="GET">
+      <input type="hidden" class="login-return-to" name="GreturnTo" id="GreturnTo" value="<%= originalUrl %>">
+
+      <button class="btn btn-phoenix-secondary w-100 mb-3">
+        <span class="fab fa-google text-danger me-2 fs--1"></span>Sign in with google
+      </button>
+    </form>
+    <div class="position-relative mt-4">
+      <hr class="bg-200" />
+      <div class="divider-content-center bg-white">or use email</div>
+    </div>
+    <%   if ( messages?.error) { %>
+    <div class="alert alert-soft-danger" role="alert"><%- messages.error %></div>
+    <% } else if ( messages?.success) { %>
+    <div class="alert alert-soft-success" role="alert"><%= messages.success %></div>
+    <% } %>
+    <form action="/auth/login" method="POST" onsubmit="disableRapidClick(this.querySelector('button[type=submit]'))">
+      <div class=" mb-2 text-start">
+        <label for="username" class="form-label">Email</label>
+        <input type="email" class="form-control" name="username" placeholder="Email" required>
+      </div>
+      <div class="mb-2  text-start">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" name="password" placeholder="Password" required>
+        <a class="fs--1 fw-bold text-end" href="/user/forgot-password">Forgot Password?</a>
+
+      </div>
+      <input type="hidden" class="login-return-to" name="returnTo" id="returnTo" value="<%= originalUrl %>">
+      <button type="submit" class="btn btn-info mt-2 w-100">Login</button>
+      <div class="text-center"><a class="fs--1 fw-bold" href="/auth/register">Sign up a new account</a>
+      </div>
+
+    </form>
+  </div>
+</div>

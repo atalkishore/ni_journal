@@ -1,0 +1,42 @@
+    <div class="row gx-3 pt-3">
+      <div class="col-12 col-xl-4">
+        <%- include('./_sideUserMenu') %>
+      </div>
+      <div class="col-12 col-xl-8">
+        <div class="card ">
+          <div class="card-body mz-2">
+            <div class="border-bottom border-300 mb-4">
+              <form action="/user/settings" method="POST" onsubmit="disableRapidClick(this.querySelector('button[type=submit]'))">
+
+                <h4 class="mb-4">Change Password</h4>
+                <div class="row g-3 mb-6">
+                  <div class="col-12 col-sm-6">
+                    <% if (message && message.text) { %>
+                    <div class="alert alert-outline-<%= message.type || 'info' %> d-flex align-items-center p-2" role="alert">
+                      <span class="fas fa-<%= message.type == 'success'?'check':'times' %>-circle text-<%= message.type || 'info' %> fs-3 me-3"></span>
+                      <p class="mb-0 flex-1"><%- message.text %></p>
+                    </div>
+                    <% } %>
+                    <div class="form-icon-container mb-3">
+                      <div class="form-floating"><input class="form-control form-icon-input" name="currentPassword" type="password" placeholder="Old password" required /><label class="text-700 form-icon-label" for="oldPassword">Old Password</label></div><span class="fa-solid fa-lock text-900 fs--1 form-icon"></span>
+                    </div>
+                    <div class="form-icon-container mb-3">
+                      <div class="form-floating"><input class="form-control form-icon-input" name="newPassword" type="password" placeholder="New password" required /><label class="text-700 form-icon-label" for="newPassword">New Password</label></div><span class="fa-solid fa-key text-900 fs--1 form-icon"></span>
+                    </div>
+                    <div class="form-icon-container">
+                      <div class="form-floating"><input class="form-control form-icon-input" name="confirmPassword" type="password" placeholder="Confirm New password" required /><label class="text-700 form-icon-label" for="newPassword2">Confirm New Password</label></div><span class="fa-solid fa-key text-900 fs--1 form-icon"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-start mb-6">
+                  <div><button type="submit" class="btn btn-info me-4">Reset Password</button>
+                    <a class="fs--1 fw-bold" href="/user/forgot-password">Forgot Password?</a>
+                  </div>
+
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

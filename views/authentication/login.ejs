@@ -1,0 +1,23 @@
+<main class="main" id="top">
+  <div class="container">
+    <div class="card ">
+      <div class="card-body">
+        <%  if ( messages?.SHOW_VERIFY_INSTRUCTION) { %>
+        <div class="col-sm-10 col-md-10 text-center mx-auto">
+          <div class="alert alert-soft-success text-center" role="alert">
+            <span class="fas fs-6 fa-check-circle text-success  mb-3"></span>
+            <br>
+            <p class="mb-3 flex-1 fs-0 text-center fw-bolder">Mail Sent!</p>
+            <p class="mb-3 flex-1 fs-0 text-center"><%= messages?.SHOW_VERIFY_INSTRUCTION %></p>
+            <p class="mb-3 flex-1 fs-0 text-start">Please check your email and follow the instructions to verify your account. If you don't see the email, kindly check your spam or junk folder, as it might have landed there.</p>
+            <img class="mb-3" src="<%= process.env.STATIC_FILES %>/public/images/Google-spam-instruction-comp.gif" width="100%" alt="check your spam folder">
+          </div>
+        </div>
+        <% } %>
+        <div class="mx-auto col-lg-5">
+          <%- include('./_login-box.ejs') %>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

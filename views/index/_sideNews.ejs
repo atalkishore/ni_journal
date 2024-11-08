@@ -1,0 +1,35 @@
+<section class="p-0 mb-3">
+  <div class="card ms-lg-2">
+    <div class="card-header bg-info text-500">
+      <div class="row g-3 justify-content-between align-items-center">
+        <div class="col-12 col-md">
+          <h4 class="text-200 mb-0"><%= title %></h4>
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-1" style="height:400px;overflow-y: scroll;">
+      <div class="list-group list-group-flush">
+        <% iNews.forEach(function (item, index) { %>
+        <div class="list-group-item flex-column align-items-start p-1">
+          <div class="d-flex flex-column flex-sm-row justify-content-between mb-1 mb-md-0">
+            <h5 class="mb-1">
+              <span class="badge badge-phoenix badge-phoenix-info">
+                <i class="fab fa-gripfire"></i>
+                <%= item.symbol %></span>
+              </h5>
+            <small><i class="fa fa-clock"></i> <%=  item.displayDate %></small>
+          </div>
+          <p class="mb-1 text-600 fs--1"><%=  item.title.charAt(0) + item.title.slice(1).toLowerCase() %> </p>
+          <!-- <small> The most basic list group</small> -->
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <div class="card-footer p-1 text-center">
+      <a class="center"  href="/news/stock-news">See more</a>
+      </ul>
+
+    </div>
+  </div>
+</section>
+<% include ../adsense/google/_v_scrapper_ad_banner_1.ejs %>

@@ -1,0 +1,82 @@
+    <div class="row gx-3 pt-3">
+      <div class="col-12 col-xl-4">
+        <%- include('./_sideUserMenu') %>
+      </div>
+      <div class="col-12 col-xl-8">
+        <div class="card ">
+          <div class="card-body mx-2">
+            <div class="border-bottom border-300 mb-3">
+              <form action="/user/profile" method="POST" onsubmit="disableRapidClick(this.querySelector('button[type=submit]'))">
+                <div>
+                  <h4 class="mb-4">Personal Information</h4>
+
+                  <% if ( messages?.error) { %>
+                  <div class="alert alert-outline-danger d-flex align-items-center p-2" role="alert">
+                    <span class="fas fa-times-circle text-danger fs-3 me-3"></span>
+                    <p class="mb-0 flex-1"><%- messages.error %></p>
+                  </div>
+                  <% } else if ( messages?.success) { %>
+                  <div class="alert alert-outline-success d-flex align-items-center p-2" role="alert">
+                    <span class="fas fa-check-circle text-success fs-3 me-3"></span>
+                    <p class="mb-0 flex-1"><%- messages.success %></p>
+                  </div>
+                  <% } %>
+
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <div class="form-icon-container">
+                        <div class="form-floating"><input class="form-control form-icon-input" value="<%=formdata.name%>" name="name" type="text" placeholder="First Name" /><label class="text-700 form-icon-label" for="firstName">FIRST NAME</label></div><span class="fa-solid fa-user text-900 fs--1 form-icon"></span>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <div class="form-icon-container">
+                        <div class="form-floating"><input disabled class="form-control form-icon-input" value="<%=user.email%>" id="emailSocial" type="email" placeholder="Email" /><label class="text-700 form-icon-label" for="emailSocial">EMAIL</label></div><span class="fa-solid fa-envelope text-900 fs--1 form-icon"></span>
+                        <div>
+                          <% if (formdata?.email_verified) { %>
+                          <input type="hidden" name="email_verified" value="<%= formdata?.email_verified %>" />
+                          <p><span class="badge badge-phoenix fs--2 badge-phoenix-success"><span class="badge-label">Email Verified</span><span class="ms-1" data-feather="check" style="height:12.8px;width:12.8px;"></span></span>
+                          </p>
+                          <% } else { %>
+                          <p><span class="badge badge-phoenix fs--2 badge-phoenix-danger">
+                              <span class="ms-1" data-feather="x" style="height:12.8px;width:12.8px;"></span>
+                              <span class="badge-label">
+                                <a href="/auth/send-verify-link/<%= user.email %>" class="text-decoration-none">Verify Now <i class="fas fa-arrow-right"></i></a>
+                              </span>
+                            </span></p>
+
+                          <!-- <p>Email Not Verified <a href="/send-verify-link/<%= user.email %>" class="text-decoration-none">Verify Now <i class="fas fa-arrow-right"></i></a></p> -->
+                          <% } %>
+                        </div>
+
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                      <div class="form-icon-container">
+                        <div class="form-floating"><input class="form-control form-icon-input" value="<%= formdata?.phone%>" name="phone" type="tel" placeholder="Phone" /><label class="text-700 form-icon-label" for="phone">PHONE</label></div><span class="fa-solid fa-phone text-900 fs--1 form-icon"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-start mb-6 mt-3">
+                  <div>
+                    <!-- <button class="btn btn-phoenix-secondary me-2">Cancel Changes</button> -->
+                    <button type="submit" class="btn btn-info">Save Information</button>
+                  </div>
+                </div>
+                <!-- <div class="mb-6">
+          <h4 class="mb-4">Social</h4>
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <div class="form-icon-container">
+                <div class="form-floating"><input class="form-control form-icon-input" id="facebook" type="text" placeholder="Facebook" /><label class="text-700 form-icon-label" for="facebook">Facebook</label></div><span class="fa-brands fa-facebook text-900 fs--1 form-icon"></span>
+              </div>
+            </div>
+
+          </div>
+        </div> -->
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

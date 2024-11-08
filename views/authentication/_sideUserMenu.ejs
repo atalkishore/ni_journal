@@ -1,0 +1,29 @@
+<div class="card cover-image mb-2">
+  <div class="card-header hover-actions-trigger position-relative mb-6" style="min-height: 130px; ">
+    <div class="bg-holder" style="background-image: linear-gradient(0deg, #000000 -3%, rgba(0, 0, 0, 0) 83%), url(../../assets/img/generic/59.png)">
+      <!-- <input class="d-none" id="upload-settings-cover-image" type="file" /> -->
+      <!-- <label class="cover-image-file-input" for="upload-settings-cover-image"></label> -->
+      <!-- <div class="hover-actions end-0 bottom-0 pe-1 pb-2 text-white">
+          <span class="fa-solid fa-camera me-2"></span>
+        </div> -->
+    </div>
+    <!-- <input class="d-none" id="upload-settings-porfile-picture" type="file" /> -->
+    <label class="avatar avatar-4xl  feed-avatar-profile" for="upload-settings-porfile-picture">
+      <img class="rounded-circle img-thumbnail bg-white shadow-sm" src="<%= user.image%>" width="200" alt="profile image" />
+    </label>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex flex-wrap mb-2 align-items-center">
+          <h3 class="me-2"><%= user?.name%></h3><span class="fw-normal fs-0"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-0 mb-5 mb-lg-0 d-none d-md-block">
+  <div class="col-12 border-1 border-bottom py-2"><a class="btn btn-link ps-2 fs--1 <%= originalUrl.includes('/user/profile')? 'text-info':'text-800' %> hover-primary fw-semi-bold text-decoration-none d-flex" href="/user/profile"><span class="fa-solid fa-user-group me-2 mb-2 mb-xxl-0"></span>Personal Information</a></div>
+  <div class="col-12 border-1 border-bottom py-2"><a class="btn btn-link ps-2 fs--1 <%= originalUrl.includes('/user/settings')? 'text-info':'text-800' %> hover-primary fw-semi-bold text-decoration-none d-flex" href="/user/settings"><span class="fa-solid fa-shield me-2 mb-2 mb-xxl-0"></span>Change Password</a></div>
+  <div class="col-12 border-1 border-bottom py-2"><a class="btn btn-link ps-2 fs--1 <%= originalUrl.includes('/user/support')? 'text-info':'text-800' %> hover-primary fw-semi-bold text-decoration-none d-flex" href="/user/support"><span class="fa-solid fa-question-circle me-2 mb-2 mb-xxl-0"></span>Help & Support</a></div>
+</div>

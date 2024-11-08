@@ -1,0 +1,32 @@
+.DS_Store
+.ssh
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/test/unit/coverage/
+/test/e2e/reports/
+selenium-debug.log
+# pheonixTheme/
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# secret files
+.uat/lib/serviceAccountKey.json
+.uat/env.list
+.prod/lib/serviceAccountKey.json
+.prod/env.list
+lib/serviceAccountKey.json
+bin/www
+env.list
+logs/*
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+!.elasticbeanstalk/*.config

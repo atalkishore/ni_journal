@@ -1,0 +1,44 @@
+<div class="d-flex flex-column g-1 mb-3">
+  <h4 class="text-danger"><b>Popular</b></h4>
+  <div class="d-flex flex-wrap g-1 mb-3">
+    <% tickerGroup.forEach(function(group){ 
+      group.children.forEach(function(item){ 
+        if(item?.isPopularCategory) {
+    %>
+      <div class="mb-2 me-2 flex-grow-1" aria-label="show max pain data for NIFTY 50">
+        <div class="card text-100 bg-gradient" style="background-color: #005e9f;">
+          <div class="card-body p-2">
+            <a href="/<%= destLink %>/<%= item.ticker.symbol %>" class="text-decoration-none text-white">
+              <span class="float-end" style="color:gold"><i class="fa fa-star"></i></span>
+              <p class="card-title text-100 truncate mb-1"><strong><%= item.ticker.symbol %></strong></p>
+              <p class="card-text symbol-italics"><i>( <%= item.ticker.name %> )</i></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    <%    }
+      }); 
+    }); %>
+  </div>
+
+  <h4 class="text-danger mt-3"><b>Commodity</b></h4>
+  <div class="d-flex flex-wrap g-1 mb-3">
+    <% tickerGroup.forEach(function(group){ 
+      group.children.forEach(function(item){ 
+        if(item?.instrument == "MCX") {
+    %>
+      <div class="mb-2 me-2 flex-grow-1" aria-label="show max pain data for NIFTY 50">
+        <div class="card text-100 bg-gradient" style="background-color: #007ac5;">
+          <div class="card-body p-2">
+            <a href="/<%= destLink %>/<%= item.ticker.symbol %>" class="text-decoration-none text-white">
+              <p class="card-title text-100 truncate mb-1"><strong><%= item.ticker.symbol %></strong></p>
+              <p class="card-text symbol-italics"><i>( <%= item.ticker.name %> )</i></p>
+            </a>
+          </div>
+        </div>
+      </div>
+    <%    }
+      }); 
+    }); %>
+  </div>
+</div>

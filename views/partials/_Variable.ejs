@@ -1,0 +1,54 @@
+<% 
+showAd = process.env.SHOW_AD || "false";
+ENABLE_CLARITY = process.env.ENABLE_CLARITY || "false";
+ENABLE_NOTIFICATION = process.env.ENABLE_NOTIFICATION || "false";
+imgDataUri = "data:image/png;base64,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"
+delayedDataInfo = "These feeds are not real-time. Please trade cautiously"
+var now = new Date();
+timeInMinute = (now.getUTCHours() * 60 + now.getUTCMinutes()) + 330
+today=now;
+isTradingHourNse = timeInMinute > 540 && timeInMinute < 930
+isTradingHourNseExtended = timeInMinute > 480 && timeInMinute < 960
+preMarketHour = timeInMinute > 8 * 60 && timeInMinute < (15 * 60 + 15)
+postMarketHour = timeInMinute > 16 * 60
+isWeekEnd = now.getDay() == 0 || now.getDay() == 6
+isIndexSymbol=(symbol) =>{
+    symbol = symbol.toUpperCase();
+    return symbol === "NIFTY" || symbol === "BANKNIFTY" || symbol === "FINNIFTY" || symbol==="MIDCPNIFTY" || symbol === "SENSEX" || symbol==="BANKEX"
+} 
+isCurrOrCommoditySymbol=(symbol) =>{
+    symbol = symbol.toUpperCase();
+    return isCurrencySymbol(symbol) || isCommoditySymbol(symbol);
+}
+isCurrencySymbol=(symbol) =>{
+    symbol = symbol.toUpperCase();
+    return symbol === "USDINR";
+}
+isCommoditySymbol=(symbol) =>{
+    symbol = symbol.toUpperCase();
+    return symbol === "NATURALGAS" || symbol === "CRUDEOIL" || symbol === "GOLD" || symbol === "COPPER" 
+    || symbol === "CRUDEOIL" || symbol === "CRUDEOILM" || symbol === "GOLDM" || symbol === "NATGASMINI" 
+    || symbol === "SILVER"|| symbol === "SILVERM"|| symbol === "SILVER"|| symbol === "ZINC";
+}
+capitalizeWords = (str) => str.replace(/\w\S*/g,
+        (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+);
+changeTextClass = (val) => val > 0 ? "text-success" : "text-danger";
+bgClass = (val) => val > 0 ? "success" : "danger";
+arrowName = (val) => (val > 0 ? "uil uil-arrow-growth mx-1" : "uil uil-chart-down mx-1");
+themeColor = "bg-info"
+oc_openInterest = 0;
+oc_changeInOpenInterest=1;
+oc_impliedVolatility=2;
+oc_lastTradedPrice=3;
+oc_netChange=4;
+oc_volume=5;
+oc_volumeInLot=6;
+oc_openInterestInLot=7;
+oc_changeInOpenInterestInLot=8;
+oc_delta=9;
+oc_gamma=10;
+oc_theta=11;
+oc_vega=12;
+PYTHON_SERVICE_HOST=process.env.PYTHON_SERVICE_URL
+%>

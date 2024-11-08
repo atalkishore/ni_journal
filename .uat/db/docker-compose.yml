@@ -1,0 +1,39 @@
+services:
+  uat_redisdb:
+    image: redis:latest
+    container_name: uat_redisdb
+    ports:
+      - "1002:6379"
+    volumes:
+      - /var/myprojects/niftyinvestui_uat/.vscode/data:/data/db
+      - /var/myprojects/niftyinvestui_uat/redis.conf:/etc/redis/redis.conf
+    command: /bin/sh -c "redis-server  --requirepass $$REDISDB_PASSWORD"
+    env_file:
+      - env.list
+    networks:
+      - uat_ni_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+  uat_mongodb:
+    image: mongo
+    container_name: uat_mongodb
+    ports:
+      - "1003:27017"
+    env_file:
+      - env.list
+    volumes:
+      - /var/myprojects/niftyinvestui_uat/.vscode/data:/data/db
+      - /var/myprojects/niftyinvestui_uat/mongod.conf:/etc/mongod.conf
+    networks:
+      - uat_ni_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+networks:
+  uat_ni_network:
+    driver: bridge

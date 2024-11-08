@@ -1,0 +1,111 @@
+<%
+let header = [
+    {name: "Forum", link: "/coming-soon", children: []},
+    {name: "Journal", link: "/journal", children: []}
+]
+var activeMenu = menu
+%>
+
+<nav class="navbar navbar-top fixed-top navbar-expand-lg" id="navbarTop">
+  <div class="navbar-logo">
+    <button class="btn navbar-toggler navbar-toggler-humburger-icon hover-bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTopCollapse" aria-controls="navbarTopCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+    <a class="navbar-brand ms-0 me-sm-3" href="/">
+      <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center"><img src="<%= process.env.STATIC_FILES %>/public/images/logo.png" alt="Nifty Invest Logo" width="27" />
+          <p class="logo-text ms-2">NiftyInvest</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center" id="navbarTopCollapse">
+    <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
+      <% header.forEach(function (menu, mCount) { %>
+      <% if(menu.children.length > 0) { %>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><%= menu.name %><span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
+        <ul class="dropdown-menu navbar-dropdown-caret">
+          <% menu.children.forEach(function (subMenu) { %>
+          <li><a class="dropdown-item" href="<%= menu.link + subMenu.link %>">
+              <div class="dropdown-item-wrapper"><span class="fab fa-strava me-2"></span><%= subMenu.name %></div>
+            </a></li>
+          <% }) %>
+        </ul>
+      </li>
+      <% }else{ %>
+
+      <li class="nav-item">
+        <a class="nav-link lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="<%= menu.link %>"><%= menu.name %></a>
+      </li>
+      <% } }) 
+       if (!isAuthenticated) { %>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="/auth/login">Login</a>
+      </li>
+      <li class="nav-item d-lg-none">
+        <a class="nav-link" href="/auth/register">Sign-up</a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+  <ul class="navbar-nav navbar-nav-icons flex-row">
+    <li class="nav-item">
+      <div class="theme-control-toggle fa-icon-wait px-0"><input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" /><label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="moon"></span></label><label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="sun"></span></label></div>
+    </li>
+    <li class="nav-item"><a id="search-link" class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchBoxModal">
+        <span data-feather="search" style="height:19px;width:19px;margin-bottom: 2px;"></span></a></li>
+    <li class="nav-item">
+      <% if (isAuthenticated) { %>
+    <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+        <div class="avatar avatar-l ">
+          <img class="rounded-circle " src="<%= user.image %>" alt="" />
+        </div>
+      </a>
+      <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
+        <div class="card position-relative border-0">
+          <div class="card-body p-0">
+            <div class="text-center pt-4 pb-3">
+              <div class="avatar avatar-xl ">
+                <img class="rounded-circle " src="<%= user.image %>" alt="Profile Image" />
+              </div>
+              <h6 class="mt-2 text-black"><%= user.email %></h6>
+            </div>
+          </div>
+          <div class="overflow-auto scrollbar"> <!-- style="height: 8rem;" -->
+            <ul class="nav d-flex flex-column mb-2 pb-1">
+              <li class="nav-item"><a class="nav-link px-3" href="/user/profile"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
+              <% if(user?.isAdmin) { %>
+              <li class="nav-item"><a class="nav-link px-3" href="/admin"><span class="me-2 text-900" data-feather="shield"></span>Admin Dashboard</a></li>
+              <li class="nav-item"><a class="nav-link px-3" href="/trade-dashboard"><span class="me-2 text-900" data-feather="bar-chart-2"></span>Trade Dashboard</a></li>
+              <% } %>
+              <li class="nav-item"><a class="nav-link px-3" href="/user/settings"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
+              <li class="nav-item"><a class="nav-link px-3" href="/user/support"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
+            </ul>
+          </div>
+          <div class="card-footer p-0">
+            <!-- <ul class="nav d-flex flex-column my-3">
+                <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user-plus"></span>Add another account</a></li>
+              </ul> -->
+            <!-- <hr /> -->
+            <div class="px-3 pt-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100" href="/auth/logout"> <span class="me-2" data-feather="log-out"> </span>Sign out</a></div>
+            <div class="my-2 text-center fw-bold fs--2 text-600"><a class="text-600 me-1" href="/privacy-policy">Privacy policy</a>&bull;<a class="text-600 mx-1" href="/terms-and-conditions">Terms</a>&bull;<a class="text-600 ms-1" href="/terms-and-conditions">Cookies</a></div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <% } else{%>
+    <a id="search-link" class="nav-link d-none d-md-block" href="/auth/login">Login /</a>
+    <a id="search-link" class="nav-link d-none d-md-block" href="/auth/register">Sign-up</a>
+    <a id="search-link" class="nav-link d-md-none" href="/auth/login"><span class="text-info" data-feather="log-in" style="height:19px;width:19px;margin-bottom: 2px;"></span>
+      </span>
+    </a>
+    <% } %>
+
+    </li>
+
+  </ul>
+</nav>
+
+
+<span style="display: none">[--[65.84.65.76]--]</span>
+</div>
