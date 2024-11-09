@@ -5,7 +5,7 @@ const { PAGE_NAME } = require("../utils/constants");
 const asyncMiddleware = require("../config/asyncMiddleware.config");
 
 router.get('/', asyncMiddleware(async (req, res) => {
-    res.render('journal/main', { menu: "", ...seoHeadTagValues(PAGE_NAME.HOME) });
+    res.render('journal/main', { menu: "Journal", ...seoHeadTagValues(PAGE_NAME.HOME) });
 }));
 
 

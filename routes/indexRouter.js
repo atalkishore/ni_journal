@@ -18,8 +18,10 @@ router.get('/', asyncMiddleware(async function (req, res, next) {
 
     let tickers = await repository.getTickers();
     let { dict, dictNameToSymbolMap } = tickerFormatting(tickers, "");
+    let j = "username"
+
     res.render('index', {
-        menu: '',
+        menu: j,
         ...seoHeadTagValues(PAGE_NAME.HOME),
         tickers: JSON.stringify(dict),
         tickersMap: JSON.stringify(dictNameToSymbolMap),
@@ -86,13 +88,13 @@ router.get('/sitemap.xml', async (req, res) => {
         try {
             // URL of the remote file
             const fileUrl = 'https://niftyinvest.com/xml/sitemap.xml';
-    
+
             // Fetch the file from the remote URL
             const response = await axios.get(fileUrl, { responseType: 'text' });
-    
+
             // Set the appropriate Content-Type for XML if required
             res.setHeader('Content-Type', 'application/xml');
-    
+
             // Send the fetched file content as a response
             res.send(response.data);
         } catch (error) {

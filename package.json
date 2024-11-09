@@ -29,6 +29,7 @@
     "express-session": "^1.18.0",
     "firebase-admin": "11.11.0",
     "http-errors": "2.0.0",
+    "json2csv": "^6.0.0-alpha.2",
     "moment-timezone": "^0.5.45",
     "mongodb": "^6.5.0",
     "morgan": "1.10.0",

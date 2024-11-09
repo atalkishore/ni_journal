@@ -3,6 +3,8 @@ var router = express.Router();
 const asyncMiddleware = require("../config/asyncMiddleware.config");
 const { ensureAdmin, ensureLoggedIn } = require("../config/ensureUserRole.config");
 const { getAuditLogs } = require("../repository/logRepository");
+const { Parser } = require('json2csv');
+
 
 router.get('/audit-logs', ensureAdmin(), asyncMiddleware(async (req, res) => {
     try {
@@ -37,6 +39,7 @@ router.get('/test-api-login', ensureLoggedIn(), asyncMiddleware(async (req, res)
 
 router.get('/test-api', asyncMiddleware(async (req, res) => {
     try {
+
         let data = { status: "ok", message: "your test api is working without login" }
         // Return the result
         res.status(200).json(data);
