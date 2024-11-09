@@ -56,7 +56,9 @@ let getTickersV2 = async function () {
         const _db = await mongodb;
         const collection = _db.collection('option_ticker');
         const query = { active_status: true, manually_deactivated: { $ne: true } };
+
         cursor = await collection.find(query);
+
         data = (await cursor.toArray())
         data?.sort(compare);
         // data = dataArr?.map(doc => ({ expiryDate: doc.expiry?.toUpperCase() }))?.sort((a, b) => +new Date(a.expiryDate) - +new Date(b.expiryDate));

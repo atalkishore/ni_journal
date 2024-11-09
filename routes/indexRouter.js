@@ -1,7 +1,7 @@
 var express = require('express');
 const axios = require('axios');
 var router = express.Router();
-const repository = require('../repository/tickerRepository');
+const tickerrepository = require('../repository/tickerRepository');
 const { tickerFormatting, seoHeadTagValues, isIndexSymbol, indexSymbol } = require("../utils/helpers");
 const { PAGE_NAME } = require("../utils/constants");
 const { getStockQuote } = require("../repository/indicesRepository");
@@ -16,7 +16,7 @@ router.get('/', asyncMiddleware(async function (req, res, next) {
     let allStockQuote = (await getStockQuote())?.data;
     let allIndices = allStockQuote;
 
-    let tickers = await repository.getTickers();
+    let tickers = await tickerrepository.getTickers();
     let { dict, dictNameToSymbolMap } = tickerFormatting(tickers, "");
     let j = "username"
 
