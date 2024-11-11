@@ -16,7 +16,7 @@ function setupRouter(app) {
         app.use('/user', userRouter);
         app.use('/journal/', journalRouter);
         app.use('/api/journal/', apiJournalRouter);
-        app.use('/trade/add', tradeRouter);
+        app.use('/trade', tradeRouter);
         
 
         app.use('*', (req, res) => {
