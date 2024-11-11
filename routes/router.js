@@ -6,6 +6,8 @@ const authRouter = require('./authRouter');
 const userRouter = require('./userRouter');
 const journalRouter = require('./jornalRouter');
 const apiJournalRouter = require('./apiJornalRouter');
+const tradeRouter = require('./tradeRouter');
+
 
 function setupRouter(app) {
     app.use('/', indexRouter);
@@ -14,6 +16,9 @@ function setupRouter(app) {
         app.use('/user', userRouter);
         app.use('/journal/', journalRouter);
         app.use('/api/journal/', apiJournalRouter);
+        app.use('/trade/add', tradeRouter);
+        
+
         app.use('*', (req, res) => {
             res.status(404).render('404', { menu: '404', title: 'Not-Found', description: 'Server Error', source: '/', keywords: '' });
         });

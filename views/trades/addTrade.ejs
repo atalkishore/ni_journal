@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Trade</title>
+</head>
+<body>
+    <h1>Add New Trade</h1>
+    <form action="/api/add-trade" method="POST">
+        <label for="stockName">Stock Name:</label>
+        <input type="text" id="stockName" name="stockName" required><br><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <label for="orderType">Order Type:</label>
+        <select id="orderType" name="orderType" required>
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+        </select><br><br>
+
+        <button type="submit">Add Trade</button>
+    </form>
+</body>
+</html>

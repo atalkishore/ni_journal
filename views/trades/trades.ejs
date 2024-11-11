@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trades</title>
+</head>
+<body>
+    <h1>All Trades</h1>
+    <table border="1">
+        <tr>
+            <th>Stock Name</th>
+            <th>Price</th>
+            <th>Order Type</th>
+        </tr>
+        <% trades.forEach(trade => { %>
+        <tr>
+            <td><%= trade.stockName %></td>
+            <td><%= trade.price %></td>
+            <td><%= trade.orderType %></td>
+        </tr>
+        <% }) %>
+    </table>
+    <a href="/trade/add">Add Another Trade</a>
+</body>
+</html>
