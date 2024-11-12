@@ -1,26 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Trade</title>
-</head>
-<body>
-    <h1>Add New Trade</h1>
-    <form action="/api/add-trade" method="POST">
-        <label for="stockName">Stock Name:</label>
-        <input type="text" id="stockName" name="stockName" required><br><br>
+<link
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Add New Trade</h1>
 
-        <label for="price">Price:</label>
-        <input type="number" id="price" name="price" required><br><br>
+  <form action="/api/trades" method="POST" class="border p-4 bg-light rounded">
+    <div class="form-group">
+      <label for="stockName">Stock Name</label>
+      <input
+        type="text"
+        id="stockName"
+        name="stockName"
+        class="form-control"
+        required
+      />
+    </div>
 
-        <label for="orderType">Order Type:</label>
-        <select id="orderType" name="orderType" required>
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-        </select><br><br>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input
+        type="number"
+        id="price"
+        name="price"
+        class="form-control"
+        required
+      />
+    </div>
 
-        <button type="submit">Add Trade</button>
-    </form>
-</body>
-</html>
+    <div class="form-group">
+      <label for="orderType">Order Type</label>
+      <select id="orderType" name="orderType" class="form-control" required>
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-success btn-block">Add Trade</button>
+    <a href="/trades" class="btn btn-secondary btn-block">Cancel</a>
+  </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

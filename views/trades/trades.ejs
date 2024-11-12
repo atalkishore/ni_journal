@@ -1,26 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trades</title>
-</head>
-<body>
-    <h1>All Trades</h1>
-    <table border="1">
-        <tr>
-            <th>Stock Name</th>
-            <th>Price</th>
-            <th>Order Type</th>
-        </tr>
-        <% trades.forEach(trade => { %>
-        <tr>
-            <td><%= trade.stockName %></td>
-            <td><%= trade.price %></td>
-            <td><%= trade.orderType %></td>
-        </tr>
-        <% }) %>
-    </table>
-    <a href="/trade/add">Add Another Trade</a>
-</body>
-</html>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <div class="container mt-2">
+        <h1 class="text-center mb-4">All Trades</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Price</th>
+                        <th>Order Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% trades.forEach(trade => { %>
+                    <tr>
+                        <td><%= trade.stockName %></td>
+                        <td><%= trade.price %></td>
+                        <td><span class="badge <%= trade.orderType === 'buy' ? 'badge-success' : 'badge-danger' %>">
+                            <%= trade.orderType.charAt(0).toUpperCase() + trade.orderType.slice(1) %>
+                        </span></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/trade/add" class="btn btn-primary">Add Another Trade</a>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
