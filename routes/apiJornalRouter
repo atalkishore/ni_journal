@@ -3,7 +3,6 @@ var router = express.Router();
 const asyncMiddleware = require("../config/asyncMiddleware.config");
 const { ensureAdmin, ensureLoggedIn } = require("../config/ensureUserRole.config");
 const { getAuditLogs } = require("../repository/logRepository");
-const { Parser } = require('json2csv');
 
 
 router.get('/audit-logs', ensureAdmin(), asyncMiddleware(async (req, res) => {

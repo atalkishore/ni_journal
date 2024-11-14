@@ -1,3 +1,4 @@
+<%- include('../partials/_Variable.ejs') %>
 <!DOCTYPE html>
 <html lang="en" class="navbar-horizontal">
 
@@ -19,17 +20,17 @@
   <meta name="robots" content="index, follow">
   <title><%= title %></title>
   <!-- External css -->
-  <% include ../partials/_StaticCss.ejs %>
+  <%- include('../partials/_StaticCss.ejs') %>
 </head>
 
 <body>
-  <% include ../partials/_Variable.ejs %>
+  <%- include('../partials/_Variable.ejs') %>
   <main class=" main" id="top">
-    <%- include('../partials/_Header.ejs',{page: menu}) %>
+    <%- include('../partials/_Header.ejs', {page: menu}) %>
     <div class="content px-2 pb-0">
       <%- body %>
     </div>
-    <% include ../adsense/google/_h_scrapper_ad_banner_2.ejs %>
+    <%- include('../adsense/google/_h_scrapper_ad_banner_2.ejs') %>
     <div class="modal fade" id="searchBoxModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-phoenix-modal="data-phoenix-modal" style="--phoenix-backdrop-opacity: 1;">
       <div class="modal-dialog modal-xl">
         <div class="modal-content mt-8 rounded-pill">
@@ -45,10 +46,10 @@
         </div>
       </div>
     </div>
-    <% include ../partials/_Footer.ejs %>
+    <%- include('../partials/_Footer.ejs') %>
   </main>
   <!-- External JavaScripts -->
-  <% include ../partials/_StaticJs.ejs %>
+  <%- include('../partials/_StaticJs.ejs') %>
 </body>
 
 </html>

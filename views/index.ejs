@@ -1,4 +1,4 @@
-<% include ./partials/_Variable.ejs %>
+<%- include('./partials/_Variable.ejs') %>
 <div style="background-image: url(<%= process.env.STATIC_FILES %>/public/images/corner-5.png);background-size: cover;">
   <section class="py-0 overflow-hidden" id="home">
     <canvas id="home-canvas" class=" d-none d-lg-block" style="position: absolute;"></canvas>
@@ -57,18 +57,9 @@
           </div>
           <div class="col-12 col-lg-6  pb-0 position-relative text-end">
             <img src="<%= process.env.STATIC_FILES %>/public/images/d2.png" alt="Nifty Invest Logo">
-
-
           </div>
         </div>
       </div>
     </div>
   </section>
-
 </div>
-
-
-
-<%
-
-%>
