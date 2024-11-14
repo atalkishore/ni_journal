@@ -1,4 +1,3 @@
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <div class="container mt-2">
         <h1 class="text-center mb-4">All Trades</h1>
         <div class="table-responsive">
@@ -15,7 +14,7 @@
                     <tr>
                         <td><%= trade.stockName %></td>
                         <td><%= trade.price %></td>
-                        <td><span class="badge <%= trade.orderType === 'buy' ? 'badge-success' : 'badge-danger' %>">
+                        <td><span class="badge <%= trade.orderType === 'buy' ? 'bg-success' : 'bg-danger' %>">
                             <%= trade.orderType.charAt(0).toUpperCase() + trade.orderType.slice(1) %>
                         </span></td>
                     </tr>
