@@ -1,15 +1,10 @@
-<link
-  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 <div class="text-center mt-3">
-  <a href="/trade" class="btn btn-outline-primary me-1 mb-1 float-right"
-    >Show All Trades</a
-  >
+  <a href="/trade" class="btn btn-outline-primary me-1 mb-1 float-right">Show All Trades</a>
 </div>
 <div class="container mt-1">
   <h1 class="text-center mb-4">Add New Trade</h1>
- 
+
 
   <% if (message) { %>
   <div class="alert alert-success"><%= message %></div>
@@ -20,26 +15,12 @@
   <form action="/trade/add" method="POST" class="border p-4 bg-light rounded">
     <div class="form-group">
       <label for="stockName">Stock Name</label>
-      <input
-        type="text"
-        id="stockName"
-        name="stockName"
-        class="form-control"
-        placeholder="Enter Stock Name"
-        required
-      />
+      <input type="text" id="stockName" name="stockName" class="form-control" placeholder="Enter Stock Name" required />
     </div>
 
     <div class="form-group">
       <label for="price">Price</label>
-      <input
-        type="number"
-        id="price"
-        name="price"
-        class="form-control"
-        placeholder="Enter Price"
-        required
-      />
+      <input type="number" id="price" name="price" class="form-control" placeholder="Enter Price" required />
     </div>
 
     <div class="form-group">
@@ -54,7 +35,7 @@
     <button class="btn btn-outline-secondary me-1 mb-1 float-right" type="reset">Clear</button>
   </form>
 
-  <% include ../partials/_TradeList.ejs %>
+  <%- include('../partials/_TradeList.ejs') %>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
