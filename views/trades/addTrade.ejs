@@ -3,16 +3,21 @@
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
   rel="stylesheet"
 />
+
 <div class="text-center mt-3">
-  <a href="/trade" class="btn btn-primary btn-sm float-right">Show All Trades</a>
+  <a href="/trade" class="btn btn-primary btn-sm float-right"
+    >Show All Trades</a
+  >
 </div>
+
 <div class="container mt-5">
   <h1 class="text-center mb-4">Add New Trade</h1>
+
   <% if (message) { %>
-    <div class="alert alert-success">
-      <%= message %>
-    </div>
-         <% } %>
+  <div class="alert alert-success"><%= message %></div>
+           <% } %> <% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+  <% } %>
 
   <form action="/trade/add" method="POST" class="border p-4 bg-light rounded">
     <div class="form-group">
