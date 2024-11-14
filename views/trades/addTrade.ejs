@@ -1,4 +1,3 @@
-<title>Add Trade</title>
 <link
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
   rel="stylesheet"
@@ -15,7 +14,7 @@
 
   <% if (message) { %>
   <div class="alert alert-success"><%= message %></div>
-           <% } %> <% if (error) { %>
+  <% } %> <% if (error) { %>
   <div class="alert alert-danger"><%= error %></div>
   <% } %>
 
@@ -55,6 +54,8 @@
     </button>
     <button type="reset" class="btn btn-secondary btn-block mt-2">Clear</button>
   </form>
+
+  <% include ../partials/_TradeList.ejs %>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
