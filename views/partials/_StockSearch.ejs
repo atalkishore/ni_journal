@@ -1,6 +1,0 @@
-<select id="select-<%= Math.random() %>" class="form-select form-select-lg data-choices-manual" multiple="multiple"  data-options='{  }'>
-  <option value="">Search Stock or Index...</option>
-  <% var j_tickersMap=JSON.parse(tickersMap); Object.keys(JSON.parse(tickersMap)).forEach((key)=>{ %>
-  <option value="<%= j_tickersMap[key] %>"><%= key %></option>
-  <% }) %>
-</select>

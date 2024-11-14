@@ -1,8 +1,0 @@
-<% include ../../partials/_Variable.ejs %>
-<% if(!isAuthenticated || !user?.isAdDisabled){ %>
-<script async id="AV66b9bd86ee728e70220baaa4" type="text/javascript" src="https://tg1.vidcrunch.com/api/adserver/spt?AV_TAGID=66b9bd86ee728e70220baaa4&AV_PUBLISHERID=66b250b2b4f06416b803bf39"></script>
-<% }  else { %>
-<% if(showAd.toLowerCase() == "false"){ %>
-<h3 class="text-200 text-center">ADVERTISEMENT</h3>
-<%}%>
-<% } %>
