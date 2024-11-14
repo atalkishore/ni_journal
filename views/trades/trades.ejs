@@ -11,6 +11,7 @@
           <th>Stock Name</th>
           <th>Price</th>
           <th>Order Type</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,14 @@
               trade.orderType.slice(1) %>
             </span>
           </td>
+          <td>
+            <span>
+              <button class="btn btn-outline-danger sm" type="delete">
+                Delete
+              </button>
+              <%= trade.actions %></span
+            >
+          </td>
         </tr>
         <% }) %>
       </tbody>
@@ -33,7 +42,7 @@
   </div>
 
   <div class="text-center mt-4">
-    <a href="/trade/add" class="btn btn-primary">Add Another Trade</a>
+    <a href="/trade/add" class="btn btn-outline-info me-1 mb-1">Add Another Trade</a>
   </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

@@ -2,15 +2,14 @@
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
   rel="stylesheet"
 />
-
 <div class="text-center mt-3">
-  <a href="/trade" class="btn btn-primary btn-sm float-right"
+  <a href="/trade" class="btn btn-outline-primary me-1 mb-1 float-right"
     >Show All Trades</a
   >
 </div>
-
 <div class="container mt-1">
   <h1 class="text-center mb-4">Add New Trade</h1>
+ 
 
   <% if (message) { %>
   <div class="alert alert-success"><%= message %></div>
@@ -51,10 +50,8 @@
       </select>
     </div>
 
-    <button type="submit" class="btn btn-success btn-block mt-3">
-      Add Trade
-    </button>
-    <button type="reset" class="btn btn-secondary btn-block mt-2">Clear</button>
+    <button class="btn btn-outline-success me-1 mb-1" type="submit">Add Trade</button>
+    <button class="btn btn-outline-secondary me-1 mb-1 float-right" type="reset">Clear</button>
   </form>
 
   <% include ../partials/_TradeList.ejs %>
