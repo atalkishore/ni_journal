@@ -1,8 +1,7 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const { seoHeadTagValues } = require("../utils/helpers");
 const { PAGE_NAME } = require("../utils/constants");
-const asyncMiddleware = require("../config/asyncMiddleware.config");
 const { error } = require("winston");
 
 let trades = [];
@@ -20,41 +19,51 @@ router.get("/add", (req, res) => {
     menu: "Journal",
     ...seoHeadTagValues(PAGE_NAME.HOME),
     trades,
-    message:null,
-    error:null,
+    message: null,
+    error: null,
   });
 });
 
 router.get("/api/trades", (req, res) => {
-  // localhost:5110/trade/api/trades
   res.json(trades);
 });
 
 router.post("/add", (req, res) => {
-  // localhost:5110/trade/add
   const { stockName, price, orderType } = req.body;
 
-  if (stockName === "SBI") {
-    return res.render("trades/addTrade", {
+  if (stockName && price && orderType) {
+    const newTrade = { stockName, price, orderType };
+    trades.push(newTrade);
+    res.render("trades/addTrade", {
       menu: "Journal",
       ...seoHeadTagValues(PAGE_NAME.HOME),
       trades,
-      message: null,
-      error: "Cannot add stock", 
+      message: "Trade added successfully",
+      error: null,
+    });
+  } else {
+    res.render("trades/addTrade", {
+      menu: "Journal",
+      ...seoHeadTagValues(PAGE_NAME.HOME),
+      trades,
+      message: "Please fill out all fields",
+      error: null,
     });
   }
+});
 
-  const newTrade = { stockName, price, orderType };
-  trades.push(newTrade);
+router.delete("/api/trade-del", (req, res) => {
+  const { index } = req.body;
 
-  res.render("trades/addTrade", {
-    menu: "Journal",
-    ...seoHeadTagValues(PAGE_NAME.HOME),
-    trades,
-    message: "Trade added successfully",
-    error:null,
-  });
-  // res.status(201).json(newTrade);
+  if (index >= 0 && index < trades.length) {
+    const deletedTrade = trades.splice(index, 1);
+    res.json({
+      status: "ok",
+      message: `${deletedTrade[0].stockName} Trade Deleted Successfully`,
+    });
+  } else {
+    res.status(404).json({ status: "error", message: "Trade not found." });
+  }
 });
 
 module.exports = router;

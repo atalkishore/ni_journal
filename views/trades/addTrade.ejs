@@ -1,10 +1,14 @@
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+<link
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 <div class="text-center mt-3">
-  <a href="/trade" class="btn btn-outline-primary me-1 mb-1 float-right">Show All Trades</a>
+  <a href="/trade" class="btn btn-outline-primary me-1 mb-1 float-right"
+    >Show All Trades</a
+  >
 </div>
-<div class="container mt-1">
+<div class="container mt-5">
   <h1 class="text-center mb-4">Add New Trade</h1>
-
 
   <% if (message) { %>
   <div class="alert alert-success"><%= message %></div>
@@ -15,12 +19,26 @@
   <form action="/trade/add" method="POST" class="border p-4 bg-light rounded">
     <div class="form-group">
       <label for="stockName">Stock Name</label>
-      <input type="text" id="stockName" name="stockName" class="form-control" placeholder="Enter Stock Name" required />
+      <input
+        type="text"
+        id="stockName"
+        name="stockName"
+        class="form-control"
+        placeholder="Enter Stock Name"
+        required
+      />
     </div>
 
     <div class="form-group">
       <label for="price">Price</label>
-      <input type="number" id="price" name="price" class="form-control" placeholder="Enter Price" required />
+      <input
+        type="number"
+        id="price"
+        name="price"
+        class="form-control"
+        placeholder="Enter Price"
+        required
+      />
     </div>
 
     <div class="form-group">
@@ -31,12 +49,47 @@
       </select>
     </div>
 
-    <button class="btn btn-outline-success me-1 mb-1" type="submit">Add Trade</button>
-    <button class="btn btn-outline-secondary me-1 mb-1 float-right" type="reset">Clear</button>
+    <button class="btn btn-outline-success me-1 mb-1" type="submit">
+      Add Trade
+    </button>
+    <button
+      class="btn btn-outline-secondary me-1 mb-1 float-right"
+      type="reset"
+    >
+      Clear
+    </button>
   </form>
 
   <%- include('../partials/_TradeList.ejs') %>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $(".delete-trade").on("click", function (e) {
+      e.preventDefault();
+
+      const stockName = $(this).data("stockname");
+      if (
+        confirm(`Are you sure you want to delete the trade for ${stockName}?`)
+      ) {
+        $.ajax({
+          url: "/trade/api/trade-del",
+          type: "DELETE",
+          contentType: "application/json",
+          data: JSON.stringify({ stockName }),
+          success: function (response) {
+            alert(response.message);
+            $(`#trade-${stockName}`).remove();
+          },
+          error: function (err) {
+            alert("Error deleting trade. Please try again.");
+          },
+        });
+      }
+    });
+  });
+</script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
