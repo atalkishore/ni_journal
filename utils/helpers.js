@@ -1,28 +1,28 @@
-import moment from "moment-timezone";
+import moment from 'moment-timezone';
 
 const istOffset = 5.5 * 60 * 60 * 1000;
-const dateFormat = "DDMMMYYYY";
+const dateFormat = 'DDMMMYYYY';
 
 const notFoundPage = (res) => {
-  res.render("404", {
-    page: "404",
+  res.render('404', {
+    page: '404',
   });
 };
 const redirectTo404 = (res) =>
-  res.status(404).render("404", {
-    menu: "404",
-    title: "Not-Found",
-    description: "Page not found",
-    source: "/",
-    keywords: "",
+  res.status(404).render('404', {
+    menu: '404',
+    title: 'Not-Found',
+    description: 'Page not found',
+    source: '/',
+    keywords: '',
   });
 
-const redirectOnException = (res) => res.status(301).redirect("/");
+const redirectOnException = (res) => res.status(301).redirect('/');
 
 // eslint-disable-next-line no-unused-vars
 const internalServerError = (res) => {
-  res.render("500", {
-    page: "500",
+  res.render('500', {
+    page: '500',
   });
 };
 
@@ -69,10 +69,10 @@ function capitalizeWords(str) {
 
 function showLiveTicker(symbol) {
   return (
-    symbol === "BANKNIFTY" ||
-    symbol === "NIFTY" ||
-    symbol === "NIFTYIT" ||
-    symbol === "MCDOWELL-N"
+    symbol === 'BANKNIFTY' ||
+    symbol === 'NIFTY' ||
+    symbol === 'NIFTYIT' ||
+    symbol === 'MCDOWELL-N'
   );
 }
 
@@ -85,10 +85,10 @@ function todayIST() {
 
 function isDateGreaterThanOrEqualToTodayInIST(date) {
   // Create a Moment object for the current date in IST
-  const currentDateIST = moment().tz("Asia/Kolkata").startOf("day");
+  const currentDateIST = moment().tz('Asia/Kolkata').startOf('day');
 
   // Create a Moment object for the input date
-  const inputDate = moment(date, dateFormat).tz("Asia/Kolkata").startOf("day");
+  const inputDate = moment(date, dateFormat).tz('Asia/Kolkata').startOf('day');
 
   // Compare the input date with the current date
   return inputDate.isSameOrAfter(currentDateIST);
@@ -100,13 +100,13 @@ function isThursday(day) {
 
 function indexSymbol() {
   return [
-    "NIFTY",
-    "BANKNIFTY",
-    "MIDCPNIFTY",
-    "FINNIFTY",
-    "NIFTYNXT50",
-    "SENSEX",
-    "BANKEX",
+    'NIFTY',
+    'BANKNIFTY',
+    'MIDCPNIFTY',
+    'FINNIFTY',
+    'NIFTYNXT50',
+    'SENSEX',
+    'BANKEX',
   ];
 }
 
@@ -116,21 +116,21 @@ function isIndexSymbol(symbol) {
 
 function isCurrencySymbol(symbol) {
   symbol = symbol.toUpperCase();
-  return symbol === "USDINR";
+  return symbol === 'USDINR';
 }
 // eslint-disable-next-line no-unused-vars
 function isCommoditySymbol(symbol) {
   symbol = symbol.toUpperCase();
-  return symbol === "NATURALGAS" || symbol === "CRUDEOIL" || symbol === "GOLD";
+  return symbol === 'NATURALGAS' || symbol === 'CRUDEOIL' || symbol === 'GOLD';
 }
 
 function isCurrOrCommoditySymbol(symbol) {
   symbol = symbol.toUpperCase();
   return (
-    symbol === "USDINR" ||
-    symbol === "NATURALGAS" ||
-    symbol === "CRUDEOIL" ||
-    symbol === "GOLD"
+    symbol === 'USDINR' ||
+    symbol === 'NATURALGAS' ||
+    symbol === 'CRUDEOIL' ||
+    symbol === 'GOLD'
   );
 }
 
@@ -142,25 +142,25 @@ function generateCacheKeys(cacheName, symbol, expiry) {
 
 function getClassNameForPCR(val) {
   if (val > 0 && val <= 0.8) {
-    return "danger";
+    return 'danger';
   } else if (val >= 1.2) {
-    return "success";
+    return 'success';
   } else if (val === 0) {
-    return "secondary";
+    return 'secondary';
   } else {
-    return "info";
+    return 'info';
   }
 }
 
 function getTextForPCR(val) {
   if (val > 0 && val <= 0.8) {
-    return "Bearish Trend";
+    return 'Bearish Trend';
   } else if (val >= 1.2) {
-    return "Bullish Trend";
+    return 'Bullish Trend';
   } else if (val === 0) {
-    return "InSufficient Data";
+    return 'InSufficient Data';
   } else {
-    return "Neutral Trend";
+    return 'Neutral Trend';
   }
 }
 
@@ -168,7 +168,7 @@ function capitalizeFirstLetterOfEachWord(name) {
   return (
     name
       ?.toLowerCase() // Convert the entire string to lowercase
-      ?.replace(/\b\w/g, (char) => char.toUpperCase()) ?? ""
+      ?.replace(/\b\w/g, (char) => char.toUpperCase()) ?? ''
   ); // Capitalize the first letter of each word
 }
 

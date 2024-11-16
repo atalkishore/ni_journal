@@ -1,16 +1,16 @@
 /* eslint-disable no-undef */
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const currentDirname = path.dirname(__filename);
 const __dirname = path.dirname(currentDirname);
-const SHOW_AD = process.env.SHOW_AD || "false";
-const SHOW_MEDIA_AD = process.env.SHOW_MEDIA_AD || "false";
-const ENABLE_CLARITY = process.env.ENABLE_CLARITY || "false";
+const SHOW_AD = process.env.SHOW_AD || 'false';
+const SHOW_MEDIA_AD = process.env.SHOW_MEDIA_AD || 'false';
+const ENABLE_CLARITY = process.env.ENABLE_CLARITY || 'false';
 const SECRET = process.env.SECRET;
 const VERSION = process.env.VERSION;
 const GOGGLE_CLIENT_ID = process.env.GOGGLE_CLIENT_ID;
@@ -38,7 +38,7 @@ const PG_IM_CLIENT_ID = process.env.PG_IM_CLIENT_ID;
 const PG_IM_CLIENT_SECRET = process.env.PG_IM_CLIENT_SECRET;
 const PORT = process.env.PORT;
 const PYTHON_SERVICE_URL =
-  process.env.PYTHON_SERVICE_URL || "http://127.0.0.1:5005";
+  process.env.PYTHON_SERVICE_URL || 'http://127.0.0.1:5005';
 
 export {
   SHOW_AD,

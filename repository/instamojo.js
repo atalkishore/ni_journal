@@ -1,44 +1,44 @@
 /* eslint-disable no-useless-catch */
-import * as axios from "axios";
+import * as axios from 'axios';
 
 import {
   PG_IM_CLIENT_ID,
   PG_IM_CLIENT_SECRET,
-} from "../config/env.constant.js";
+} from '../config/env.constant.js';
 
 const HOSTS = {
-  production: "https://api.instamojo.com/v2/",
-  test: "https://test.instamojo.com/v2/",
+  production: 'https://api.instamojo.com/v2/',
+  test: 'https://test.instamojo.com/v2/',
 };
 
 const AUTHHOSTS = {
-  production: "https://api.instamojo.com/oauth2/token/",
-  test: "https://test.instamojo.com/oauth2/token/",
+  production: 'https://api.instamojo.com/oauth2/token/',
+  test: 'https://test.instamojo.com/oauth2/token/',
 };
 
 const API = {
-  createPayment: "payment_requests/",
-  payments: "payments/",
-  paymentStatus: "payment_requests/",
-  refunds: "payments/",
-  paymentforSDK: "gateway/orders/payment-request/",
+  createPayment: 'payment_requests/',
+  payments: 'payments/',
+  paymentStatus: 'payment_requests/',
+  refunds: 'payments/',
+  paymentforSDK: 'gateway/orders/payment-request/',
 };
 
-let CURRENT_TOKEN = "";
-let CURRENT_HOST = "production";
+let CURRENT_TOKEN = '';
+let CURRENT_HOST = 'production';
 
 const AuthHEADERS = {
-  "Content-Type": "application/x-www-form-urlencoded",
-  Authorization: "",
+  'Content-Type': 'application/x-www-form-urlencoded',
+  Authorization: '',
 };
 
 function isSandboxMode(isSandbox) {
-  CURRENT_HOST = isSandbox ? "test" : "production";
+  CURRENT_HOST = isSandbox ? 'test' : 'production';
 }
 
 function setToken(resToken) {
   CURRENT_TOKEN = resToken;
-  AuthHEADERS.Authorization = "Bearer " + resToken;
+  AuthHEADERS.Authorization = 'Bearer ' + resToken;
 }
 
 function hasToken() {
@@ -52,7 +52,7 @@ async function createToken() {
       AuthTokenRequestData(),
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     const result = response.data;
     setToken(result?.access_token);
@@ -70,7 +70,7 @@ async function createPayment(data) {
       data,
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -85,7 +85,7 @@ async function createPaymentforSDK(data) {
       data,
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -116,10 +116,10 @@ async function getAllPaymentRequests() {
 async function getPaymentRequestStatus(id) {
   try {
     const response = await axios.get(
-      HOSTS[CURRENT_HOST] + API.paymentStatus + id + "/",
+      HOSTS[CURRENT_HOST] + API.paymentStatus + id + '/',
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -133,12 +133,12 @@ async function getPaymentDetails(payment_request_id, payment_id) {
       HOSTS[CURRENT_HOST] +
         API.paymentStatus +
         payment_request_id +
-        "/" +
+        '/' +
         payment_id +
-        "/",
+        '/',
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -149,11 +149,11 @@ async function getPaymentDetails(payment_request_id, payment_id) {
 async function createRefund(refundRequest) {
   try {
     const response = await axios.post(
-      HOSTS[CURRENT_HOST] + API.refunds + "/",
+      HOSTS[CURRENT_HOST] + API.refunds + '/',
       refundRequest,
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -175,10 +175,10 @@ async function getAllRefunds() {
 async function getRefundDetails(id) {
   try {
     const response = await axios.get(
-      HOSTS[CURRENT_HOST] + API.refunds + id + "/",
+      HOSTS[CURRENT_HOST] + API.refunds + id + '/',
       {
         headers: AuthHEADERS,
-      },
+      }
     );
     return response.data;
   } catch (error) {
@@ -188,17 +188,17 @@ async function getRefundDetails(id) {
 
 function PaymentData() {
   return {
-    purpose: "", // required
+    purpose: '', // required
     amount: 0, // required
-    currency: "INR",
-    buyer_name: "",
-    email: "",
-    phone: "",
-    send_email: "",
-    send_sms: "",
-    allow_repeated_payments: "",
-    webhook: "",
-    redirect_url: "",
+    currency: 'INR',
+    buyer_name: '',
+    email: '',
+    phone: '',
+    send_email: '',
+    send_sms: '',
+    allow_repeated_payments: '',
+    webhook: '',
+    redirect_url: '',
 
     setWebhook(hook) {
       this.webhook = hook;
@@ -212,14 +212,14 @@ function PaymentData() {
 
 function OrderData() {
   return {
-    id: "", // required
-    phone: "",
+    id: '', // required
+    phone: '',
   };
 }
 
 function AuthTokenRequestData() {
   return {
-    grant_type: "client_credentials",
+    grant_type: 'client_credentials',
     client_id: PG_IM_CLIENT_ID,
     client_secret: PG_IM_CLIENT_SECRET,
   };
@@ -227,9 +227,9 @@ function AuthTokenRequestData() {
 
 function RefundRequest() {
   return {
-    payment_id: "",
-    type: "", // Available: ['RFD', 'TNR', 'QFL', 'QNR', 'EWN', 'TAN', 'PTH']
-    body: "",
+    payment_id: '',
+    type: '', // Available: ['RFD', 'TNR', 'QFL', 'QNR', 'EWN', 'TAN', 'PTH']
+    body: '',
 
     setRefundAmount(refundAmount) {
       this.refund_amount = refundAmount;

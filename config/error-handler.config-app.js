@@ -1,9 +1,9 @@
-import createError from "http-errors";
+import createError from 'http-errors';
 
-import { ENVNAME } from "./env.constant.js";
+import { ENVNAME } from './env.constant.js';
 
 function config(app) {
-  if (ENVNAME !== "prod") {
+  if (ENVNAME !== 'prod') {
     return;
   }
 
@@ -12,20 +12,20 @@ function config(app) {
     req.logger.error(err.message);
     res.locals.error = {};
     if (err.status === 404) {
-      res.status(404).render("404", {
-        menu: "404",
-        title: "Not Found",
-        description: "Page not found",
+      res.status(404).render('404', {
+        menu: '404',
+        title: 'Not Found',
+        description: 'Page not found',
         source: req.originalUrl,
-        keywords: "",
+        keywords: '',
       });
     }
-    res.status(500).render("500", {
-      menu: "500",
-      title: "Server Error",
-      description: "Server Error",
+    res.status(500).render('500', {
+      menu: '500',
+      title: 'Server Error',
+      description: 'Server Error',
       source: req.originalUrl,
-      keywords: "",
+      keywords: '',
     });
   });
   app.use((req, res, next) => {

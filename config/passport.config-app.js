@@ -1,11 +1,11 @@
-import { compare } from "bcrypt";
-import RedisStore from "connect-redis";
-import session from "express-session";
-import moment from "moment-timezone";
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth2";
-import { Strategy as LocalStrategy } from "passport-local";
-import { URL } from "url";
+import { compare } from 'bcrypt';
+import RedisStore from 'connect-redis';
+import session from 'express-session';
+import moment from 'moment-timezone';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { URL } from 'url';
 
 import {
   ENVNAME,
@@ -13,11 +13,11 @@ import {
   GOGGLE_CLIENT_SECRET,
   GOGGLE_REDIRECT_URI,
   SECRET,
-} from "./env.constant.js";
-import { sendTemplateMail } from "./mail.config.js"; // Path to mail.config.js
-import { LOGGER } from "./winston-logger.config.js";
-import { mongodb } from "../repository/baseMongoDbRepository.js";
-import { redisClient as redisClient } from "../repository/baseRedisRepository.js";
+} from './env.constant.js';
+import { sendTemplateMail } from './mail.config.js'; // Path to mail.config.js
+import { LOGGER } from './winston-logger.config.js';
+import { mongodb } from '../repository/baseMongoDbRepository.js';
+import { redisClient as redisClient } from '../repository/baseRedisRepository.js';
 
 function config(app) {
   // Passport initialization
@@ -37,7 +37,7 @@ function config(app) {
         secure: false, // Set to true if using HTTPS
         maxAge: 30 * 60 * 1000, // 30 min (session expiration time)
       },
-    }),
+    })
   );
   app.use(passport.initialize());
   app.use(passport.session());
@@ -48,16 +48,16 @@ function config(app) {
       try {
         const _db = await mongodb;
         const existingUser = await _db
-          .collection("users")
+          .collection('users')
           .findOne({ email: username });
 
         if (!existingUser) {
-          return done(null, false, { message: "Incorrect email or password" });
+          return done(null, false, { message: 'Incorrect email or password' });
         } else {
           if (moment(existingUser.lockUntil).toDate() > moment.utc().toDate()) {
             const remainingTime = Math.ceil(
               (moment(existingUser.lockUntil) - moment.utc().toDate()) /
-                (1000 * 60),
+                (1000 * 60)
             );
             return done(null, false, {
               message: `Account is locked. Please try again in ${remainingTime} minutes.`,
@@ -72,25 +72,25 @@ function config(app) {
           if (existingUser.password) {
             const isPasswordValid = await compare(
               password,
-              existingUser.password,
+              existingUser.password
             );
 
             if (!isPasswordValid) {
               // Incorrect password
-              await _db.collection("users").updateOne(
+              await _db.collection('users').updateOne(
                 { email: username },
                 {
                   $inc: { loginAttempts: 1 },
                   $set: {
                     lockUntil:
                       existingUser.loginAttempts + 1 >= 3
-                        ? moment().add(1, "hour").utc()
+                        ? moment().add(1, 'hour').utc()
                         : 0,
                   },
-                },
+                }
               );
               return done(null, false, {
-                message: "Incorrect email or password",
+                message: 'Incorrect email or password',
               });
             }
           } else {
@@ -98,7 +98,7 @@ function config(app) {
               message: `Oops! It looks like you originally signed up with Google/Facebook. Please use the same method to log in, or use forgot password to reset password`,
             });
           }
-          await _db.collection("users").updateOne(
+          await _db.collection('users').updateOne(
             { email: username },
             {
               $set: {
@@ -106,14 +106,14 @@ function config(app) {
                 loginAttempts: 0,
                 lockUntil: 0,
               },
-            },
+            }
           );
           return done(null, existingUser);
         }
       } catch (error) {
         return done(error);
       }
-    }),
+    })
   );
 
   passport.use(
@@ -131,23 +131,23 @@ function config(app) {
         } catch (error) {
           return done(error);
         }
-      },
-    ),
+      }
+    )
   );
 
   passport.serializeUser((user, done) => {
     const { _id, name, email, image, userType, adFreeUntil } = user;
-    const image1 = image || "../assets/img/team/avatar-rounded.webp";
-    const isAdmin = userType === "admin";
+    const image1 = image || '../assets/img/team/avatar-rounded.webp';
+    const isAdmin = userType === 'admin';
     let isAdsfree = false;
     if (adFreeUntil) {
-      const now = moment().tz("Asia/Kolkata").toDate();
-      const adFreeDate = moment(adFreeUntil).tz("Asia/Kolkata").toDate();
+      const now = moment().tz('Asia/Kolkata').toDate();
+      const adFreeDate = moment(adFreeUntil).tz('Asia/Kolkata').toDate();
       isAdsfree = adFreeDate > now;
     }
     const isAdDisabled = isAdmin || isAdsfree;
     // eslint-disable-next-line no-undef, no-console
-    console.log("New Login  \n" + JSON.stringify({ name, email, image1 }));
+    console.log('New Login  \n' + JSON.stringify({ name, email, image1 }));
     done(null, { _id, name, email, image, isAdmin, isAdDisabled });
   });
 
@@ -158,11 +158,11 @@ function config(app) {
   app.use((req, res, next) => {
     res.locals.isAuthenticated = req.isAuthenticated();
     res.locals.CANONICAL_URL = `https://niftyinvest.com${req.originalUrl}`;
-    if (!req.originalUrl.includes("auth/login")) {
+    if (!req.originalUrl.includes('auth/login')) {
       delete req.session.returnTo;
       res.locals.originalUrl = req.originalUrl;
     } else {
-      res.locals.originalUrl = "/";
+      res.locals.originalUrl = '/';
     }
     if (res.locals.isAuthenticated) {
       req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 Day (session expiration time)
@@ -174,12 +174,12 @@ function config(app) {
 
   // eslint-disable-next-line no-unused-vars
   function trackPageViews(req, res) {
-    const now = moment().tz("Asia/Kolkata");
-    const today = now.format("YYYYMMDD");
+    const now = moment().tz('Asia/Kolkata');
+    const today = now.format('YYYYMMDD');
     // const today = '20240823';
-    const currentHour = now.format("HH");
+    const currentHour = now.format('HH');
     const pathname = new URL(res.locals.CANONICAL_URL).pathname.toLowerCase();
-    const parentPage = pathname.split("/").filter(Boolean)[0] || "root";
+    const parentPage = pathname.split('/').filter(Boolean)[0] || 'root';
 
     const viewData = req.session.viewData ?? {};
 
@@ -221,11 +221,11 @@ function config(app) {
     const user = { name, email, image };
 
     const existingUser = await _db
-      .collection("users")
+      .collection('users')
       .findOne({ email: user.email });
 
     if (existingUser) {
-      return await _db.collection("users").findOneAndUpdate(
+      return await _db.collection('users').findOneAndUpdate(
         { email: user.email },
         {
           $set: {
@@ -234,11 +234,11 @@ function config(app) {
             last_loggedin: moment.utc().toDate(),
           },
         },
-        { returnDocument: "after" },
+        { returnDocument: 'after' }
       );
     } else {
-      await _db.collection("users").insertOne({
-        status: "ACTIVE",
+      await _db.collection('users').insertOne({
+        status: 'ACTIVE',
         last_loggedin: moment.utc().toDate(),
         registration_date: moment.utc().toDate(),
         google_oauth_client_id: google_oauth_client_id,
@@ -246,17 +246,17 @@ function config(app) {
         ...user,
       });
       try {
-        sendTemplateMail("WELCOME_EMAIL", user.email, {
+        sendTemplateMail('WELCOME_EMAIL', user.email, {
           username: user.name,
         });
       } catch (error) {
-        LOGGER.debug("Error sending email:", error);
+        LOGGER.debug('Error sending email:', error);
       }
 
       const filter = { email: profile.email };
       const update = { $set: profile };
       const options = { upsert: true };
-      await _db.collection("users_google").updateOne(filter, update, options);
+      await _db.collection('users_google').updateOne(filter, update, options);
       return user;
     }
   }

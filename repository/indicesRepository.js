@@ -1,14 +1,14 @@
-import { mongodb } from "./baseMongoDbRepository.js";
-import { getFromCache, CACHE_NEW } from "./cacheRedisRepository.js";
-import { LOGGER } from "../config/winston-logger.config.js";
-import { capitalizeFirstLetterOfEachWord } from "../utils/helpers.js";
+import { mongodb } from './baseMongoDbRepository.js';
+import { getFromCache, CACHE_NEW } from './cacheRedisRepository.js';
+import { LOGGER } from '../config/winston-logger.config.js';
+import { capitalizeFirstLetterOfEachWord } from '../utils/helpers.js';
 
 async function getStockQuotes() {
   let stock_quote = null;
   try {
     const _db = await mongodb;
-    const collection = _db.collection("stock_quote");
-    const query = { docType: "STOCK_QUOTE" };
+    const collection = _db.collection('stock_quote');
+    const query = { docType: 'STOCK_QUOTE' };
     stock_quote = await collection.findOne(query);
     if (stock_quote?.data?.length > 0) {
       stock_quote?.data.forEach((doc) => {

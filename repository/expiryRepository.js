@@ -1,8 +1,8 @@
-import { mongodb } from "./baseMongoDbRepository.js";
-import { getFromCache, CACHE_NEW } from "./cacheRedisRepository.js";
-import { LOGGER } from "../config/winston-logger.config.js";
-import { getSecondsRemainingBeforeMidnightIST } from "../utils/dateUtils.js";
-import { isDateGreaterThanOrEqualToTodayInIST } from "../utils/helpers.js";
+import { mongodb } from './baseMongoDbRepository.js';
+import { getFromCache, CACHE_NEW } from './cacheRedisRepository.js';
+import { LOGGER } from '../config/winston-logger.config.js';
+import { getSecondsRemainingBeforeMidnightIST } from '../utils/dateUtils.js';
+import { isDateGreaterThanOrEqualToTodayInIST } from '../utils/helpers.js';
 
 function isMarketOpenFor(symbol) {
   const marketTimings = {
@@ -35,7 +35,7 @@ async function getSymbolExpiryFor(symbol) {
   let data = null;
   try {
     const _db = await mongodb;
-    const collection = _db.collection("expiry");
+    const collection = _db.collection('expiry');
     const query = {
       symbol: symbol,
       manually_deactivated: { $ne: true },
@@ -58,7 +58,7 @@ const getSymbolExpiryForCache = async function (symbol) {
   return getFromCache(
     () => getSymbolExpiryFor(symbol),
     `${CACHE_NEW.SYMBOL_EXPIRIES}:${symbol}`,
-    Ex,
+    Ex
   );
 };
 
@@ -66,12 +66,12 @@ async function processExpiryServiceV2(
   symbol,
   expiryParam,
   expiryCount = 8,
-  includePrevValue = 0,
+  includePrevValue = 0
 ) {
   let expiryArr = await getSymbolExpiryForCache(symbol);
 
   let closetMonthIndex = expiryArr.findIndex((it) =>
-    isDateGreaterThanOrEqualToTodayInIST(it.expiryDate),
+    isDateGreaterThanOrEqualToTodayInIST(it.expiryDate)
   );
 
   const closetExpiryMonth = expiryArr[closetMonthIndex]?.expiryDate;

@@ -1,26 +1,26 @@
-import momentTimezone from "moment-timezone";
-import { ObjectId } from "mongodb";
+import momentTimezone from 'moment-timezone';
+import { ObjectId } from 'mongodb';
 
-import { mongodb } from "./baseMongoDbRepository.js";
-import { LOGGER } from "../config/winston-logger.config.js";
+import { mongodb } from './baseMongoDbRepository.js';
+import { LOGGER } from '../config/winston-logger.config.js';
 
 const countOpenTickets = async function (userId) {
   const _db = await mongodb;
   return await _db
-    .collection("support_tickets")
-    .countDocuments({ userId: userId, status: "open" });
+    .collection('support_tickets')
+    .countDocuments({ userId: userId, status: 'open' });
 };
 
 // Method to create a support ticket
 const createTicket = async function (ticketData) {
   const _db = await mongodb;
-  const result = await _db.collection("support_tickets").insertOne(ticketData);
+  const result = await _db.collection('support_tickets').insertOne(ticketData);
   return result.insertedId; // Return the inserted ticket ID
 };
 
 async function getTicketsByUserId(userId) {
   const _db = await mongodb;
-  const ticketsCollection = _db.collection("support_tickets"); // Replace with your tickets collection name
+  const ticketsCollection = _db.collection('support_tickets'); // Replace with your tickets collection name
 
   const tickets = await ticketsCollection
     .find({ userId })
@@ -32,13 +32,13 @@ async function getTicketsByUserId(userId) {
 
 async function getPaginatedTickets(page, limit) {
   const db = await mongodb;
-  const ticketsCollection = db.collection("support_tickets"); // Replace with the correct collection
+  const ticketsCollection = db.collection('support_tickets'); // Replace with the correct collection
 
   const skip = (page - 1) * limit; // Calculate how many records to skip
 
   // Fetch paginated tickets, sorted by status (open first), then by createdAt (newest first)
   const tickets = await ticketsCollection
-    .find({ status: { $eq: "open" } })
+    .find({ status: { $eq: 'open' } })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)
@@ -52,7 +52,7 @@ async function getPaginatedTickets(page, limit) {
 
 async function updateTicketReply(ticketId, reply, replyUserId) {
   const db = await mongodb;
-  const ticketsCollection = db.collection("support_tickets"); // Replace with the correct collection name
+  const ticketsCollection = db.collection('support_tickets'); // Replace with the correct collection name
 
   // Update the ticket with the reply and set the status to "Closed"
   const result = await ticketsCollection.updateOne(
@@ -60,12 +60,12 @@ async function updateTicketReply(ticketId, reply, replyUserId) {
     {
       $set: {
         reply: reply,
-        status: "closed",
+        status: 'closed',
         updatedAt: new Date(),
         replyUserId: replyUserId,
-        ttl_at: momentTimezone.utc().add(90, "days").toDate(),
+        ttl_at: momentTimezone.utc().add(90, 'days').toDate(),
       },
-    },
+    }
   );
 
   return result; // Return the update result (modifiedCount will indicate success)
@@ -74,7 +74,7 @@ async function updateTicketReply(ticketId, reply, replyUserId) {
 async function getTicketById(ticketId) {
   try {
     const _db = await mongodb; // Get the database connection
-    const ticketsCollection = _db.collection("support_tickets"); // Tickets collection
+    const ticketsCollection = _db.collection('support_tickets'); // Tickets collection
 
     // MongoDB aggregation to join tickets with user details
     const ticket = await ticketsCollection
@@ -83,18 +83,18 @@ async function getTicketById(ticketId) {
 
         {
           $addFields: {
-            userId: { $toObjectId: "$userId" }, // Convert userId from string to ObjectId
+            userId: { $toObjectId: '$userId' }, // Convert userId from string to ObjectId
           },
         },
         {
           $lookup: {
-            from: "users", // Collection to join (users collection)
-            localField: "userId", // Field in tickets collection
-            foreignField: "_id", // Field in users collection
-            as: "user", // Alias for the joined data
+            from: 'users', // Collection to join (users collection)
+            localField: 'userId', // Field in tickets collection
+            foreignField: '_id', // Field in users collection
+            as: 'user', // Alias for the joined data
           },
         },
-        { $unwind: { path: "$user" } }, // Deconstruct the userDetails array
+        { $unwind: { path: '$user' } }, // Deconstruct the userDetails array
       ])
       .toArray();
 
@@ -106,7 +106,7 @@ async function getTicketById(ticketId) {
     return ticket[0]; // Return the first (and only) result, as _id is unique
   } catch (error) {
     LOGGER.error(`Error fetching ticket by ID: ${ticketId}`, error);
-    throw new Error("Unable to fetch ticket with user details");
+    throw new Error('Unable to fetch ticket with user details');
   }
 }
 

@@ -1,8 +1,8 @@
-import moment from "moment-timezone";
-import { ObjectId } from "mongodb";
+import moment from 'moment-timezone';
+import { ObjectId } from 'mongodb';
 
-import { mongodb } from "./baseMongoDbRepository.js";
-import { LOGGER } from "../config/winston-logger.config.js";
+import { mongodb } from './baseMongoDbRepository.js';
+import { LOGGER } from '../config/winston-logger.config.js';
 
 async function storeAuditLog(
   resourceType,
@@ -10,16 +10,16 @@ async function storeAuditLog(
   action,
   description,
   createdBy,
-  metadata = {},
+  metadata = {}
 ) {
   try {
     // Validate resource type
     if (!resourceType.name || !resourceType.expirationDays) {
-      throw new Error("Invalid resource type");
+      throw new Error('Invalid resource type');
     }
 
     const _db = await mongodb; // Get the database connection
-    const auditLogsCollection = _db.collection("audit_logs"); // Audit logs collection
+    const auditLogsCollection = _db.collection('audit_logs'); // Audit logs collection
     const expirationDays = resourceType.expirationDays;
     // Construct the audit log entry
     const auditLog = {
@@ -30,7 +30,7 @@ async function storeAuditLog(
       created_by: new ObjectId(createdBy), // Convert createdBy to ObjectId (assuming users have ObjectIds)
       created_at: moment().utcOffset(330).toDate(), // Set current IST time (UTC +5:30)
       metadata: metadata, // Additional data related to the action
-      expires_at: moment().utcOffset(330).add(expirationDays, "days").toDate(), // Expiration in 90 days in IST
+      expires_at: moment().utcOffset(330).add(expirationDays, 'days').toDate(), // Expiration in 90 days in IST
     };
 
     // Insert the log into the audit logs collection
@@ -39,8 +39,8 @@ async function storeAuditLog(
 
     return result.insertedId; // Return the inserted log ID
   } catch (error) {
-    LOGGER.error("Error storing audit log:", error);
-    throw new Error("Unable to store audit log");
+    LOGGER.error('Error storing audit log:', error);
+    throw new Error('Unable to store audit log');
   }
 }
 // storeAuditLog(
@@ -54,7 +54,7 @@ async function storeAuditLog(
 
 const getAuditLogs = async (resourceType, resourceId, action) => {
   const _db = await mongodb;
-  const auditLogsCollection = _db.collection("audit_logs");
+  const auditLogsCollection = _db.collection('audit_logs');
 
   // Build the query based on the provided parameters
   const query = {

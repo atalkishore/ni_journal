@@ -1,6 +1,6 @@
-import { ensureLoggedIn as __ensureLoggedIn } from "connect-ensure-login";
+import { ensureLoggedIn as __ensureLoggedIn } from 'connect-ensure-login';
 
-function ensureAdmin(options = "/auth/login") {
+function ensureAdmin(options = '/auth/login') {
   // Reuse the ensureLoggedIn functionality first to check if user is logged in
   const ensureLoggedInMiddleware = __ensureLoggedIn(options);
 
@@ -14,13 +14,13 @@ function ensureAdmin(options = "/auth/login") {
         return res
           .status(403)
           .send(
-            "Forbidden: you are authorized to access. <a href='/'>Go home</a>",
+            "Forbidden: you are authorized to access. <a href='/'>Go home</a>"
           ); // User is not admin
       }
     });
   };
 }
-function ensureLoggedIn(options = "/auth/login") {
+function ensureLoggedIn(options = '/auth/login') {
   return __ensureLoggedIn(options);
 }
 const _ensureAdmin = ensureAdmin;

@@ -1,9 +1,9 @@
-import { mongodb } from "./baseMongoDbRepository.js";
-import { getFromCache, CACHE_NEW } from "./cacheRedisRepository.js";
-import { getStockQuote } from "./indicesRepository.js";
-import { LOGGER } from "../config/winston-logger.config.js";
-import { getSecondsRemainingBeforeMidnightIST } from "../utils/dateUtils.js";
-import { capitalizeFirstLetterOfEachWord } from "../utils/helpers.js";
+import { mongodb } from './baseMongoDbRepository.js';
+import { getFromCache, CACHE_NEW } from './cacheRedisRepository.js';
+import { getStockQuote } from './indicesRepository.js';
+import { LOGGER } from '../config/winston-logger.config.js';
+import { getSecondsRemainingBeforeMidnightIST } from '../utils/dateUtils.js';
+import { capitalizeFirstLetterOfEachWord } from '../utils/helpers.js';
 
 const getTickersV2 = async function () {
   function compare(a, b) {
@@ -18,7 +18,7 @@ const getTickersV2 = async function () {
   let data = null;
   try {
     const _db = await mongodb;
-    const collection = _db.collection("option_ticker");
+    const collection = _db.collection('option_ticker');
     const query = { active_status: true, manually_deactivated: { $ne: true } };
 
     const cursor = await collection.find(query);
@@ -33,8 +33,8 @@ const getTickersV2 = async function () {
   if (data.length > 0) {
     try {
       const _db = await mongodb;
-      const collection = _db.collection("configuration");
-      const query = { key: "popular_symbols" };
+      const collection = _db.collection('configuration');
+      const query = { key: 'popular_symbols' };
       const popularSymbols = await collection.findOne(query);
       // popularSymbols = (await cursor.toArray())
 
@@ -59,10 +59,10 @@ const tickerCache = async function () {
 const liveStockPriceV3 = async function (symbol) {
   let data = null;
   const defaultData = {
-    type: "equity",
+    type: 'equity',
     symbol: symbol,
-    symbolName: "",
-    name: "",
+    symbolName: '',
+    name: '',
     ltp: 0,
     change: 0,
     pchange: 0,

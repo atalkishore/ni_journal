@@ -1,34 +1,34 @@
-import { ENVNAME } from "../config/env.constant.js";
-import { LOGGER } from "../config/winston-logger.config.js";
-import { redisClient } from "../repository/baseRedisRepository.js";
+import { ENVNAME } from '../config/env.constant.js';
+import { LOGGER } from '../config/winston-logger.config.js';
+import { redisClient } from '../repository/baseRedisRepository.js';
 
 const CACHE_NEW = {
-  SCREENER_CACHE: "SCREENER_CACHE",
-  PRE_MINUTES_READ: "PRE_MINUTES_READ",
-  POST_MINUTES_READ: "POST_MINUTES_READ",
-  PCR_TABLE: "PCR_TABLE",
-  MAXPAIN_TABLE: "MAXPAIN_TABLE",
-  PUTCALLRATIO: "PUTCALLRATIO",
-  INTRADAY_OC: "INTRADAY_OC",
-  INTRADAY_OC_1M: "INTRADAY_OC_1M",
-  INTRADAY_OC_HISTORY: "INTRADAY_OC_HISTORY",
-  IOC_HIST_DATES_AVLB: "IOC_HIST_DATES_AVLB",
-  OPTION_CHAIN: "OPTION_CHAIN",
-  OPTION_CHAIN_HISTORY: "OPTION_CHAIN_HISTORY",
-  MAXPAIN: "MAXPAIN",
-  STOCK_QUOTE: "STOCK_QUOTE",
-  NEWS: "NEWS",
-  TECHNICALS: "TECHNICALS",
-  TICKERS: "TICKERS",
-  INDICES: "INDICES",
-  FOLivePrice: "FOLivePrice",
-  NIFTY50: "NIFTY50",
-  SYMBOL_EXPIRIES: "SYMBOL_EXPIRIES",
-  TUES_EXPIRIES: "TUES_EXPIRIES",
-  WED_EXPIRIES: "WED_EXPIRIES",
-  BANKNIFTY_EXPIRIES: "BANKNIFTY_EXPIRIES",
-  CURRENCY_EXPIRIES: "CURRENCY_EXPIRIES",
-  THURS_EXPIRIES: "THURS_EXPIRIES",
+  SCREENER_CACHE: 'SCREENER_CACHE',
+  PRE_MINUTES_READ: 'PRE_MINUTES_READ',
+  POST_MINUTES_READ: 'POST_MINUTES_READ',
+  PCR_TABLE: 'PCR_TABLE',
+  MAXPAIN_TABLE: 'MAXPAIN_TABLE',
+  PUTCALLRATIO: 'PUTCALLRATIO',
+  INTRADAY_OC: 'INTRADAY_OC',
+  INTRADAY_OC_1M: 'INTRADAY_OC_1M',
+  INTRADAY_OC_HISTORY: 'INTRADAY_OC_HISTORY',
+  IOC_HIST_DATES_AVLB: 'IOC_HIST_DATES_AVLB',
+  OPTION_CHAIN: 'OPTION_CHAIN',
+  OPTION_CHAIN_HISTORY: 'OPTION_CHAIN_HISTORY',
+  MAXPAIN: 'MAXPAIN',
+  STOCK_QUOTE: 'STOCK_QUOTE',
+  NEWS: 'NEWS',
+  TECHNICALS: 'TECHNICALS',
+  TICKERS: 'TICKERS',
+  INDICES: 'INDICES',
+  FOLivePrice: 'FOLivePrice',
+  NIFTY50: 'NIFTY50',
+  SYMBOL_EXPIRIES: 'SYMBOL_EXPIRIES',
+  TUES_EXPIRIES: 'TUES_EXPIRIES',
+  WED_EXPIRIES: 'WED_EXPIRIES',
+  BANKNIFTY_EXPIRIES: 'BANKNIFTY_EXPIRIES',
+  CURRENCY_EXPIRIES: 'CURRENCY_EXPIRIES',
+  THURS_EXPIRIES: 'THURS_EXPIRIES',
 };
 Object.freeze(CACHE_NEW);
 
@@ -43,7 +43,7 @@ Object.freeze(CACHE_NEW);
 async function getFromCache(
   asyncCallback,
   redisCacheKey,
-  expirationSeconds = 3600,
+  expirationSeconds = 3600
 ) {
   let cacheResult = null;
 
@@ -51,7 +51,7 @@ async function getFromCache(
     // const redisCacheKey = `${featureName}:${cacheKey}`;
 
     // Check if the result exists in Redis cache
-    if (ENVNAME !== "dev") {
+    if (ENVNAME !== 'dev') {
       cacheResult = await redisClient.get(redisCacheKey);
     }
 
@@ -93,11 +93,11 @@ async function cacheBreaker(redisCacheKey) {
   } catch (error) {
     LOGGER.debug(
       `Redis: Error breaking Redis cache for ${redisCacheKey}:`,
-      error,
+      error
     );
     LOGGER.error(
       `Redis: Error breaking Redis cache for ${redisCacheKey}:`,
-      error,
+      error
     );
   }
 }
@@ -110,7 +110,7 @@ async function cacheBreaker(redisCacheKey) {
  */
 async function cacheBreakAndFill(redisCacheKey, defaultValue) {
   LOGGER.debug(
-    `Redis: Breaking Redis cache and filling data for ${redisCacheKey}`,
+    `Redis: Breaking Redis cache and filling data for ${redisCacheKey}`
   );
   LOGGER.debug(defaultValue);
 
@@ -125,11 +125,11 @@ async function cacheBreakAndFill(redisCacheKey, defaultValue) {
   } catch (error) {
     LOGGER.debug(
       `Redis: Error breaking cache and filling data for ${redisCacheKey}:`,
-      error,
+      error
     );
     LOGGER.error(
       `Redis: Error breaking cache and filling data for ${redisCacheKey}:`,
-      error,
+      error
     );
   }
 }
