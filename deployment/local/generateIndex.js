@@ -1,7 +1,9 @@
 import { watch } from "chokidar";
 import { readdirSync, writeFileSync } from "fs";
+import minimist from "minimist"; // For command-line argument parsing
 import { join } from "path";
 
+// Function to generate the index file
 function generateIndexFile(dir) {
   const files = readdirSync(dir).filter((file) => file.endsWith(".js"));
   let indexContent = "";
@@ -20,13 +22,13 @@ function generateIndexFile(dir) {
   console.log(`Index file generated at ${indexPath}`);
 }
 
-// Watch the directories and regenerate index files on changes
+// Function to watch directories and regenerate index files on changes
 function watchDirectories(dirs) {
   dirs.forEach((dir) => {
     watch(dir, { persistent: true, ignoreInitial: true }).on(
       "change",
       (filePath) => {
-        // eslint-disable-next-line no-console, no-undef
+        // eslint-disable-next-line no-undef, no-console
         console.log(`Change detected in ${filePath}`);
         generateIndexFile(dir); // Regenerate index file when any file changes
       },
@@ -34,6 +36,16 @@ function watchDirectories(dirs) {
   });
 }
 
+// Parse command-line arguments
+// eslint-disable-next-line no-undef
+const args = minimist(process.argv.slice(2));
+
 // Set directories to watch
 const directoriesToWatch = ["./repository", "./utils", "./config"];
-watchDirectories(directoriesToWatch);
+
+// If the --watch flag is provided, watch directories; otherwise, directly generate index files
+if (args.watch) {
+  watchDirectories(directoriesToWatch);
+} else {
+  directoriesToWatch.forEach(generateIndexFile);
+}
