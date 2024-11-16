@@ -1,25 +1,35 @@
-const redis = require('redis');
+import * as redis from "redis";
+
+import {
+  REDISDB_PASSWORD,
+  REDISDB_PORT,
+  REDISDB_URL,
+} from "../config/env.constant.js";
+import { LOGGER } from "../config/winston-logger.config.js";
 
 let redisClientInstance = null;
 
 // Create and configure Redis client
-const createRedisClient = () => {
-    if (!redisClientInstance) {
-        const redisURL = `redis://default:${process.env.REDISDB_PASSWORD}@${process.env.REDISDB_URL}:${process.env.REDISDB_PORT}`;
+const createRedisClient = async () => {
+  if (!redisClientInstance) {
+    const redisURL = `redis://default:${REDISDB_PASSWORD}@${REDISDB_URL}:${REDISDB_PORT}`;
 
-        redisClientInstance = redis.createClient({
-            url: redisURL
-        });
+    redisClientInstance = redis.createClient({ url: redisURL });
 
-        // Handle Redis client connection errors
-        redisClientInstance.on('error', (err) => {
-            console.error('Redis error:', err);
-        });
-        redisClientInstance.on('connect', () => {
-            console.log('Connected to RedisDB');
-        });
-    }
-    return redisClientInstance;
+    // Handle Redis client connection errors
+    redisClientInstance.on("error", (err) => {
+      LOGGER.debug("Redis error:", err);
+    });
+
+    // Connect to Redis
+    redisClientInstance.on("connect", () => {
+      LOGGER.debug("Connected to RedisDB");
+    });
+
+    await redisClientInstance.connect();
+  }
+
+  return redisClientInstance;
 };
 
-module.exports = createRedisClient();
+export { createRedisClient, redisClientInstance as redisClient };

@@ -15,6 +15,7 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+*.env
 
 # secret files
 .uat/lib/serviceAccountKey.json
@@ -22,7 +23,7 @@ selenium-debug.log
 .prod/lib/serviceAccountKey.json
 .prod/env.list
 lib/serviceAccountKey.json
-bin/www
+deployment/local/www
 env.list
 logs/*
 # Elastic Beanstalk Files

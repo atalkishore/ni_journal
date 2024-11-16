@@ -1,20 +1,23 @@
-const { MongoClient } = require('mongodb');
-const { LOGGER } = require('../config/winston-logger.config');
+import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGO_DB_URL; // Connection URI
+import { MONGO_DB_NAME, MONGO_DB_URL } from "../config/env.constant.js";
+import { LOGGER } from "../config/winston-logger.config.js";
+
 let client = null;
+let mongodb = null;
 async function connect() {
-    if (!client) {
-        try {
-            client = await MongoClient.connect(uri);
-            console.log('Connected to MongoDB');
-        } catch (err) {
-            console.error('Failed to connect to MongoDB:', err);
-            throw err;
-        }
+  const uri = MONGO_DB_URL; // Connection URI
+  if (!client) {
+    try {
+      client = await MongoClient.connect(uri);
+      LOGGER.debug("Connected to MongoDB");
+    } catch (err) {
+      LOGGER.debug("Failed to connect to MongoDB:", err);
+      throw err;
     }
-    return client.db(process.env.MONGO_DB_NAME);
+  }
+  mongodb = client.db(MONGO_DB_NAME);
+  return client.db(MONGO_DB_NAME);
 }
-let mongodb = connect();
 
-module.exports = { connect, mongodb };
+export { connect, mongodb };

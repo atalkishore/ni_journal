@@ -1,41 +1,67 @@
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const compression = require('compression');
-const flash = require('express-flash');
-const expressLayouts = require('express-ejs-layouts');
-const router = require('./routes/router');
-const { createLoggerMiddleware } = require('./config/winston-logger.config');
-const a= require('./repository/logRepository')
+import compression from "compression";
+import cookieParser from "cookie-parser";
+import express, { json, urlencoded } from "express";
+import expressLayouts from "express-ejs-layouts";
+import flash from "express-flash";
+import path from "path";
+
+import {
+  PORT,
+  ROOT_DIR_BASE,
+  errorHandler,
+  PassportConfigHandler,
+} from "./config/index.js";
+import {
+  createLoggerMiddleware,
+  LOGGER,
+} from "./config/winston-logger.config.js";
+import {
+  connect as connectMongoDb,
+  createRedisClient,
+} from "./repository/index.js";
+import { setupRouter } from "./routes/router.js";
+
 const app = express();
 
+connectMongoDb();
+(async () => {
+  const redisClient = await createRedisClient();
+
+  // Example Redis operation
+  await redisClient.ping();
+})();
+// console.log(import.meta.env.REDISDB_PASSWORD);
 // Middleware setup
 app.use(compression());
 app.use(cookieParser());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: false }));
+app.use(json({ limit: "10mb" }));
+app.use(urlencoded({ limit: "10mb", extended: false }));
 const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: oneWeek }));
+app.use(
+  express.static(path.join(ROOT_DIR_BASE, "public"), { maxAge: oneWeek }),
+);
 app.use(flash());
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-app.set('layout', path.join(__dirname, 'views/layouts/withHeaderAndFooter'));
+app.set("views", path.join(ROOT_DIR_BASE, "views"));
+app.set("view engine", "ejs");
+app.set(
+  "layout",
+  path.join(ROOT_DIR_BASE, "views/layouts/withHeaderAndFooter"),
+);
 app.use(expressLayouts);
 
-
 // Passport configuration
-require('./config/passport.config-app')(app);
+PassportConfigHandler(app);
 
 // config logging
 createLoggerMiddleware(app);
 
 // Routes setup
-router.setupRouter(app);
+setupRouter(app);
 
 // Error handling
-require('./config/error-handler.config-app')(app);
+errorHandler(app);
 
-const PORT = process.env.PORT || 5110;
-app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+const _PORT = PORT || 5110;
+app.listen(_PORT, () => LOGGER.debug(`Listening on ${_PORT}`));
 
-module.exports = app;
+export default app;

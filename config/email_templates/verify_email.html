@@ -1,32 +1,123 @@
-<div bgcolor="#f7f7f7" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; line-height: 1.4; padding: 0; width: 100% !important; margin: 0 !important; height: 100%; color: #676767;">
-  <table align="center" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse !important; min-width: 90%;">
+<div
+  bgcolor="#f7f7f7"
+  style="
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol';
+    line-height: 1.4;
+    padding: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    height: 100%;
+    color: #676767;
+  "
+>
+  <table
+    align="center"
+    cellpadding="0"
+    cellspacing="0"
+    width="100%"
+    style="border-collapse: collapse !important; min-width: 90%"
+  >
     <tr>
-      <td align="center" valign="top" style="padding: 20px 0 30px; background-color: #f7f7f7;">
-        <table cellspacing="0" cellpadding="0" width="90%" style="border-collapse: collapse !important;">
+      <td
+        align="center"
+        valign="top"
+        style="padding: 20px 0 30px; background-color: #f7f7f7"
+      >
+        <table
+          cellspacing="0"
+          cellpadding="0"
+          width="90%"
+          style="border-collapse: collapse !important"
+        >
           <tr>
             <td>
-              <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse: collapse !important;">
+              <table
+                cellspacing="0"
+                cellpadding="0"
+                width="100%"
+                style="border-collapse: collapse !important"
+              >
                 <tr>
-                  <td style="background-color: #ffffff; border: 1px solid #cccccc; border-radius: 5px; padding: 5% 8%;">
-                    <table cellspacing="0" cellpadding="0" width="100%" style="border-collapse: collapse !important; background: #ffffff;">
+                  <td
+                    style="
+                      background-color: #ffffff;
+                      border: 1px solid #cccccc;
+                      border-radius: 5px;
+                      padding: 5% 8%;
+                    "
+                  >
+                    <table
+                      cellspacing="0"
+                      cellpadding="0"
+                      width="100%"
+                      style="
+                        border-collapse: collapse !important;
+                        background: #ffffff;
+                      "
+                    >
                       <tr>
-                        <td height="80" valign="top" style="text-align: center; vertical-align: middle;">
-                          <a href="{{ STATIC_HOST }}/images/logo.png" style="text-decoration: none;"><img src="{{ STATIC_HOST }}/images/logo.png" style="max-width: 80px;">
+                        <td
+                          height="80"
+                          valign="top"
+                          style="text-align: center; vertical-align: middle"
+                        >
+                          <a
+                            href="{{ STATIC_HOST }}/images/logo.png"
+                            style="text-decoration: none"
+                            ><img
+                              src="{{ STATIC_HOST }}/images/logo.png"
+                              style="max-width: 80px"
+                            />
                           </a>
                         </td>
                       </tr>
                       <tr>
-                        <td style="box-sizing:border-box;font-family:Helvetica,Arial,sans-serif;border-collapse:collapse;padding-top:10px;font-size:16px;text-align:left;font-style:normal;line-height:25px;font-weight:500;letter-spacing:1px;color:#060606">
+                        <td
+                          style="
+                            box-sizing: border-box;
+                            font-family: Helvetica, Arial, sans-serif;
+                            border-collapse: collapse;
+                            padding-top: 10px;
+                            font-size: 16px;
+                            text-align: left;
+                            font-style: normal;
+                            line-height: 25px;
+                            font-weight: 500;
+                            letter-spacing: 1px;
+                            color: #060606;
+                          "
+                        >
                           <!-- Your email content here -->
                           <p>Hello {{displayName}},</p>
                           <p>Follow this link to verify your email address.</p>
-                          <p><a href="{{ verifyUrl }}" style="display: inline-block; padding: 10px 20px; background-color: #3d96ed; color: #ffffff; text-decoration: none; border-radius: 20px; border: none; cursor: pointer;">Verify now</a> </p>
-                          <p>or paste this into your browser to complete the process:
-                            {{verifyUrl}}
+                          <p>
+                            <a
+                              href="{{ verifyUrl }}"
+                              style="
+                                display: inline-block;
+                                padding: 10px 20px;
+                                background-color: #3d96ed;
+                                color: #ffffff;
+                                text-decoration: none;
+                                border-radius: 20px;
+                                border: none;
+                                cursor: pointer;
+                              "
+                              >Verify now</a
+                            >
                           </p>
-                          <br>
-                          <p>If you didn’t ask to verify this address, you can ignore this email.</p>
-                          <br>
+                          <p>
+                            or paste this into your browser to complete the
+                            process: {{verifyUrl}}
+                          </p>
+                          <br />
+                          <p>
+                            If you didn’t ask to verify this address, you can
+                            ignore this email.
+                          </p>
+                          <br />
                           <p>Thanks,</p>
                           <p>NiftyInvest team</p>
                         </td>

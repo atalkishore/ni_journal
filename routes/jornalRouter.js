@@ -1,13 +1,18 @@
-var express = require('express');
-var router = express.Router();
-const { seoHeadTagValues } = require("../utils/helpers");
-const { PAGE_NAME } = require("../utils/constants");
-const asyncMiddleware = require("../config/asyncMiddleware.config");
+import { Router } from "express";
 
-router.get('/', asyncMiddleware(async (req, res) => {
-    res.render('journal/main', { menu: "Journal", ...seoHeadTagValues(PAGE_NAME.HOME) });
-}));
+const router = Router();
+import asyncMiddleware from "../config/asyncMiddleware.config.js";
+import { PAGE_NAME } from "../utils/constants.js";
+import { seoHeadTagValues } from "../utils/index.js";
 
+router.get(
+  "/",
+  asyncMiddleware(async (req, res) => {
+    res.render("journal/main", {
+      menu: "Journal",
+      ...seoHeadTagValues(PAGE_NAME.HOME),
+    });
+  }),
+);
 
-
-module.exports = router;
+export default router;

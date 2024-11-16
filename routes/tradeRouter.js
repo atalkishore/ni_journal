@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
-const { seoHeadTagValues } = require("../utils/helpers");
-const { PAGE_NAME } = require("../utils/constants");
-const { mongodb } = require("../baseMongoDbRepository");
+import { Router } from "express";
 
-const tradesCollection = mongodb.collection("trades");
+const router = Router();
+import { mongodb } from "../repository/index.js";
+import { PAGE_NAME } from "../utils/constants.js";
+import { seoHeadTagValues } from "../utils/seoHelper.js";
 
 router.get("/", async (req, res) => {
+  const tradesCollection = (await mongodb).collection("trades");
   try {
     const trades = await tradesCollection.find({}).toArray();
     res.render("trades/trades", {
@@ -30,6 +30,7 @@ router.get("/add", (req, res) => {
 
 router.get("/api/trades", async (req, res) => {
   try {
+    const tradesCollection = (await mongodb).collection("trades");
     const trades = await tradesCollection.find({}).toArray();
     res.json(trades);
   } catch (error) {
@@ -49,6 +50,7 @@ router.post("/add", async (req, res) => {
   }
 
   try {
+    const tradesCollection = (await mongodb).collection("trades");
     const newTrade = { stockName, price, orderType };
     await tradesCollection.insertOne(newTrade);
     res.render("trades/addTrade", {
@@ -60,7 +62,7 @@ router.post("/add", async (req, res) => {
     res.render("trades/addTrade", {
       menu: "Journal",
       ...seoHeadTagValues(PAGE_NAME.HOME),
-      message: "Failed to add trade",
+      message: "Failed to add trade " + error,
     });
   }
 });
@@ -75,6 +77,7 @@ router.delete("/api/trade-del", async (req, res) => {
   }
 
   try {
+    const tradesCollection = (await mongodb).collection("trades");
     const result = await tradesCollection.deleteOne({ stockName });
     if (result.deletedCount === 1) {
       res.json({
@@ -91,4 +94,4 @@ router.delete("/api/trade-del", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -40,7 +40,7 @@ jobs:
             docker-compose up -d
             cd /var/myprojects/niftyinvestui_uat
             docker build --build-arg IMAGE_NAME=uat_ni_ui_img --build-arg IMAGE_TAG=latest -t uat_ni_ui_img:latest .
-            
+
             service_name="uat_0_niftyinvestui"
             running_containers=$(docker compose ps --filter "status=running" --format "{{.Names}}" | grep -v $service_name)
             running_containers+=" $service_name"
@@ -56,6 +56,5 @@ jobs:
             done
 
             echo "All containers have been restarted."
-            
+
             # docker stack deploy -c docker-compose.yml uat_uistack
-            

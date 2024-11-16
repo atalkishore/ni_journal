@@ -1,51 +1,79 @@
-var express = require('express');
-var router = express.Router();
-const asyncMiddleware = require("../config/asyncMiddleware.config");
-const { ensureAdmin, ensureLoggedIn } = require("../config/ensureUserRole.config");
-const { getAuditLogs } = require("../repository/logRepository");
+import { Router } from "express";
 
+const router = Router();
+import asyncMiddleware from "../config/asyncMiddleware.config.js";
+import {
+  ensureAdmin,
+  ensureLoggedIn,
+} from "../config/ensureUserRole.config.js";
+import { LOGGER } from "../config/winston-logger.config.js";
+import { getAuditLogs } from "../repository/logRepository.js";
 
-router.get('/audit-logs', ensureAdmin(), asyncMiddleware(async (req, res) => {
+router.get(
+  "/audit-logs",
+  ensureAdmin(),
+  asyncMiddleware(async (req, res) => {
     try {
-        const { resourceType, resourceId, action } = req.query;
+      const { resourceType, resourceId, action } = req.query;
 
-        // Validate mandatory parameters
-        if (!resourceType || !resourceId) {
-            return res.status(400).json({ error: 'resourceType and resourceId are required' });
-        }
+      // Validate mandatory parameters
+      if (!resourceType || !resourceId) {
+        return res
+          .status(400)
+          .json({ error: "resourceType and resourceId are required" });
+      }
 
-        // Fetch audit logs from the controller
-        const logs = await getAuditLogs(resourceType, resourceId, action);
+      // Fetch audit logs from the controller
+      const logs = await getAuditLogs(resourceType, resourceId, action);
 
-        // Return the result
-        res.status(200).json(logs);
+      // Return the result
+      res.status(200).json(logs);
     } catch (error) {
-        console.error('Error fetching audit logs:', error);
-        res.status(500).json({ message: 'An error occurred while fetching audit logs.' });
+      LOGGER.error("Error fetching audit logs:", error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching audit logs." });
     }
-}));
+  }),
+);
 
-router.get('/test-api-login', ensureLoggedIn(), asyncMiddleware(async (req, res) => {
+router.get(
+  "/test-api-login",
+  ensureLoggedIn(),
+  asyncMiddleware(async (req, res) => {
     try {
-        let data = { status: "ok", message: "your test api is working with login" }
-        // Return the result
-        res.status(200).json(data);
+      const data = {
+        status: "ok",
+        message: "your test api is working with login",
+      };
+      // Return the result
+      res.status(200).json(data);
     } catch (error) {
-        console.error('Error fetching audit logs:', error);
-        res.status(500).json({ message: 'An error occurred while fetching audit logs.' });
+      LOGGER.error("Error fetching audit logs:", error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching audit logs." });
     }
-}));
+  }),
+);
 
-router.get('/test-api', asyncMiddleware(async (req, res) => {
+router.get(
+  "/test-api",
+  asyncMiddleware(async (req, res) => {
     try {
-
-        let data = { status: "ok", message: "your test api is working without login" }
-        // Return the result
-        res.status(200).json(data);
+      const data = {
+        status: "ok",
+        message: "your test api is working without login",
+      };
+      // Return the result
+      res.status(200).json(data);
     } catch (error) {
-        console.error('Error fetching audit logs:', error);
-        res.status(500).json({ message: 'An error occurred while fetching audit logs.' });
+      LOGGER.error("Error fetching audit logs:", error);
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching audit logs." });
     }
-}));
+  }),
+);
 
-module.exports = router;
+export default router;

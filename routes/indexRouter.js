@@ -1,107 +1,107 @@
-var express = require('express');
-const axios = require('axios');
-var router = express.Router();
-const tickerrepository = require('../repository/tickerRepository');
-const { tickerFormatting, seoHeadTagValues, isIndexSymbol, indexSymbol } = require("../utils/helpers");
-const { PAGE_NAME } = require("../utils/constants");
-const { getStockQuote } = require("../repository/indicesRepository");
-const { getSgxNifty } = require("../repository/indicesRepository");
-const asyncMiddleware = require("../config/asyncMiddleware.config");
+import * as axios from "axios";
+import { Router } from "express";
 
-var request = require('request');
+import asyncMiddleware from "../config/asyncMiddleware.config.js";
+import { DISP_NAME, VERSION } from "../config/env.constant.js";
+import { LOGGER } from "../config/winston-logger.config.js";
+import { getTickers } from "../repository/tickerRepository.js";
+import { PAGE_NAME } from "../utils/constants.js";
+import { tickerFormatting, seoHeadTagValues } from "../utils/index.js";
 
+const router = Router();
 /* GET home page. */
 
-router.get('/', asyncMiddleware(async function (req, res, next) {
-    let allStockQuote = (await getStockQuote())?.data;
-    let allIndices = allStockQuote;
+router.get(
+  "/",
+  asyncMiddleware(async function (req, res) {
+    const tickers = await getTickers();
+    const { dict, dictNameToSymbolMap } = tickerFormatting(tickers, "");
+    const j = "username";
 
-    let tickers = await tickerrepository.getTickers();
-    let { dict, dictNameToSymbolMap } = tickerFormatting(tickers, "");
-    let j = "username"
-
-    res.render('index', {
-        menu: j,
-        ...seoHeadTagValues(PAGE_NAME.HOME),
-        tickers: JSON.stringify(dict),
-        tickersMap: JSON.stringify(dictNameToSymbolMap),
+    res.render("index", {
+      menu: j,
+      ...seoHeadTagValues(PAGE_NAME.HOME),
+      tickers: JSON.stringify(dict),
+      tickersMap: JSON.stringify(dictNameToSymbolMap),
     });
-}));
+  }),
+);
 
-router.get('/lot-size', asyncMiddleware(async function (req, res, next) {
-    let tickers = await repository.getTickers();
-    let lotSizeStocks = [];
-    let lotsizeIndex = [];
-    tickers.forEach(ticker => {
-
-        if (ticker.instrument === 'OPTSTK') {
-            lotSizeStocks.push(ticker);
-        } else {
-            lotsizeIndex.push(ticker);
-        }
-    });
-    res.render('lot-size/lotSize', {
-        ...seoHeadTagValues(PAGE_NAME.LOT_SIZE),
-        menu: 'lot size',
-        lotSizeStocks: lotSizeStocks,
-        lotsizeIndex: lotsizeIndex
-    });
-}));
-
-router.get('/404', asyncMiddleware(function (req, res, next) {
+router.get(
+  "/404",
+  asyncMiddleware(function (req, res) {
     let source = decodeURIComponent(req.query.source) || "";
-    source = source === 'undefined' ? "" : source;
+    source = source === "undefined" ? "" : source;
+    res.status(404).render("404", {
+      menu: "404",
+      title: "Not-Found",
+      description: "Page not found",
+      source,
+      keywords: "",
+    });
+  }),
+);
+
+router.get(
+  "/500",
+  asyncMiddleware(function (req, res) {
     res
-        .status(404)
-        .render('404', { menu: '404', title: 'Not-Found', description: "Page not found", source, keywords: "" });
-}));
+      .status(req.params.status)
+      .render("404", { menu: "500", title: "Error" });
+  }),
+);
 
-router.get('/500', asyncMiddleware(function (req, res, next) {
-    res.status(req.params.status).render('404', { menu: '500', title: 'Error' });
-}));
+router.get(
+  "/coming-soon",
+  asyncMiddleware(function (req, res) {
+    res.render("coming-soon", { menu: "500", ...seoHeadTagValues("ERROR") });
+  }),
+);
 
-router.get('/coming-soon', asyncMiddleware(function (req, res, next) {
-    res.render('coming-soon', { menu: '500', ...seoHeadTagValues("ERROR") });
-}));
+router.get(
+  "/health",
+  asyncMiddleware(async function (req, res) {
+    res.json({
+      status: "up",
+      version: VERSION,
+      app_name: DISP_NAME,
+    });
+  }),
+);
 
+router.get("/sitemap.xml", async (req, res) => {
+  try {
+    // URL of the remote file
+    const fileUrl = "https://static.niftyinvest.com/xml/sitemap.xml";
 
-router.get('/health', asyncMiddleware(async function (req, res, next) {
-    res.json({ status: 'up', version: process.env.VERSION, app_name: process.env.DISP_NAME })
-}));
+    // Fetch the file from the remote URL
+    const response = await axios.get(fileUrl, { responseType: "text" });
 
+    // Set the appropriate Content-Type for XML if required
+    res.setHeader("Content-Type", "application/xml");
 
-router.get('/sitemap.xml', async (req, res) => {
+    // Send the fetched file content as a response
+    res.send(response.data);
+    // eslint-disable-next-line no-unused-vars
+  } catch (error) {
+    // Handle errors
     try {
-        // URL of the remote file
-        const fileUrl = 'https://static.niftyinvest.com/xml/sitemap.xml';
+      // URL of the remote file
+      const fileUrl = "https://niftyinvest.com/xml/sitemap.xml";
 
-        // Fetch the file from the remote URL
-        const response = await axios.get(fileUrl, { responseType: 'text' });
+      // Fetch the file from the remote URL
+      const response = await axios.get(fileUrl, { responseType: "text" });
 
-        // Set the appropriate Content-Type for XML if required
-        res.setHeader('Content-Type', 'application/xml');
+      // Set the appropriate Content-Type for XML if required
+      res.setHeader("Content-Type", "application/xml");
 
-        // Send the fetched file content as a response
-        res.send(response.data);
+      // Send the fetched file content as a response
+      res.send(response.data);
     } catch (error) {
-        // Handle errors
-        try {
-            // URL of the remote file
-            const fileUrl = 'https://niftyinvest.com/xml/sitemap.xml';
-
-            // Fetch the file from the remote URL
-            const response = await axios.get(fileUrl, { responseType: 'text' });
-
-            // Set the appropriate Content-Type for XML if required
-            res.setHeader('Content-Type', 'application/xml');
-
-            // Send the fetched file content as a response
-            res.send(response.data);
-        } catch (error) {
-            // Handle errors
-            console.error('Error fetching the file:', error);
-            res.status(500).send('Error fetching the file');
-        }
+      // Handle errors
+      LOGGER.debug("Error fetching the file:", error);
+      res.status(500).send("Error fetching the file");
     }
+  }
 });
-module.exports = router;
+export default router;

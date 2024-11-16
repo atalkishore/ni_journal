@@ -1,10 +1,10 @@
-version: "3.9"
+version: '3.9'
 services:
   uat_redisdb:
     image: redis:latest
     container_name: uat_redisdb
     ports:
-      - "1002:6379"
+      - '1002:6379'
     command: /bin/sh -c "redis-server --user username --requirepass $$REDISDB_PASSWORD"
     env_file:
       - env.list
@@ -19,7 +19,7 @@ services:
           cpus: '0.5'
           memory: 0.5G
     healthcheck:
-      test: ["CMD", "nc", "-zv", "localhost", "1002"]
+      test: ['CMD', 'nc', '-zv', 'localhost', '1002']
       interval: 1m
       timeout: 10s
       retries: 3

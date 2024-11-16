@@ -3,7 +3,7 @@ services:
     image: redis:latest
     container_name: uat_redisdb
     ports:
-      - "1002:6379"
+      - '1002:6379'
     volumes:
       - /var/myprojects/niftyinvestui_uat/.vscode/data:/data/db
       - /var/myprojects/niftyinvestui_uat/redis.conf:/etc/redis/redis.conf
@@ -21,7 +21,7 @@ services:
     image: mongo
     container_name: uat_mongodb
     ports:
-      - "1003:27017"
+      - '1003:27017'
     env_file:
       - env.list
     volumes:
