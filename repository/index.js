@@ -6,4 +6,5 @@ export * from './indicesRepository.js';
 export * from './instamojo.js';
 export * from './logRepository.js';
 export * from './tickerRepository.js';
+export * from './tradeRepository.js';
 export * from './userRepository.js';
