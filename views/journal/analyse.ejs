@@ -86,24 +86,21 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Initialize ECharts instance
       var chartDom = document.getElementById('profitLossHeatmap');
       var myChart = echarts.init(chartDom);
 
-      // Sample data for heatmap
       var data = [
-        [0, 0, 10],  // Profit
-        [0, 1, -5],  // Loss
-        [0, 2, 20],  // High Profit
-        [1, 0, -10], // Loss
-        [1, 1, 15],  // Low Profit
-        [1, 2, 5],   // Low Profit
-        [2, 0, 30],  // High Profit
-        [2, 1, -2],  // Loss
-        [2, 2, 40],  // High Profit
+        [0, 0, 10],  
+        [0, 1, -5],  
+                [0, 2, 20], 
+        [1, 0, -10],
+        [1, 1, 15],  
+        [1, 2, 5],  
+        [2, 0, 30], 
+        [2, 1, -2],  
+        [2, 2, 40],  
       ];
 
-      // Heatmap configuration
       var option = {
         tooltip: {
           position: 'top',
@@ -129,14 +126,14 @@
           splitArea: { show: true },
         },
         visualMap: {
-          min: -20, // Min value for loss
-          max: 50,  // Max value for profit
+          min: -20, 
+          max: 50, 
           dimension: 2,
           orient: 'horizontal',
           left: 'center',
           bottom: '5%',
           inRange: {
-            color: ['#f00', '#90EE90', '#006400'], // Red, Light Green, Dark Green
+            color: ['#f00', '#90EE90', '#006400'], 
           },
           text: ['High Profit', 'Low Profit', 'Loss'],
         },
@@ -162,7 +159,6 @@
         }]
       };
 
-      // Set chart options
       myChart.setOption(option);
     });
   </script>
