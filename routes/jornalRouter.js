@@ -42,7 +42,7 @@ router.get('/addTrade', async (req, res) => {
     menu: 'Journal',
     currentPath: '/journal/addTrade',
     title: 'Add Trade - Nifty Invest',
-    description: 'Easily add your trades to track your investments.',
+    description: 'Easily add your trades.',
     keywords: 'add trade, investments, stock journal, nifty invest',
     CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
   });

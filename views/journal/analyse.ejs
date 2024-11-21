@@ -8,13 +8,14 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" 
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js"></script>
 </head>
 <body>
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
         <%- include('../partials/_Sidebar.ejs') %>
-    </div>
+      </div>
 
       <div class="col-md-7">
         <div class="container mt-5">
@@ -36,35 +37,7 @@
           </div>
 
           <div class="border p-4 rounded shadow-sm">
-            <div 
-              class="d-flex flex-wrap graph-container" 
-              style="width: 420px; margin: 0 auto; gap: 4px;">
-              <% for (let i = 0; i < 7; i++) { %>
-                <div class="d-flex flex-column">
-                  <% for (let j = 0; j < 7; j++) { %>
-                    <% 
-                      const status = Math.random();
-                      const colorClass = (status < 0.3) 
-                        ? 'bg-danger'  
-                        : (status < 0.6) 
-                        ? 'bg-success-light'  
-                        : 'bg-success-dark';  
-                      const tooltipText = (status < 0.3)
-                        ? 'Loss'
-                        : (status < 0.6)
-                        ? 'Low Profit'
-                        : 'High Profit';
-                    %>
-                    <div 
-                      class="graph-box <%= colorClass %>" 
-                      data-bs-toggle="tooltip" 
-                      data-bs-placement="top" 
-                      title="<%= tooltipText %>">
-                    </div>
-                  <% } %>
-                </div>
-              <% } %>
-            </div>
+            <div id="profitLossHeatmap" style="min-height:350px;" class="echart-heatmap-chart-example"></div>
           </div>
         </div>
       </div>
@@ -113,12 +86,84 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      var tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-      );
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
+      // Initialize ECharts instance
+      var chartDom = document.getElementById('profitLossHeatmap');
+      var myChart = echarts.init(chartDom);
+
+      // Sample data for heatmap
+      var data = [
+        [0, 0, 10],  // Profit
+        [0, 1, -5],  // Loss
+        [0, 2, 20],  // High Profit
+        [1, 0, -10], // Loss
+        [1, 1, 15],  // Low Profit
+        [1, 2, 5],   // Low Profit
+        [2, 0, 30],  // High Profit
+        [2, 1, -2],  // Loss
+        [2, 2, 40],  // High Profit
+      ];
+
+      // Heatmap configuration
+      var option = {
+        tooltip: {
+          position: 'top',
+          formatter: function (params) {
+            var value = params.value[2];
+            return value > 0 ? `Profit: $${value}` : `Loss: $${Math.abs(value)}`;
+          }
+        },
+        grid: {
+          left: '10%',
+          right: '10%',
+          bottom: '10%',
+          top: '10%',
+        },
+        xAxis: {
+          type: 'category',
+          data: ['Stock A', 'Stock B', 'Stock C'],
+          splitArea: { show: true },
+        },
+        yAxis: {
+          type: 'category',
+          data: ['Trade 1', 'Trade 2', 'Trade 3'],
+          splitArea: { show: true },
+        },
+        visualMap: {
+          min: -20, // Min value for loss
+          max: 50,  // Max value for profit
+          dimension: 2,
+          orient: 'horizontal',
+          left: 'center',
+          bottom: '5%',
+          inRange: {
+            color: ['#f00', '#90EE90', '#006400'], // Red, Light Green, Dark Green
+          },
+          text: ['High Profit', 'Low Profit', 'Loss'],
+        },
+        series: [{
+          name: 'Profit/Loss',
+          type: 'heatmap',
+          data: data,
+          label: {
+            show: true,
+            position: 'inside',
+            formatter: function (params) {
+              var value = params.value[2];
+              return value > 0 ? `+$${value}` : `-$${Math.abs(value)}`;
+            }
+          },
+          emphasis: {
+            itemStyle: {
+              borderColor: '#000',
+              borderWidth: 1,
+              shadowBlur: 10,
+            }
+          }
+        }]
+      };
+
+      // Set chart options
+      myChart.setOption(option);
     });
   </script>
 </body>
