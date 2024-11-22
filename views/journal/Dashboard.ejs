@@ -1,15 +1,160 @@
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+<link
     rel="stylesheet"
-  >
-  <link href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" rel="stylesheet">
-</head>
-<body>
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQ0EjFVBt10iABaRsmIkow5hr3NqpCUnAqAtz4hEReEVluOw6Ezx9Rn0c"
+    crossorigin="anonymous"
+  />
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      border-radius: 12px;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard-header {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .chart-container {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      background-color: #ffffff;
+    }
+  </style>
   <div class="d-flex">
-    <%- include('../partials/_Sidebar.ejs') %>
+    <div>
+      <%- include('../partials/_Sidebar.ejs') %>
+    </div>
     <div class="container-fluid p-4">
-      <h1 class="mb-3">Welcome to the Dashboard</h1>
+      <div class="dashboard-header">Welcome to Your Trading Dashboard</div>
+      <div class="row g-3">
+        <div class="col-lg-3 col-md-6">
+          <div class="card text-center border-0 bg-primary text-white">
+            <div class="card-body">
+              <h5 class="card-title">Total Trades</h5>
+              <p class="card-text fs-4">124</p>
+              <i class="uil uil-chart-line fs-1"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card text-center border-0 bg-success text-white">
+            <div class="card-body">
+              <h5 class="card-title">Profitable Trades</h5>
+              <p class="card-text fs-4">87</p>
+              <i class="uil uil-dollar-sign-alt fs-1"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card text-center border-0 bg-danger text-white">
+            <div class="card-body">
+              <h5 class="card-title">Loss Trades</h5>
+              <p class="card-text fs-4">37</p>
+              <i class="uil uil-arrow-down fs-1"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card text-center border-0 bg-warning text-dark">
+            <div class="card-body">
+              <h5 class="card-title">Pending Trades</h5>
+              <p class="card-text fs-4">12</p>
+              <i class="uil uil-clock fs-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <h4>Recent Activity</h4>
+        <table class="table table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Stock Name</th>
+              <th>Order Type</th>
+              <th>Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>1</th>
+              <td>Apple</td>
+              <td>Buy</td>
+              <td>$150</td>
+              <td><span class="badge bg-success">Profit</span></td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>Microsoft</td>
+              <td>Sell</td>
+              <td>$250</td>
+              <td><span class="badge bg-danger">Loss</span></td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td>Google</td>
+              <td>Buy</td>
+              <td>$300</td>
+              <td><span class="badge bg-success">Profit</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-container">
+        <h4>Trade Performance</h4>
+        <div id="trade-graph" style="height: 400px;"></div>
+      </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
+    integrity="sha384-whLAzbBec1LlR8WaE/T00+MuZzRSdH9Up7L8U6M9Mfru3dkkj7Ym/hpVfNvQLjR4"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script>
+    const chart = echarts.init(document.getElementById('trade-graph'));
+
+    const options = {
+      title: {
+        text: 'Trade Performance',
+        left: 'center',
+      },
+      tooltip: {
+        trigger: 'item',
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          data: [150, 230, -120, 340, 200, -50, 400, 320, 90, -100, 240, 360],
+          type: 'bar',
+          itemStyle: {
+            color: function (params) {
+              return params.data >= 0 ? '#4caf50' : '#f44336';
+            },
+          },
+        },
+      ],
+    };
+
+    chart.setOption(options);
+  </script>
+

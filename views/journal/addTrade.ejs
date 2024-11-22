@@ -1,55 +1,69 @@
-<div class="container-fluid">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
         <%- include('../partials/_Sidebar.ejs') %>
       </div>
-      <div class="col-md-9 mt-4">
-        <h2 class="mt-4">Add Trade</h2>
-        <form id="addTradeForm" class="mt-4">
-          <div class="mb-3">
-            <label for="stockName" class="form-label">Stock Name</label>
-            <input type="text" class="form-control" id="stockName" name="stockName" required />
-          </div>
-          <div class="mb-3">
-            <label for="price" class="form-label">Price</label>
-            <input type="number" class="form-control" id="price" name="price" required />
-          </div>
-          <div class="mb-3">
-            <label for="stockType" class="form-label">Stock Type</label>
-            <select class="form-select" id="stockType" name="stockType" required>
-              <option value="" disabled selected>Select Type</option>
-              <option value="Buy">Buy</option>
-              <option value="Sell">Sell</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Add Trade</button>
-        </form>
-        <div id="responseMessage" class="text-center mt-3"></div>
+
+      <div class="col-md-9">
+        <div class="container mt-5">
+          <h1 class="text-center mb-5">Add Trade</h1>
+          <form id="addTradeForm">
+            <div class="mb-3">
+              <label for="stockName" class="form-label">Stock Name</label>
+              <input type="text" class="form-control" id="stockName" name="stockName" required />
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Price</label>
+              <input type="number" class="form-control" id="price" name="price" required />
+            </div>
+            <div class="mb-3">
+              <label for="stockType" class="form-label">Stock Type</label>
+              <select class="form-control" id="stockType" name="stockType" required>
+                <option value="Buy">Buy</option>
+                <option value="Sell">Sell</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Trade</button>
+          </form>
+          <div id="alertBox" class="mt-3"></div>
+        </div>
       </div>
     </div>
   </div>
-  
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <script>
-    $('#addTradeForm').on('submit', function (e) {
-      e.preventDefault(); n
-      const formData = $(this).serialize(); 
-  
-      $.post('/addTrade', formData, function (response) {
-        if (response.success) {
-          window.location.href = '/trades';
-        } else {
-          $('#responseMessage')
-            .text(response.message)
-            .removeClass()
-            .addClass('text-danger');
-        }
-      }).fail(function () {
-        $('#responseMessage')
-          .text('Failed to add trade. Please try again.')
-          .removeClass()
-          .addClass('text-danger');
+    $(document).ready(function () {
+      $("#addTradeForm").on("submit", function (event) {
+        event.preventDefault();
+
+        const tradeData = {
+          stockName: $("#stockName").val(),
+          price: $("#price").val(),
+          stockType: $("#stockType").val(),
+        };
+
+        $.ajax({
+          url: "/addTrade",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(tradeData),
+          success: function (response) {
+            $("#alertBox").html(`
+              <div class="alert alert-success">Trade added successfully!</div>
+            `);
+            setTimeout(() => {
+              window.location.href = "/trades"; 
+            }, 1500);
+          },
+          error: function (error) {
+            $("#alertBox").html(`
+              <div class="alert alert-danger">Failed to add trade. Please try again.</div>
+            `);
+          },
+        });
       });
     });
   </script>
-  

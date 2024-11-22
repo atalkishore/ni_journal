@@ -1,16 +1,163 @@
-
   <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
     rel="stylesheet"
-  >
-  <link href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" rel="stylesheet">
-</head>
-<body>
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    integrity="sha384-rbsA2VBKQ0EjFVBt10iABaRsmIkow5hr3NqpCUnAqAtz4hEReEVluOw6Ezx9Rn0c"
+    crossorigin="anonymous"
+  />
+  <style>
+    body {
+      background-color: #f5f7fa;
+    }
+
+    .journal-container {
+      padding: 20px;
+    }
+
+    .journal-header {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .journal-table th,
+    .journal-table td {
+      vertical-align: middle;
+    }
+
+    .analytics-section {
+      text-align: center;
+    }
+
+    .analytics-chart {
+      height: 300px;
+    }
+  </style>
+
   <div class="d-flex">
-    <%- include('../partials/_Sidebar.ejs') %>
-        <div class="container-fluid p-4">
-      <h1 class="mb-3">Welcome to the Journal Page</h1>
-      <p>Use this page to maintain your journal entries.</p>
+    <div>
+      <%- include('../partials/_Sidebar.ejs') %>
+    </div>
+    <div class="container-fluid journal-container">
+      <div class="journal-header">Trading Journal</div>
+
+      <div class="section">
+        <h4>Add a New Journal Entry</h4>
+        <form id="journalForm" class="mt-4">
+          <div class="mb-3">
+            <label for="journalTitle" class="form-label">Journal Title</label>
+            <input
+              type="text"
+              id="journalTitle"
+              class="form-control"
+              placeholder="Enter title for your journal entry"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="journalContent" class="form-label">Journal Content</label>
+            <textarea
+              id="journalContent"
+              class="form-control"
+              rows="4"
+              placeholder="Write your journal entry here..."
+              required
+            ></textarea>
+          </div>
+          <button class="btn btn-outline-success me-1 mb-1" type="button">Submit</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h4>My Journal Entries</h4>
+        <div class="table-responsive mt-3">
+          <table class="table journal-table">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="journalList">
+              <tr>
+                <th>1</th>
+                <td>First Trade</td>
+                <td>Bought Amazon stocks at $135</td>
+                <td>2024-11-19</td>
+              </tr>
+              <tr>
+                <th>2</th>
+                <td>Quick Sell</td>
+                <td>Sold Tesla stocks at $225</td>
+                <td>2024-11-18</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section analytics-section">
+        <h4>Profit/Loss Overview</h4>
+        <div id="analyticsChart" class="analytics-chart"></div>
+      </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
+    integrity="sha384-whLAzbBec1LlR8WaE/T00+MuZzRSdH9Up7L8U6M9Mfru3dkkj7Ym/hpVfNvQLjR4"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script>
+    const form = document.getElementById('journalForm');
+    const journalList = document.getElementById('journalList');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('journalTitle').value;
+      const content = document.getElementById('journalContent').value;
+
+      if (title && content) {
+        const row = `
+          <tr>
+            <th>${journalList.children.length + 1}</th>
+            <td>${title}</td>
+            <td>${content}</td>
+            <td>${new Date().toISOString().split('T')[0]}</td>
+          </tr>
+        `;
+        journalList.insertAdjacentHTML('beforeend', row);
+        form.reset();
+      }
+    });
+
+    const analyticsChart = echarts.init(document.getElementById('analyticsChart'));
+    const chartOptions = {
+      title: { text: 'Profit/Loss Distribution', left: 'center' },
+      tooltip: { trigger: 'item' },
+      series: [
+        {
+          name: 'Profit/Loss',
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: 60, name: 'Profit Trades', itemStyle: { color: '#4caf50' } },
+            { value: 40, name: 'Loss Trades', itemStyle: { color: '#f44336' } },
+          ],
+        },
+      ],
+    };
+    analyticsChart.setOption(chartOptions);
+  </script>
+

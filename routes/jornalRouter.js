@@ -51,42 +51,35 @@ router.get('/addTrade', async (req, res) => {
 router.post('/addTrade', async (req, res) => {
   try {
     const { stockName, price, stockType } = req.body;
-    await tradeRepository.addTrade({
-      stockName,
-      price,
-      stockType,
-      createdAt: new Date(),
-    });
-    res.json({ success: true, message: 'Trade added successfully!' });
-  } catch (err) {
-    // console.error(err);
-    res.json({ success: false, message: 'Failed to add trade.' });
+
+    if (!stockName || !price || !stockType) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const trade = { stockName, price: parseFloat(price), stockType };
+    const result = await tradeRepository.addTrade(trade);
+
+    res.status(200).json({ message: 'Trade added successfully', data: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add trade' });
   }
 });
 
-router.get('/trades', async (req, res) => {
-  try {
+router.get(
+  '/trades',
+  asyncMiddleware(async (req, res) => {
     const trades = await tradeRepository.getTrades();
     res.render('journal/tradeList', {
       menu: 'Journal',
+      trades,
       currentPath: '/journal/trades',
       title: 'Trade List - Nifty Invest',
       description: 'View and manage your trade history.',
       keywords: 'trade list, investments, stock journal, nifty invest',
       CANONICAL_URL: 'https://niftyinvest.com/journal/trades',
-      trades,
     });
-  } catch (err) {
-    // console.error(err);
-    res.render('journal/tradeList', {
-      menu: 'Journal',
-      currentPath: '/journal/trades',
-      trades: [],
-      error: 'Unable to fetch trades',
-    });
-  }
-});
-
+  })
+);
 router.get(
   '/leaderboard',
   asyncMiddleware(async (req, res) => {
