@@ -1,57 +1,57 @@
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
-    <div class="col-md-9 mt-4">
-      <h2 class="mt-4">Trade List</h2>
-      <div id="tradeTableContainer">
-        <table class="table table-striped">
+
+    <div class="col-md-9">
+      <div class="container mt-5">
+        <h1 class="text-center">Trades List</h1>
+        <table id="tradeTable" class="table table-striped">
           <thead>
             <tr>
+              <th>#</th>
               <th>Stock Name</th>
               <th>Price</th>
               <th>Stock Type</th>
-              <th>Date</th>
             </tr>
           </thead>
-          <tbody id="tradeTableBody"></tbody>
+          <tbody></tbody>
         </table>
       </div>
-      <div id="responseMessage" class="text-center mt-3"></div>
     </div>
   </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  function fetchTrades() {
-    $.get('/trades/list', function (response) {
-      const tradeTableBody = $('#tradeTableBody');
-      tradeTableBody.empty();
-      if (response.success && response.trades.length > 0) {
-        response.trades.forEach((trade) => {
-          tradeTableBody.append(`
-              <tr>
-                <td>${trade.stockName}</td>
-                <td>${trade.price}</td>
-                <td>${trade.stockType}</td>
-                <td>${new Date(trade.createdAt).toLocaleString()}</td>
-              </tr>
-            `);
-        });
-      } else {
-        tradeTableBody.append(`
-            <tr>
-              <td colspan="4" class="text-center">No trades found</td>
-            </tr>
-          `);
-      }
-    }).fail(function () {
-      $('#responseMessage')
-        .text('Failed to fetch trades.')
-        .removeClass()
-        .addClass('text-danger');
+  $(document).ready(function () {
+    $.ajax({
+      url: '/journal/getAllTrades', //localhost:5110/journal/getAllTrades
+      type: 'GET',
+      success: function (response) {
+        if (response.success) {
+          const tradeTableBody = $('#tradeTable tbody');
+          tradeTableBody.empty();
+          response.data.forEach((trade, index) => {
+            const row = `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${trade.stockName}</td>
+                  <td>${trade.price}</td>
+                  <td>${trade.stockType}</td>
+                </tr>
+              `;
+            tradeTableBody.append(row);
+          });
+        } else {
+          alert('Failed to fetch trades: ' + response.message);
+        }
+      },
+      error: function () {
+        alert('An error occurred while fetching trades.');
+      },
     });
-  }
-
-  $(document).ready(fetchTrades);
+  });
 </script>

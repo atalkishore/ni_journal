@@ -1,5 +1,4 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <div class="container-fluid">
     <div class="row">
@@ -45,8 +44,11 @@
           stockType: $("#stockType").val(),
         };
 
+//get- localhost:5110/journal/addTrade
+
+
         $.ajax({
-          url: "/addTrade",
+          url: "/journal/addTrade",
           type: "POST",
           contentType: "application/json",
           data: JSON.stringify(tradeData),
@@ -55,8 +57,8 @@
               <div class="alert alert-success">Trade added successfully!</div>
             `);
             setTimeout(() => {
-              window.location.href = "/trades"; 
-            }, 1500);
+              window.location.href = "/journal/trades"; //localhost:5110/journal/trades
+            }, 1000);
           },
           error: function (error) {
             $("#alertBox").html(`

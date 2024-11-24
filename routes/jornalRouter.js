@@ -37,6 +37,9 @@ router.get(
     });
   })
 );
+
+// get- localhost:5110/journal/addTrade
+
 router.get('/addTrade', async (req, res) => {
   res.render('journal/addTrade', {
     menu: 'Journal',
@@ -47,6 +50,8 @@ router.get('/addTrade', async (req, res) => {
     CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
   });
 });
+
+// post- localhost:5110/journal/AddTrade
 
 router.post('/addTrade', async (req, res) => {
   try {
@@ -59,11 +64,19 @@ router.post('/addTrade', async (req, res) => {
     const trade = { stockName, price: parseFloat(price), stockType };
     const result = await tradeRepository.addTrade(trade);
 
-    res.status(200).json({ message: 'Trade added successfully', data: result });
+    res.status(200).json({
+      status: 'Success',
+      message: 'Trade added successfully',
+      data: result,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add trade' });
+    res
+      .status(500)
+      .json({ status: 'Failed', message: 'Failed to add trade', data: null });
   }
 });
+
+// get- localhost:5110/journal/trades
 
 router.get(
   '/trades',
@@ -80,6 +93,25 @@ router.get(
     });
   })
 );
+
+// get- localhost:5110/journal/getAllTrades
+
+router.get(
+  '/getAllTrades',
+  asyncMiddleware(async (req, res) => {
+    try {
+      const trades = await tradeRepository.getTrades();
+      res.status(200).json({ success: true, data: trades });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch trades',
+        error: error.message,
+      });
+    }
+  })
+);
+
 router.get(
   '/leaderboard',
   asyncMiddleware(async (req, res) => {
