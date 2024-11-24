@@ -95,3 +95,5 @@ openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in env.list.enc -out env
 
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/sec1.enc -out .prod/env.list
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/lib/sec2.enc -out .prod/lib/serviceAccountKey.json
+
+

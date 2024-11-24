@@ -2,16 +2,13 @@ import { Router } from 'express';
 
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
-import {
-  ensureAdmin,
-  ensureLoggedIn,
-} from '../config/ensureUserRole.config.js';
+import { AuthenticationMiddleware as auth } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
 import { getAuditLogs } from '../repository/logRepository.js';
 
 router.get(
   '/audit-logs',
-  ensureAdmin(),
+  auth.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     try {
       const { resourceType, resourceId, action } = req.query;
@@ -39,7 +36,7 @@ router.get(
 
 router.get(
   '/test-api-login',
-  ensureLoggedIn(),
+  auth.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     try {
       const data = {

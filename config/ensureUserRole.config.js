@@ -1,29 +1,66 @@
 import { ensureLoggedIn as __ensureLoggedIn } from 'connect-ensure-login';
 
-function ensureAdmin(options = '/auth/login') {
-  // Reuse the ensureLoggedIn functionality first to check if user is logged in
-  const ensureLoggedInMiddleware = __ensureLoggedIn(options);
+class AuthenticationMiddleware {
+  // Web Middleware for Admin Authentication
+  static ensureAdmin(options = '/auth/login') {
+    const ensureLoggedInMiddleware = __ensureLoggedIn(options);
 
-  return function (req, res, next) {
-    // First, call the ensureLoggedIn middleware
-    ensureLoggedInMiddleware(req, res, function () {
-      // If the user is logged in, check if they are an admin
+    return function (req, res, next) {
+      ensureLoggedInMiddleware(req, res, function () {
+        if (req.user && req.user.isAdmin) {
+          return next(); // User is admin, allow access
+        } else {
+          return res
+            .status(403)
+            .send(
+              "Forbidden: You are not authorized to access. <a href='/'>Go home</a>"
+            );
+        }
+      });
+    };
+  }
+
+  // API Middleware for Admin Authentication
+  static ensureAdminApi() {
+    return function (req, res, next) {
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: Please log in to access this resource.',
+        });
+      }
       if (req.user && req.user.isAdmin) {
         return next(); // User is admin, allow access
       } else {
-        return res
-          .status(403)
-          .send(
-            "Forbidden: you are authorized to access. <a href='/'>Go home</a>"
-          ); // User is not admin
+        return res.status(403).json({
+          success: false,
+          message: 'Forbidden: You are not authorized to access this resource.',
+        });
       }
-    });
-  };
+    };
+  }
+
+  // Web Middleware for Logged-In User Authentication
+  static ensureLoggedIn(options = '/auth/login') {
+    const ensureLoggedInMiddleware = __ensureLoggedIn(options);
+
+    return function (req, res, next) {
+      ensureLoggedInMiddleware(req, res, next);
+    };
+  }
+
+  // API Middleware for Logged-In User Authentication
+  static ensureLoggedInApi() {
+    return function (req, res, next) {
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: Please log in to access this resource.',
+        });
+      }
+      return next();
+    };
+  }
 }
-function ensureLoggedIn(options = '/auth/login') {
-  return __ensureLoggedIn(options);
-}
-const _ensureAdmin = ensureAdmin;
-export { _ensureAdmin as ensureAdmin };
-const _ensureLoggedIn = ensureLoggedIn;
-export { _ensureLoggedIn as ensureLoggedIn };
+// Optimized Exports
+export { AuthenticationMiddleware };

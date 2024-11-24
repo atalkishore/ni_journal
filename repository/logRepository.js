@@ -24,7 +24,7 @@ async function storeAuditLog(
     // Construct the audit log entry
     const auditLog = {
       resource_type: resourceType.name, // e.g., ResourceType.ORDERS
-      resource_id: new ObjectId(resourceId), // Convert resourceId to ObjectId if applicable
+      resource_id: resourceId, // Convert resourceId to ObjectId if applicable
       action: action, // e.g., "update"
       description: description, // Description of the action
       created_by: new ObjectId(createdBy), // Convert createdBy to ObjectId (assuming users have ObjectIds)
