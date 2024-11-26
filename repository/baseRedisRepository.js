@@ -1,6 +1,7 @@
 import * as redis from 'redis';
 
 import {
+  ENVNAME,
   REDISDB_PASSWORD,
   REDISDB_PORT,
   REDISDB_URL,
@@ -11,7 +12,7 @@ let redisClientInstance = null;
 
 // Create and configure Redis client
 const createRedisClient = async () => {
-  if (!redisClientInstance) {
+  if (ENVNAME !== 'dev' && !redisClientInstance) {
     const redisURL = `redis://default:${REDISDB_PASSWORD}@${REDISDB_URL}:${REDISDB_PORT}`;
 
     redisClientInstance = redis.createClient({ url: redisURL });

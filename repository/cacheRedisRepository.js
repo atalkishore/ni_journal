@@ -52,7 +52,8 @@ async function getFromCache(
 
     // Check if the result exists in Redis cache
     if (ENVNAME !== 'dev') {
-      cacheResult = await redisClient.get(redisCacheKey);
+      throw Error('NO redis');
+      // cacheResult = await redisClient.get(redisCacheKey);
     }
 
     if (!cacheResult) {
@@ -69,7 +70,7 @@ async function getFromCache(
       cacheResult = JSON.parse(cacheResult);
     }
   } catch (error) {
-    LOGGER.error(`Error accessing Redis cache for ${redisCacheKey}:  ${error}`);
+    // LOGGER.error(`Error accessing Redis cache for ${redisCacheKey}:  ${error}`);
     // In case of any error, fallback to executing the asyncCallback
     try {
       cacheResult = await asyncCallback();

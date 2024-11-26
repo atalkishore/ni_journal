@@ -10,6 +10,7 @@ import {
   ROOT_DIR_BASE,
   errorHandler,
   PassportConfigHandler,
+  ENVNAME,
 } from './config/index.js';
 import {
   createLoggerMiddleware,
@@ -26,9 +27,9 @@ const app = express();
 connectMongoDb();
 (async () => {
   const redisClient = await createRedisClient();
-
-  // Example Redis operation
-  await redisClient.ping();
+  if (ENVNAME !== 'dev') {
+    await redisClient.ping();
+  }
 })();
 // console.log(import.meta.env.REDISDB_PASSWORD);
 // Middleware setup
