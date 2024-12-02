@@ -5,6 +5,7 @@ import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware as auth } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
 import { getAuditLogs } from '../repository/logRepository.js';
+import { tradeRepository } from '../repository/tradeRepository.js';
 
 router.get(
   '/audit-logs',
@@ -62,7 +63,6 @@ router.get(
         status: 'ok',
         message: 'your test api is working without login',
       };
-      // Return the result
       res.status(200).json(data);
     } catch (error) {
       LOGGER.error('Error fetching audit logs:', error);
@@ -72,5 +72,47 @@ router.get(
     }
   })
 );
+
+// post- localhost:5110/api/journal/addTrade
+
+router.post('/addTrade', async (req, res) => {
+  try {
+    const trade = req.body;
+    await tradeRepository.addTrade({ ...trade, status: 'Active' }); // Default status
+    res
+      .status(200)
+      .json({ status: 'Success', message: 'Trade added successfully.' });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: 'Failure', message: 'Failed to add trade.' });
+  }
+});
+// localhost:5110/api/journal/trades
+router.get('/trades', async (req, res) => {
+  try {
+    const trades = await tradeRepository.getTrades();
+    res.status(200).json(trades);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: 'Failure', message: 'Failed to fetch trades.' });
+  }
+});
+
+// localhost:5110/api/journal/deleteTrade
+router.delete('/deleteTrade/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await tradeRepository.deleteTrade(id);
+    res
+      .status(200)
+      .json({ status: 'Success', message: 'Trade deleted successfully' });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: 'Failure', message: 'Failed to delete trade' });
+  }
+});
 
 export default router;

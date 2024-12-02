@@ -4,7 +4,7 @@
 />
 <div
   class="d-flex flex-column flex-shrink-0 p-3 bg-light"
-  style="width: 250px; height: 100vh"
+  style="width: 250px; height: 80vh"
 >
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item">
@@ -15,36 +15,13 @@
         <i class="uil uil-home"></i> Dashboard
       </a>
     </li>
-    <li class="nav-item">
-      <a
-        href="/journal/overview"
-        class="nav-link <%= currentPath === 'journal/overview' ? 'active' : '' %>"
-      >
-      <i class="uil uil-file"></i> Overview
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        href="/journal/portfolio"
-        class="nav-link <%= currentPath === 'journal/portfolios' ? 'active' : '' %>"
-      >
-      <i class="uil uil-copy"></i> Portfolio
-      </a>
-    </li>
+   
     <li class="nav-item">
       <a
         href="/journal/tradejournal"
         class="nav-link <%= currentPath === 'journal/journal' ? 'active' : '' %>"
       >
         <i class="uil uil-diary"></i> Maintain Journal
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        href="/journal/analyse"
-        class="nav-link <%= currentPath === '/journal/analyse' ? 'active' : '' %>"
-      >
-        <i class="uil uil-chart-pie"></i> Analytics
       </a>
     </li>
     <li class="nav-item">
@@ -58,33 +35,9 @@
     <li class="nav-item">
       <a
         href="/journal/addTrade"
-        class="nav-link <%= currentPath === '/journal/add' ? 'active' : '' %>"
+        class="nav-link <%= currentPath === '/journal/addTrade' ? 'active' : '' %>"
       >
         <i class="uil uil-plus-circle"></i> Add Trade
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        href="/journal/liquidity"
-        class="nav-link <%= currentPath === '/journal/liquidity' ? 'active' : '' %>"
-      >
-        <i class="uil uil-presentation-line"></i> Liquidity
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        href="/journal/leaderboard"
-        class="nav-link <%= currentPath === '/journal/leaderboard' ? 'active' : '' %>"
-      >
-        <i class="uil uil-presentation-check"></i>Leaderboard
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        href="/journal/strategies"
-        class="nav-link <%= currentPath === '/journal/strategies' ? 'active' : '' %>"
-      >
-      <i class="uil uil-pen"></i>Strategies
       </a>
     </li>
   </ul>

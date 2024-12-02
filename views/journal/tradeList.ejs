@@ -1,24 +1,34 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
-<div class="container-fluid">
+<div class="container-fluid mt-4">
   <div class="row">
-    <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
+    <div class="col-md-3">
+      <%- include('../partials/_Sidebar.ejs') %>
+    </div>
 
     <div class="col-md-9">
-      <div class="container mt-5">
-        <h1 class="text-center">Trades List</h1>
-        <table id="tradeTable" class="table table-striped">
+      <div class="card shadow p-4">
+        <h3 class="text-center text-primary">Trade List</h3>
+        <p class="text-center text-muted">
+          View and manage your trades below.
+        </p>
+
+        <table class="table table-bordered">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Stock Name</th>
-              <th>Price</th>
-              <th>Stock Type</th>
+              <th>Trade Date</th>
+              <th>Instrument</th>
+              <th>Symbol</th>
+              <th>Position</th>
+              <th>Entry Price</th>
+              <th>Target Price</th>
+              <th>Stop Loss</th>
+              <th>Strategy</th>
+              <th>Transaction Cost</th>
+              <th>Trade Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody id="tradeTable">
+          </tbody>
         </table>
       </div>
     </div>
@@ -26,32 +36,63 @@
 </div>
 
 <script>
-  $(document).ready(function () {
+  function fetchTrades() {
     $.ajax({
-      url: '/journal/getAllTrades', //localhost:5110/journal/getAllTrades
+      url: '/api/journal/trades',
       type: 'GET',
       success: function (response) {
-        if (response.success) {
-          const tradeTableBody = $('#tradeTable tbody');
-          tradeTableBody.empty();
-          response.data.forEach((trade, index) => {
-            const row = `
-                <tr>
-                  <td>${index + 1}</td>
-                  <td>${trade.stockName}</td>
-                  <td>${trade.price}</td>
-                  <td>${trade.stockType}</td>
-                </tr>
-              `;
-            tradeTableBody.append(row);
-          });
-        } else {
-          alert('Failed to fetch trades: ' + response.message);
+        const trades = response; 
+        const tableBody = $('#tradeTable');
+        tableBody.empty(); 
+
+        if (trades.length === 0) {
+          tableBody.append('<tr><td colspan="11" class="text-center">No trades found.</td></tr>');
         }
+
+        trades.forEach(trade => {
+          const row = `
+            <tr>
+              <td>${trade.tradeDate}</td>
+              <td>${trade.instrument}</td>
+              <td>${trade.symbol}</td>
+              <td>${trade.position}</td>
+              <td>${trade.entryPrice}</td>
+              <td>${trade.targetPrice || '-'}</td>
+              <td>${trade.stopLoss || '-'}</td>
+              <td>${trade.strategy || '-'}</td>
+              <td>${trade.transactionCost}</td>
+              <td>${trade.tradeNotes || '-'}</td>
+              <td>
+                <button class="btn btn-danger delete-trade" data-id="${trade._id}">Delete</button>
+              </td>
+            </tr>`;
+          tableBody.append(row);
+        });
+
+        $('.delete-trade').on('click', function () {
+          const tradeId = $(this).data('id');
+          if (confirm('Are you sure you want to delete this trade?')) {
+            $.ajax({
+              url: `/api/journal/deleteTrade/${tradeId}`,
+              type: 'DELETE',
+              success: function (response) {
+                alert(response.message);
+                fetchTrades();
+              },
+              error: function (xhr) {
+                alert('Error deleting trade: ' + xhr.responseJSON.message);
+              }
+            });
+          }
+        });
       },
       error: function () {
-        alert('An error occurred while fetching trades.');
-      },
+        alert('Failed to fetch trades.');
+      }
     });
+  }
+
+  $(document).ready(function () {
+    fetchTrades();
   });
 </script>

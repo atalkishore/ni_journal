@@ -51,115 +51,29 @@ router.get('/addTrade', async (req, res) => {
   });
 });
 
-// post- localhost:5110/journal/AddTrade
-
-router.post('/addTrade', async (req, res) => {
-  try {
-    const { stockName, price, stockType } = req.body;
-
-    if (!stockName || !price || !stockType) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    const trade = { stockName, price: parseFloat(price), stockType };
-    const result = await tradeRepository.addTrade(trade);
-
-    res.status(200).json({
-      status: 'Success',
-      message: 'Trade added successfully',
-      data: result,
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ status: 'Failed', message: 'Failed to add trade', data: null });
-  }
-});
-
 // get- localhost:5110/journal/trades
 
 router.get(
   '/trades',
   asyncMiddleware(async (req, res) => {
-    const trades = await tradeRepository.getTrades();
-    res.render('journal/tradeList', {
-      menu: 'Journal',
-      trades,
-      currentPath: '/journal/trades',
-      title: 'Trade List - Nifty Invest',
-      description: 'View and manage your trade history.',
-      keywords: 'trade list, investments, stock journal, nifty invest',
-      CANONICAL_URL: 'https://niftyinvest.com/journal/trades',
-    });
-  })
-);
-
-// get- localhost:5110/journal/getAllTrades
-
-router.get(
-  '/getAllTrades',
-  asyncMiddleware(async (req, res) => {
     try {
       const trades = await tradeRepository.getTrades();
-      res.status(200).json({ success: true, data: trades });
+      res.render('journal/tradeList', {
+        menu: 'Journal',
+        currentPath: '/journal/trades',
+        title: 'Add Trade - Nifty Invest',
+        description: 'Easily add your trades.',
+        keywords: 'add trade, investments, stock journal, nifty invest',
+        CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
+        trades,
+      });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to fetch trades',
-        error: error.message,
+      res.status(500).render('error', {
+        status: 'Failure',
+        message: 'Failed to fetch trades.',
+        data: null,
       });
     }
-  })
-);
-
-router.get(
-  '/leaderboard',
-  asyncMiddleware(async (req, res) => {
-    res.render('journal/leaderboard', {
-      menu: 'Journal',
-      currentPath: '/journal/leaderboard',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
-    });
-  })
-);
-router.get(
-  '/liquidity',
-  asyncMiddleware(async (req, res) => {
-    res.render('journal/liquidity', {
-      menu: 'Journal',
-      currentPath: '/journal/liquidity',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
-    });
-  })
-);
-router.get(
-  '/strategies',
-  asyncMiddleware(async (req, res) => {
-    res.render('journal/strategies', {
-      menu: 'Journal',
-      currentPath: '/journal/strategies',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
-    });
-  })
-);
-router.get(
-  '/overview',
-  asyncMiddleware(async (req, res) => {
-    res.render('journal/overview', {
-      menu: 'Journal',
-      currentPath: '/journal/overview',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
-    });
-  })
-);
-router.get(
-  '/portfolio',
-  asyncMiddleware(async (req, res) => {
-    res.render('journal/portfolio', {
-      menu: 'Journal',
-      currentPath: '/journal/portfolios',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
-    });
   })
 );
 
