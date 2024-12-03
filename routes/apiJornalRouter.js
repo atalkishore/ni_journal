@@ -78,7 +78,7 @@ router.get(
 router.post('/addTrade', async (req, res) => {
   try {
     const trade = req.body;
-    await tradeRepository.addTrade({ ...trade, status: 'Active' }); // Default status
+    await tradeRepository.addTrade({ ...trade, status: 'Active' });
     res
       .status(200)
       .json({ status: 'Success', message: 'Trade added successfully.' });
@@ -105,6 +105,28 @@ router.delete('/deleteTrade/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await tradeRepository.deleteTrade(id);
+    res
+      .status(200)
+      .json({ status: 'Success', message: 'Trade deleted successfully' });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ status: 'Failure', message: 'Failed to delete trade' });
+  }
+});
+
+router.delete('/deleteTrade/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await tradeRepository.deleteTrade(id);
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        status: 'Failure',
+        message: 'Trade not found or already deleted',
+      });
+    }
+
     res
       .status(200)
       .json({ status: 'Success', message: 'Trade deleted successfully' });

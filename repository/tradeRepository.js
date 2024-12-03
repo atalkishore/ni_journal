@@ -8,7 +8,7 @@ const tradeRepository = {
   },
 
   async getTrades() {
-    return await baseRepository.find(collectionName, {});
+    return await baseRepository.find(collectionName, { status: 'Active' });
   },
 
   async getTradeById(id) {
@@ -20,7 +20,9 @@ const tradeRepository = {
   },
 
   async deleteTrade(id) {
-    return await baseRepository.deleteOneById(collectionName, id);
+    return await baseRepository.updateOneById(collectionName, id, {
+      status: 'Deleted',
+    });
   },
 };
 

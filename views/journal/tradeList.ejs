@@ -3,14 +3,10 @@
     <div class="col-md-3">
       <%- include('../partials/_Sidebar.ejs') %>
     </div>
-
     <div class="col-md-9">
       <div class="card shadow p-4">
         <h3 class="text-center text-primary">Trade List</h3>
-        <p class="text-center text-muted">
-          View and manage your trades below.
-        </p>
-
+        <p class="text-center text-muted">View and manage your trades below.</p>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -27,8 +23,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="tradeTable">
-          </tbody>
+          <tbody id="tradeTable"></tbody>
         </table>
       </div>
     </div>
@@ -41,18 +36,18 @@
       url: '/api/journal/trades',
       type: 'GET',
       success: function (response) {
-        const trades = response; 
+        const trades = response;
         const tableBody = $('#tradeTable');
-        tableBody.empty(); 
+        tableBody.empty();
 
         if (trades.length === 0) {
           tableBody.append('<tr><td colspan="11" class="text-center">No trades found.</td></tr>');
         }
 
-        trades.forEach(trade => {
+        trades.forEach((trade) => {
           const row = `
             <tr>
-              <td>${trade.tradeDate}</td>
+              <td>${new Date(trade.tradeDate).toLocaleDateString()}</td>
               <td>${trade.instrument}</td>
               <td>${trade.symbol}</td>
               <td>${trade.position}</td>
@@ -77,7 +72,7 @@
               type: 'DELETE',
               success: function (response) {
                 alert(response.message);
-                fetchTrades();
+                fetchTrades(); 
               },
               error: function (xhr) {
                 alert('Error deleting trade: ' + xhr.responseJSON.message);
@@ -96,3 +91,4 @@
     fetchTrades();
   });
 </script>
+
