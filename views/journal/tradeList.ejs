@@ -5,26 +5,35 @@
     </div>
     <div class="col-md-9">
       <div class="card shadow p-4">
-        <h3 class="text-center text-primary">Trade List</h3>
-        <p class="text-center text-muted">View and manage your trades below.</p>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Trade Date</th>
-              <th>Instrument</th>
-              <th>Symbol</th>
-              <th>Position</th>
-              <th>Entry Price</th>
-              <th>Target Price</th>
-              <th>Stop Loss</th>
-              <th>Strategy</th>
-              <th>Transaction Cost</th>
-              <th>Trade Notes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="tradeTable"></tbody>
-        </table>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="text-primary">Trade List</h3>
+          <input
+            type="text"
+            id="tradeFilter"
+            class="form-control w-50"
+            placeholder="Search trades"
+          />
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th class="text-start">Trade Date</th>
+                <th class="text-start">Instrument</th>
+                <th class="text-start">Symbol</th>
+                <th class="text-start">Position</th>
+                <th class="text-start">Entry Price</th>
+                <th class="text-start">Target Price</th>
+                <th class="text-start">Stop Loss</th>
+                <th class="text-start">Strategy</th>
+                <th class="text-start">Transaction Cost</th>
+                <th class="text-start">Trade Notes</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tradeTable"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -37,58 +46,73 @@
       type: 'GET',
       success: function (response) {
         const trades = response;
-        const tableBody = $('#tradeTable');
-        tableBody.empty();
-
-        if (trades.length === 0) {
-          tableBody.append('<tr><td colspan="11" class="text-center">No trades found.</td></tr>');
-        }
-
-        trades.forEach((trade) => {
-          const row = `
-            <tr>
-              <td>${new Date(trade.tradeDate).toLocaleDateString()}</td>
-              <td>${trade.instrument}</td>
-              <td>${trade.symbol}</td>
-              <td>${trade.position}</td>
-              <td>${trade.entryPrice}</td>
-              <td>${trade.targetPrice || '-'}</td>
-              <td>${trade.stopLoss || '-'}</td>
-              <td>${trade.strategy || '-'}</td>
-              <td>${trade.transactionCost}</td>
-              <td>${trade.tradeNotes || '-'}</td>
-              <td>
-                <button class="btn btn-danger delete-trade" data-id="${trade._id}">Delete</button>
-              </td>
-            </tr>`;
-          tableBody.append(row);
-        });
-
-        $('.delete-trade').on('click', function () {
-          const tradeId = $(this).data('id');
-          if (confirm('Are you sure you want to delete this trade?')) {
-            $.ajax({
-              url: `/api/journal/deleteTrade/${tradeId}`,
-              type: 'DELETE',
-              success: function (response) {
-                alert(response.message);
-                fetchTrades(); 
-              },
-              error: function (xhr) {
-                alert('Error deleting trade: ' + xhr.responseJSON.message);
-              }
-            });
-          }
-        });
+        renderTrades(trades);
       },
       error: function () {
         alert('Failed to fetch trades.');
+      },
+    });
+  }
+
+  function renderTrades(trades) {
+    const tableBody = $('#tradeTable');
+    tableBody.empty();
+
+    if (trades.length === 0) {
+      tableBody.append(
+        '<tr><td colspan="11" class="text-center">No trades found.</td></tr>'
+      );
+    }
+
+    trades.forEach((trade) => {
+      const row = `
+        <tr>
+          <td>${new Date(trade.tradeDate).toLocaleDateString()}</td>
+          <td>${trade.instrument}</td>
+          <td>${trade.symbol}</td>
+          <td>${trade.position}</td>
+          <td>${trade.entryPrice}</td>
+          <td>${trade.targetPrice || '-'}</td>
+          <td>${trade.stopLoss || '-'}</td>
+          <td>${trade.strategy || '-'}</td>
+          <td>${trade.transactionCost}</td>
+          <td>${trade.tradeNotes || '-'}</td>
+          <td class="text-center">
+            <button class="btn btn-danger delete-trade" data-id="${trade._id}">Delete</button>
+          </td>
+        </tr>`;
+      tableBody.append(row);
+    });
+
+    $('.delete-trade').on('click', function () {
+      const tradeId = $(this).data('id');
+      if (confirm('Are you sure you want to delete this trade?')) {
+        $.ajax({
+          url: `/api/journal/deleteTrade/${tradeId}`,
+          type: 'DELETE',
+          success: function (response) {
+            alert(response.message);
+            fetchTrades();
+          },
+          error: function (xhr) {
+            alert('Error deleting trade: ' + xhr.responseJSON.message);
+          },
+        });
       }
+    });
+  }
+
+  function filterTrades() {
+    const searchValue = $('#tradeFilter').val().toLowerCase();
+    $('#tradeTable tr').filter(function () {
+      $(this).toggle(
+        $(this).text().toLowerCase().indexOf(searchValue) > -1
+      );
     });
   }
 
   $(document).ready(function () {
     fetchTrades();
+    $('#tradeFilter').on('keyup', filterTrades);
   });
 </script>
-

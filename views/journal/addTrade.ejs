@@ -3,12 +3,9 @@
     <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
     <div class="col-md-9">
       <div class="card shadow p-4">
-        <h3 class="text-center text-primary">Add New Trade</h3>
-        <p class="text-center text-muted">
-          Fill out the details for your trade below.
-        </p>
-        <form id="addTradeForm" class="row g-3 needs-validation" novalidate>
-          <div class="col-md-6 mb-3">
+        <h3 class="text-primary text-start mb-3">Add New Trade</h3>
+        <form id="addTradeForm" class="row g-2 needs-validation" novalidate>
+          <div class="col-md-6">
             <label for="tradeDateTime" class="form-label"
               >Trade Date and Time*</label
             >
@@ -23,7 +20,7 @@
               Please provide a valid trade date and time.
             </div>
           </div>
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label for="instrument" class="form-label">Instrument*</label>
             <select
               id="instrument"
@@ -41,7 +38,7 @@
             </div>
           </div>
 
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label for="symbol" class="form-label">Symbol*</label>
             <input
               type="text"
@@ -52,7 +49,7 @@
             />
             <div class="invalid-feedback">Please provide a valid symbol.</div>
           </div>
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label for="position" class="form-label">Position*</label>
             <select id="position" name="position" class="form-select" required>
               <option selected disabled value="">Choose...</option>
@@ -62,7 +59,7 @@
             <div class="invalid-feedback">Please select a valid position.</div>
           </div>
 
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4">
             <label for="entryPrice" class="form-label">Entry Price*</label>
             <input
               type="number"
@@ -75,7 +72,7 @@
               Please provide a valid entry price.
             </div>
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4">
             <label for="targetPrice" class="form-label">Target Price</label>
             <input
               type="number"
@@ -87,7 +84,7 @@
               Please provide a valid target price.
             </div>
           </div>
-          <div class="col-md-4 mb-3">
+          <div class="col-md-4">
             <label for="stopLoss" class="form-label">Stop Loss</label>
             <input
               type="number"
@@ -100,29 +97,18 @@
             </div>
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label for="strategies" class="form-label">Strategies</label>
-            <select id="strategies" name="strategies" class="form-select">
-              <option selected disabled value="">Choose...</option>
-              <option value="Scalping">Scalping</option>
-              <option value="Swing">Swing</option>
-              <option value="Day Trading">Day Trading</option>
-              <option value="Position">Position</option>
-            </select>
-            <div class="invalid-feedback">Please select a valid strategy.</div>
-          </div>
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label for="tags" class="form-label">Tags</label>
             <div
               id="tagsInput"
-              class="form-control p-2"
+              class="form-control"
               contenteditable="true"
             ></div>
-            <div id="tagsList" class="d-flex flex-wrap gap-2 mt-2"></div>
+            <div id="tagsList" class="d-flex flex-wrap gap-1 mt-2"></div>
             <small class="text-muted">Press Enter to add tags (max 20).</small>
           </div>
 
-          <div class="col-md-6 mb-3">
+          <div class="col-md-6">
             <label for="transactionCost" class="form-label"
               >Brokerage/Transaction Cost</label
             >
@@ -138,43 +124,65 @@
             </div>
           </div>
 
-          <div class="col-md-12 mb-3">
-            <label class="form-label">Screenshots (Max 3)</label>
-            <div class="d-flex gap-3">
-              <div class="screenshot-box">
+          <div class="col-md-7">
+            <label for="strategies" class="form-label">Strategies</label>
+            <select id="strategies" name="strategies" class="form-select">
+              <option selected disabled value="">Choose...</option>
+              <option value="Scalping">Scalping</option>
+              <option value="Swing">Swing</option>
+              <option value="Day Trading">Day Trading</option>
+              <option value="Position">Position</option>
+            </select>
+            <div class="invalid-feedback">Please select a valid strategy.</div>
+          </div>
+
+          <div class="col-md-5" style="margin-top: 10px">
+            <label class="form-label" style="margin-left: 45px"
+              >Screenshots (Max 3)</label
+            >
+            <div class="d-flex gap-4">
+              <div
+                class="border border-secondary rounded p-2 d-flex align-items-center justify-content-center"
+                style="
+                  width: 60px;
+                  height: 60px;
+                  cursor: pointer;
+                  margin-left: 45px;
+                "
+              >
                 <input
                   type="file"
                   class="form-control d-none"
                   accept="image/*"
                 />
-                <div class="screenshot-placeholder">
-                  <i class="fa-solid fa-plus"></i>
-                </div>
+                <i class="fa-solid fa-plus text-secondary"></i>
               </div>
-              <div class="screenshot-box">
+              <div
+                class="border border-secondary rounded p-2 d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px; cursor: pointer"
+              >
                 <input
                   type="file"
                   class="form-control d-none"
                   accept="image/*"
                 />
-                <div class="screenshot-placeholder">
-                  <i class="fa-solid fa-plus"></i>
-                </div>
+                <i class="fa-solid fa-plus text-secondary"></i>
               </div>
-              <div class="screenshot-box">
+              <div
+                class="border border-secondary rounded p-2 d-flex align-items-center justify-content-center"
+                style="width: 60px; height: 60px; cursor: pointer"
+              >
                 <input
                   type="file"
                   class="form-control d-none"
                   accept="image/*"
                 />
-                <div class="screenshot-placeholder">
-                  <i class="fa-solid fa-plus"></i>
-                </div>
+                <i class="fa-solid fa-plus text-secondary"></i>
               </div>
             </div>
           </div>
 
-          <div class="col-md-12 mb-3">
+          <div class="col-md-12">
             <label for="tradeNotes" class="form-label">Trade Notes</label>
             <textarea
               id="tradeNotes"
@@ -188,7 +196,7 @@
           </div>
 
           <div class="text-center">
-            <button type="submit" class="btn btn-outline-primary me-1 mb-1">
+            <button type="submit" class="btn btn-outline-primary">
               Add Trade
             </button>
           </div>
@@ -199,31 +207,30 @@
 </div>
 
 <script>
-const tagsInput = document.getElementById('tagsInput');
-const tagsList = document.getElementById('tagsList');
-let tags = [];
+  const tagsInput = document.getElementById('tagsInput');
+  const tagsList = document.getElementById('tagsList');
+  let tags = [];
 
-tagsInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && tags.length < 20) {
-    e.preventDefault();
-    const tag = tagsInput.textContent.trim();
-    if (tag && !tags.includes(tag)) {
-      tags.push(tag);
-      const chip = document.createElement('div');
-      chip.className = 'tag-chip';
-      chip.innerHTML = `${tag} <span class="remove-tag">&times;</span>`;
-      
-      chip.querySelector('.remove-tag').addEventListener('click', () => {
-        tagsList.removeChild(chip);
-        tags = tags.filter((t) => t !== tag); 
-      });
-      tagsList.appendChild(chip);
-      tagsInput.textContent = ''; 
+  tagsInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && tags.length < 20) {
+      e.preventDefault();
+      const tag = tagsInput.textContent.trim();
+      if (tag && !tags.includes(tag)) {
+        tags.push(tag);
+        const chip = document.createElement('div');
+        chip.className = 'tag-chip';
+        chip.innerHTML = `${tag} <span class="remove-tag">&times;</span>`;
+
+        chip.querySelector('.remove-tag').addEventListener('click', () => {
+          tagsList.removeChild(chip);
+          tags = tags.filter((t) => t !== tag);
+        });
+        tagsList.appendChild(chip);
+        tagsInput.textContent = '';
+      }
     }
-  }
-});
+  });
 </script>
-
 
 <style>
   .tag-chip {
@@ -239,23 +246,6 @@ tagsInput.addEventListener('keydown', (e) => {
     margin-left: 5px;
     cursor: pointer;
     font-size: 14px;
-  }
-  .screenshot-box {
-    width: 40px;
-    height: 40px;
-    border: 2px dashed #6c757d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  .screenshot-placeholder {
-    font-size: 24px;
-    color: #6c757d;
-  }
-  .toast-header {
-    font-weight: bold;
   }
 </style>
 
