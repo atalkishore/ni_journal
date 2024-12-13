@@ -11,15 +11,16 @@
             data-bs-toggle="modal"
             data-bs-target="#linkTradeModal"
           >
-          <i class="fa-solid fa-link"></i>
+            <i class="fa-solid fa-link"></i>
             Link Trade
           </button>
         </div>
 
-
         <form id="addTradeForm" class="row g-2 needs-validation" novalidate>
           <div class="col-md-6">
-            <label for="tradeDateTime" class="form-label">Trade Date and Time*</label>
+            <label for="tradeDateTime" class="form-label"
+              >Trade Date and Time*</label
+            >
             <input
               type="datetime-local"
               id="tradeDateTime"
@@ -32,7 +33,7 @@
               Please provide a valid trade date and time.
             </div>
           </div>
-                    <div class="col-md-6">
+          <div class="col-md-6">
             <label for="instrument" class="form-label">Instrument*</label>
             <select
               id="instrument"
@@ -71,9 +72,7 @@
               class="form-control"
               required
             />
-            <div class="invalid-feedback">
-              Please provide a valid Quantity.
-            </div>
+            <div class="invalid-feedback">Please provide a valid Quantity.</div>
           </div>
 
           <div class="col-md-6">
@@ -95,9 +94,7 @@
               class="form-control"
               required
             />
-            <div class="invalid-feedback">
-              Please provide a valid price.
-            </div>
+            <div class="invalid-feedback">Please provide a valid price.</div>
           </div>
           <div class="col-md-4">
             <label for="targetPrice" class="form-label">Target Price</label>
@@ -265,8 +262,7 @@
               <th>Entry Price</th>
             </tr>
           </thead>
-          <tbody id="tradeListBody">
-          </tbody>
+          <tbody id="tradeListBody"></tbody>
         </table>
       </div>
       <div class="modal-footer">
@@ -277,18 +273,13 @@
         >
           Cancel
         </button>
-        <button
-          type="button"
-          id="confirmLinkButton"
-          class="btn btn-primary"
-        >
+        <button type="button" id="confirmLinkButton" class="btn btn-primary">
           Confirm Link
         </button>
       </div>
     </div>
   </div>
 </div>
-
 
 <script>
   function fetchTrades() {
@@ -297,7 +288,7 @@
       type: 'GET',
       success: function (trades) {
         const tradeListBody = $('#tradeListBody');
-        tradeListBody.empty(); 
+        tradeListBody.empty();
         trades.forEach((trade) => {
           const row = `
             <tr>
@@ -359,7 +350,6 @@
     fetchTrades();
   });
 
-
   $('#confirmLinkButton').on('click', function () {
     confirmLinkTrades();
   });
@@ -390,14 +380,13 @@
 
   const tradeDateTimeInput = document.getElementById('tradeDateTime');
 
-function setMaxDateTime() {
-  const now = new Date();
-  const formattedDateTime = now.toISOString().slice(0, 16); 
-  tradeDateTimeInput.setAttribute('max', formattedDateTime);
-}
+  function setMaxDateTime() {
+    const now = new Date();
+    const formattedDateTime = now.toISOString().slice(0, 16);
+    tradeDateTimeInput.setAttribute('max', formattedDateTime);
+  }
 
-document.addEventListener('DOMContentLoaded', setMaxDateTime);
-
+  document.addEventListener('DOMContentLoaded', setMaxDateTime);
 </script>
 
 <style>

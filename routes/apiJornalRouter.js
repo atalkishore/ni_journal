@@ -142,4 +142,37 @@ router.get('/execution-list', async (req, res) => {
   }
 });
 
+router.get('/execution-list/:groupId', async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const groupDetails = await executionRepository.getGroupDetails(groupId);
+    res.json(groupDetails);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch group details.' });
+  }
+});
+
+router.get('/group-details/:groupId', async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    const group = await executionRepository.findOneByGroupId(groupId);
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found.' });
+    }
+    res.json(group);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+router.post('/unlink-group/:groupId', async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    await executionRepository.unlinkGroup(groupId);
+    res.json({ message: 'Group unlinked successfully.' });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
 export default router;

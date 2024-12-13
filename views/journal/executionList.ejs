@@ -9,9 +9,7 @@
 
 <div class="container-fluid mt-4">
   <div class="row">
-    <div class="col-md-3">
-      <%- include('../partials/_Sidebar.ejs') %>
-    </div>
+    <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
     <div class="col-md-9">
       <div class="card shadow mb-4">
         <div class="card-body">
@@ -23,11 +21,9 @@
 
       <div class="card shadow p-2">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <div>
-            <button class="btn btn-outline-primary" id="refreshExecutions">
-                <i class="fa-solid fa-arrows-rotate"></i> Refresh
-            </button> 
-          </div>
+          <button class="btn btn-outline-primary" id="refreshExecutions">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+          </button>
         </div>
 
         <div class="table-responsive">
@@ -37,10 +33,8 @@
             <thead class="table-primary text-center">
               <tr>
                 <th class="fw-bold">Group ID</th>
-                <th class="fw-bold">Trade Date</th>
-                <th class="fw-bold">Symbol</th>
-                <th class="fw-bold">Position</th>
-                <th class="fw-bold">Price</th>
+                <th class="fw-bold">Grouped Trades</th>
+                <th class="fw-bold">Actions</th>
               </tr>
             </thead>
             <tbody id="executionTable"></tbody>
@@ -51,56 +45,161 @@
   </div>
 </div>
 
+<div
+  class="modal fade"
+  id="groupInfoModal"
+  tabindex="-1"
+  aria-labelledby="groupInfoModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="groupInfoModalLabel">Group Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Trade Date</th>
+              <th>Symbol</th>
+              <th>Position</th>
+              <th>Entry Price</th>
+            </tr>
+          </thead>
+          <tbody id="groupDetailsTable"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-warning me-1 mb-1"
+          id="unlinkGroupButton"
+        >
+          <i class="fa-solid fa-link-slash"></i>De-link
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary me-1 mb-1"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-$(document).ready(function () {
-  function fetchExecutions() {
-    $.ajax({
-      url: '/api/journal/execution-list',
-      type: 'GET',
-      success: function (executions) {
-        const tableBody = $('#executionTable');
-        tableBody.empty();
+  $(document).ready(function () {
+    function fetchExecutions() {
+      $.ajax({
+        url: '/api/journal/execution-list',
+        type: 'GET',
+        success: function (executions) {
+          const tableBody = $('#executionTable');
+          tableBody.empty();
 
-        if (executions.length === 0) {
-          tableBody.append(
-            '<tr><td colspan="5" class="text-center">No executions found.</td></tr>'
-          );
-          return;
-        }
+          if (executions.length === 0) {
+            tableBody.append(
+              '<tr><td colspan="3" class="text-center">No executions found.</td></tr>'
+            );
+            return;
+          }
 
-        executions.forEach((execution) => {
-          const tradeRows = execution.tradeIds
-            .map(
-              (trade) => `
+          executions.forEach((execution) => {
+            const groupRow = `
             <tr>
               <td>${execution._id}</td>
-              <td>${new Date(trade.tradeDate).toLocaleDateString()}</td>
-              <td>${trade.symbol}</td>
-              <td>
-                ${
-                  trade.position === 'Buy'
-                    ? '<span class="badge badge-phoenix badge-phoenix-success">BUY</span>'
-                    : '<span class="badge badge-phoenix badge-phoenix-danger">SELL</span>'
-                }
+              <td>${execution.trades.length} trades</td>
+              <td class="text-center">
+                <button
+                  class="btn btn-info btn-sm info-btn"
+                  data-group-id="${execution._id}"
+                >
+<i class="fa-solid fa-circle-info"></i>       </button>
               </td>
-              <td>${trade.entryPrice}</td>
             </tr>
-          `
-            )
-            .join('');
-          tableBody.append(tradeRows);
-        });
-      },
-      error: function () {
-        alert('Failed to fetch executions.');
-      },
-    });
-  }
+          `;
+            tableBody.append(groupRow);
+          });
+        },
+        error: function () {
+          alert('Failed to fetch executions.');
+        },
+      });
+    }
 
-  $('#refreshExecutions').on('click', function () {
+    $(document).on('click', '.info-btn', function () {
+      const groupId = $(this).data('group-id');
+
+      if (!groupId) {
+        alert('Group ID not found.');
+        return;
+      }
+
+      $.ajax({
+        url: `/api/journal/execution-list/${groupId}`,
+        type: 'GET',
+        success: function (response) {
+          if (response) {
+            const tableBody = $('#groupDetailsTable');
+            tableBody.empty();
+
+            response.trades.forEach((trade) => {
+              const tradeRow = `
+              <tr>
+                <td>${new Date(trade.tradeDate).toLocaleDateString()}</td>
+                <td>${trade.symbol}</td>
+                <td>${
+                  trade.position === 'Buy'
+                    ? '<span class="badge bg-success">BUY</span>'
+                    : '<span class="badge bg-danger">SELL</span>'
+                }</td>
+                <td>${trade.entryPrice}</td>
+              </tr>
+            `;
+              tableBody.append(tradeRow);
+            });
+
+            $('#unlinkGroupButton').data('group-id', groupId);
+
+            $('#groupInfoModal').modal('show');
+          }
+        },
+        error: function () {
+          alert('Failed to fetch group details.');
+        },
+      });
+    });
+
+    $('#unlinkGroupButton').on('click', function () {
+      const groupId = $(this).data('group-id');
+
+      $.ajax({
+        url: `/api/journal/unlink-group/${groupId}`,
+        type: 'POST',
+        success: function (response) {
+          alert(response.message);
+          $('#groupInfoModal').modal('hide');
+          fetchExecutions();
+        },
+        error: function () {
+          alert('Failed to unlink group.');
+        },
+      });
+    });
+
+    $('#refreshExecutions').on('click', function () {
+      fetchExecutions();
+    });
+
     fetchExecutions();
   });
-
-  fetchExecutions();
-});
 </script>
