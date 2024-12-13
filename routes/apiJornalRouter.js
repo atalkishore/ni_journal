@@ -4,6 +4,7 @@ const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware as auth } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
+import { executionRepository } from '../repository/executionRepository.js';
 import { getAuditLogs } from '../repository/logRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 
@@ -102,38 +103,42 @@ router.get('/trades', async (req, res) => {
 
 // localhost:5110/api/journal/deleteTrade
 router.delete('/deleteTrade/:id', async (req, res) => {
-  const { id } = req.params;
   try {
-    await tradeRepository.deleteTrade(id);
-    res
-      .status(200)
-      .json({ status: 'Success', message: 'Trade deleted successfully' });
+    const { id } = req.params;
+    const result = await tradeRepository.deleteTrade(id);
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ message: 'Trade deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Trade not found' });
+    }
   } catch (error) {
-    res
-      .status(500)
-      .json({ status: 'Failure', message: 'Failed to delete trade' });
+    res.status(500).json({ message: 'Failed to delete trade' });
   }
 });
 
-router.delete('/deleteTrade/:id', async (req, res) => {
-  const { id } = req.params;
+router.post('/execution-list', async (req, res) => {
+  const { tradeIds } = req.body;
+  if (!tradeIds || tradeIds.length === 0) {
+    return res
+      .status(400)
+      .json({ message: 'No trades selected for grouping.' });
+  }
+
   try {
-    const result = await tradeRepository.deleteTrade(id);
+    const group = await executionRepository.createGroup(tradeIds);
+    res.json({ message: 'Group created successfully!', group });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create group.' });
+  }
+});
 
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({
-        status: 'Failure',
-        message: 'Trade not found or already deleted',
-      });
-    }
-
-    res
-      .status(200)
-      .json({ status: 'Success', message: 'Trade deleted successfully' });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ status: 'Failure', message: 'Failed to delete trade' });
+router.get('/execution-list', async (req, res) => {
+  try {
+    const groups = await executionRepository.getGroups();
+    res.json(groups);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch execution list.' });
   }
 });
 

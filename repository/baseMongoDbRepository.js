@@ -23,6 +23,10 @@ async function connect() {
 }
 
 const baseRepository = {
+  async getDb() {
+    return await connect();
+  },
+
   async insertOne(collectionName, document) {
     const db = await connect();
     const collection = db.collection(collectionName);

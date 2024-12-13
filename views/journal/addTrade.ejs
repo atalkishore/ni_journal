@@ -3,24 +3,36 @@
     <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
     <div class="col-md-9">
       <div class="card shadow p-4">
-        <h3 class="text-primary text-start mb-3">Add New Trade</h3>
+        <div class="d-flex justify-content-between align-items-center">
+          <h3 class="text-primary text-start mb-3">Add New Trade</h3>
+          <button
+            id="linkTradeButton"
+            class="btn btn-outline-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#linkTradeModal"
+          >
+          <i class="fa-solid fa-link"></i>
+            Link Trade
+          </button>
+        </div>
+
+
         <form id="addTradeForm" class="row g-2 needs-validation" novalidate>
           <div class="col-md-6">
-            <label for="tradeDateTime" class="form-label"
-              >Trade Date and Time*</label
-            >
+            <label for="tradeDateTime" class="form-label">Trade Date and Time*</label>
             <input
               type="datetime-local"
               id="tradeDateTime"
               name="tradeDateTime"
               class="form-control"
+              max=""
               required
             />
             <div class="invalid-feedback">
               Please provide a valid trade date and time.
             </div>
           </div>
-          <div class="col-md-6">
+                    <div class="col-md-6">
             <label for="instrument" class="form-label">Instrument*</label>
             <select
               id="instrument"
@@ -38,7 +50,7 @@
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label for="symbol" class="form-label">Symbol*</label>
             <input
               type="text"
@@ -49,18 +61,33 @@
             />
             <div class="invalid-feedback">Please provide a valid symbol.</div>
           </div>
+
+          <div class="col-md-2">
+            <label for="quantity" class="form-label">Quantity*</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              class="form-control"
+              required
+            />
+            <div class="invalid-feedback">
+              Please provide a valid Quantity.
+            </div>
+          </div>
+
           <div class="col-md-6">
             <label for="position" class="form-label">Position*</label>
             <select id="position" name="position" class="form-select" required>
               <option selected disabled value="">Choose...</option>
-              <option value="Long">Long</option>
-              <option value="Short">Short</option>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
             </select>
             <div class="invalid-feedback">Please select a valid position.</div>
           </div>
 
           <div class="col-md-4">
-            <label for="entryPrice" class="form-label">Entry Price*</label>
+            <label for="Price" class="form-label">Price*</label>
             <input
               type="number"
               id="entryPrice"
@@ -69,7 +96,7 @@
               required
             />
             <div class="invalid-feedback">
-              Please provide a valid entry price.
+              Please provide a valid price.
             </div>
           </div>
           <div class="col-md-4">
@@ -206,7 +233,137 @@
   </div>
 </div>
 
+<div
+  class="modal fade"
+  id="linkTradeModal"
+  tabindex="-1"
+  aria-labelledby="linkTradeModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="linkTradeModalLabel">Link Trade</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped" id="tradesTable">
+          <thead>
+            <tr>
+              <th>
+                <input type="checkbox" id="selectAllTrades" />
+              </th>
+              <th>Trade Date</th>
+              <th>Instrument</th>
+              <th>Symbol</th>
+              <th>Position</th>
+              <th>Entry Price</th>
+            </tr>
+          </thead>
+          <tbody id="tradeListBody">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          id="confirmLinkButton"
+          class="btn btn-primary"
+        >
+          Confirm Link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
+  function fetchTrades() {
+    $.ajax({
+      url: '/api/journal/trades',
+      type: 'GET',
+      success: function (trades) {
+        const tradeListBody = $('#tradeListBody');
+        tradeListBody.empty(); 
+        trades.forEach((trade) => {
+          const row = `
+            <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  class="trade-checkbox"
+                  data-trade-id="${trade._id}"
+                />
+              </td>
+              <td>${new Date(trade.tradeDate).toLocaleString()}</td>
+              <td>${trade.instrument}</td>
+              <td>${trade.symbol}</td>
+              <td>${trade.position}</td>
+              <td>${trade.entryPrice}</td>
+            </tr>
+          `;
+          tradeListBody.append(row);
+        });
+
+        $('#selectAllTrades').on('change', function () {
+          const isChecked = $(this).is(':checked');
+          $('.trade-checkbox').prop('checked', isChecked);
+        });
+      },
+      error: function (xhr) {
+        alert('Error fetching trades: ' + xhr.responseJSON.message);
+      },
+    });
+  }
+
+  function confirmLinkTrades() {
+    const selectedTradeIds = [];
+    $('.trade-checkbox:checked').each(function () {
+      selectedTradeIds.push($(this).data('trade-id'));
+    });
+
+    if (selectedTradeIds.length === 0) {
+      alert('Please select at least one trade to link.');
+      return;
+    }
+
+    $.ajax({
+      url: '/api/journal/linkTrades',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ tradeIds: selectedTradeIds }),
+      success: function (response) {
+        alert('Trades successfully linked!');
+        $('#linkTradeModal').modal('hide');
+      },
+      error: function (xhr) {
+        alert('Error linking trades: ' + xhr.responseJSON.message);
+      },
+    });
+  }
+
+  $('#linkTradeModal').on('show.bs.modal', function () {
+    fetchTrades();
+  });
+
+
+  $('#confirmLinkButton').on('click', function () {
+    confirmLinkTrades();
+  });
+
   const tagsInput = document.getElementById('tagsInput');
   const tagsList = document.getElementById('tagsList');
   let tags = [];
@@ -230,6 +387,17 @@
       }
     }
   });
+
+  const tradeDateTimeInput = document.getElementById('tradeDateTime');
+
+function setMaxDateTime() {
+  const now = new Date();
+  const formattedDateTime = now.toISOString().slice(0, 16); 
+  tradeDateTimeInput.setAttribute('max', formattedDateTime);
+}
+
+document.addEventListener('DOMContentLoaded', setMaxDateTime);
+
 </script>
 
 <style>
@@ -276,6 +444,7 @@
       tradeDate: $('#tradeDateTime').val(),
       instrument: $('#instrument').val(),
       symbol: $('#symbol').val(),
+      quantity: parseFloat($('#quantity').val()),
       position: $('#position').val(),
       entryPrice: parseFloat($('#entryPrice').val()),
       targetPrice: parseFloat($('#targetPrice').val() || 0),

@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
+import { executionRepository } from '../repository/executionRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { seoHeadTagValues, PAGE_NAME } from '../utils/index.js';
 
@@ -73,6 +74,40 @@ router.get(
         message: 'Failed to fetch trades.',
         data: null,
       });
+    }
+  })
+);
+
+router.get(
+  '/execution-list',
+  asyncMiddleware(async (req, res) => {
+    res.render('journal/executionList', {
+      menu: 'Journal',
+      currentPath: '/journal/execution-list',
+      title: 'Add Trade - Nifty Invest',
+      description: 'Easily add your trades.',
+      keywords: 'add trade, investments, stock journal, nifty invest',
+      CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
+    });
+  })
+);
+
+router.get(
+  '/execution-list',
+  asyncMiddleware(async (req, res) => {
+    try {
+      const executions = await executionRepository.getGroups();
+      const tradeDetails = await Promise.all(
+        executions.map(async (execution) => {
+          const trades = await tradeRepository.getTradesByIds(
+            execution.tradeIds
+          );
+          return { ...execution, tradeIds: trades };
+        })
+      );
+      res.json(tradeDetails);
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to fetch execution list' });
     }
   })
 );
