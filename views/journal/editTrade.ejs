@@ -1,0 +1,212 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-3"><%- include('../partials/_Sidebar.ejs') %></div>
+
+    <div class="col-md-9">
+      <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h3
+            class="text-primary mb-3"
+            style="border-bottom: 2px solid #4071db"
+          >
+            Edit Trade
+          </h3>
+        </div>
+
+        <form id="editTradeForm" class="row g-2 needs-validation" novalidate>
+          <div class="col-md-4">
+            <label for="instrument" class="form-label">Instrument*</label>
+            <select id="instrument" name="instrument" class="form-select">
+              <option value="Stock">Stock</option>
+              <option value="Option">Option</option>
+              <option value="Futures">Futures</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="symbol" class="form-label">Symbol*</label>
+            <input
+              type="text"
+              id="symbol"
+              name="symbol"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="position" class="form-label">Position*</label>
+            <select id="position" name="position" class="form-select" required>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="quantity" class="form-label">Quantity*</label>
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="price" class="form-label">Price*</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="strategies" class="form-label">Strategies*</label>
+            <select id="strategies" name="strategies" class="form-select">
+              <option value="Scalping">Scalping</option>
+              <option value="Swing">Swing</option>
+              <option value="Day Trading">Day Trading</option>
+              <option value="Position">Position</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="account" class="form-label">Account</label>
+            <select id="account" name="account" class="form-select">
+              <option value="Default Account" selected>Default Account</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label for="tags" class="form-label">Tags</label>
+            <input
+              type="text"
+              id="tags"
+              name="tags"
+              class="form-control"
+              placeholder="Comma-separated tags"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="transactionCost" class="form-label"
+              >Brokerage/Transaction Cost</label
+            >
+            <input
+              type="number"
+              id="transactionCost"
+              name="transactionCost"
+              class="form-control"
+              value="0.00"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="targetPrice" class="form-label">Target Price</label>
+            <input
+              type="number"
+              id="targetPrice"
+              name="targetPrice"
+              class="form-control"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label for="stopLoss" class="form-label">Stop Loss</label>
+            <input
+              type="number"
+              id="stopLoss"
+              name="stopLoss"
+              class="form-control"
+            />
+          </div>
+
+          <div class="col-md-12">
+            <label for="tradeNotes" class="form-label">Trade Notes</label>
+            <textarea
+              id="tradeNotes"
+              name="tradeNotes"
+              class="form-control"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary" id="saveChangesBtn">
+              Save Changes
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelBtn">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tradeId = urlParams.get('tradeId');
+
+    if (tradeId) {
+      fetch(`/api/journal/trades/${tradeId}`)
+        .then((res) => res.json())
+        .then((trade) => {
+          document.getElementById('instrument').value = trade.instrument || '';
+          document.getElementById('symbol').value = trade.symbol || '';
+          document.getElementById('position').value = trade.position || '';
+          document.getElementById('quantity').value = trade.quantity || '';
+          document.getElementById('price').value = trade.price || '';
+          document.getElementById('strategies').value = trade.strategies || '';
+          document.getElementById('tags').value = trade.tags || '';
+          document.getElementById('transactionCost').value =
+            trade.transactionCost || '0.00';
+          document.getElementById('targetPrice').value =
+            trade.targetPrice || '';
+          document.getElementById('stopLoss').value = trade.stopLoss || '';
+          document.getElementById('tradeNotes').value = trade.tradeNotes || '';
+        })
+        .catch(() => alert('Failed to load trade data'));
+    }
+
+    document
+      .getElementById('editTradeForm')
+      .addEventListener('submit', function (e) {
+        e.preventDefault();
+        const updatedTrade = {
+          instrument: document.getElementById('instrument').value,
+          symbol: document.getElementById('symbol').value,
+          position: document.getElementById('position').value,
+          quantity: document.getElementById('quantity').value,
+          price: document.getElementById('price').value,
+          strategy: document.getElementById('strategies').value,
+          tags: document.getElementById('tags').value,
+          transactionCost: document.getElementById('transactionCost').value,
+          targetPrice: document.getElementById('targetPrice').value,
+          stopLoss: document.getElementById('stopLoss').value,
+          tradeNotes: document.getElementById('tradeNotes').value,
+        };
+
+        fetch(`/api/journal/updateTrade/${tradeId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedTrade),
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert('Trade updated successfully!');
+              window.location.href = '/journal/trades';
+            } else {
+              alert('Failed to update trade');
+            }
+          })
+          .catch(() => alert('An error occurred while updating the trade'));
+      });
+  });
+</script>

@@ -7,7 +7,7 @@
   style="width: 250px; height: 80vh"
 >
   <ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item">
+    <li class="nav-item d-none">
       <a
         href="/journal"
         class="nav-link <%= currentPath === 'journal/dashboard' ? 'active' : '' %>"
@@ -16,7 +16,7 @@
       </a>
     </li>
    
-    <li class="nav-item">
+    <li class="nav-item  d-none">
       <a
         href="/journal/tradejournal"
         class="nav-link <%= currentPath === 'journal/journal' ? 'active' : '' %>"
@@ -40,7 +40,7 @@
         <i class="uil uil-list-ul"></i> Trade List
       </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item  d-none">
       <a
         href="/journal/execution-list"
         class="nav-link <%= currentPath === '/journal/execution-list' ? 'active' : '' %>"

@@ -1,7 +1,6 @@
 export * from './baseMongoDbRepository.js';
 export * from './baseRedisRepository.js';
 export * from './cacheRedisRepository.js';
-export * from './executionRepository.js';
 export * from './expiryRepository.js';
 export * from './indicesRepository.js';
 export * from './instamojo.js';

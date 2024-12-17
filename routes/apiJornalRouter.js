@@ -4,7 +4,6 @@ const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware as auth } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
-import { executionRepository } from '../repository/executionRepository.js';
 import { getAuditLogs } from '../repository/logRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 
@@ -117,61 +116,51 @@ router.delete('/deleteTrade/:id', async (req, res) => {
   }
 });
 
-router.post('/execution-list', async (req, res) => {
-  const { tradeIds } = req.body;
-  if (!tradeIds || tradeIds.length === 0) {
-    return res
-      .status(400)
-      .json({ message: 'No trades selected for grouping.' });
-  }
-
+router.get('/tradeDetails/:tradeId', async (req, res) => {
+  const { tradeId } = req.params;
   try {
-    const group = await executionRepository.createGroup(tradeIds);
-    res.json({ message: 'Group created successfully!', group });
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to create group.' });
-  }
-});
-
-router.get('/execution-list', async (req, res) => {
-  try {
-    const groups = await executionRepository.getGroups();
-    res.json(groups);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch execution list.' });
-  }
-});
-
-router.get('/execution-list/:groupId', async (req, res) => {
-  try {
-    const { groupId } = req.params;
-    const groupDetails = await executionRepository.getGroupDetails(groupId);
-    res.json(groupDetails);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch group details.' });
-  }
-});
-
-router.get('/group-details/:groupId', async (req, res) => {
-  const { groupId } = req.params;
-  try {
-    const group = await executionRepository.findOneByGroupId(groupId);
-    if (!group) {
-      return res.status(404).json({ message: 'Group not found.' });
+    const trade = await tradeRepository.getTradeById(tradeId);
+    if (!trade) {
+      return res.status(404).json({ message: 'Trade not found.' });
     }
-    res.json(group);
-  } catch (err) {
-    res.status(500).json({ message: 'Internal server error.' });
+    return res.status(200).json(trade);
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to fetch trade details.' });
   }
 });
 
-router.post('/unlink-group/:groupId', async (req, res) => {
-  const { groupId } = req.params;
+router.get('/trades/:id', async (req, res) => {
   try {
-    await executionRepository.unlinkGroup(groupId);
-    res.json({ message: 'Group unlinked successfully.' });
+    const trade = await tradeRepository.getTradeById(req.params.id);
+    if (!trade) {
+      return res.status(404).json({ message: 'Trade not found' });
+    }
+    res.json(trade);
   } catch (err) {
-    res.status(500).json({ message: 'Internal server error.' });
+    res.status(500).json({ message: 'Server Error', error: err.message });
+  }
+});
+
+router.put('/updateTrade/:tradeId', async (req, res) => {
+  try {
+    const { tradeId } = req.params;
+    const updatedData = req.body;
+
+    const result = await tradeRepository.updateTrade(tradeId, updatedData);
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Trade not found or no changes applied.',
+      });
+    }
+
+    res.json({ message: 'Trade updated successfully' });
+  } catch (error) {
+    LOGGER.error('Error updating trade:', error);
+    res
+      .status(500)
+      .json({ success: false, message: 'Failed to update trade.' });
   }
 });
 

@@ -1,8 +1,8 @@
 import { baseRepository } from './baseMongoDbRepository.js';
 
-const collectionName = 'trades';
+const collectionName = 'journal_trades';
 
-const tradeRepository = {
+export const tradeRepository = {
   async addTrade(trade) {
     return await baseRepository.insertOne(collectionName, trade);
   },
@@ -16,7 +16,9 @@ const tradeRepository = {
   },
 
   async updateTrade(id, updateData) {
-    return await baseRepository.updateOneById(collectionName, id, updateData);
+    return await baseRepository.updateOneById(collectionName, id, updateData, {
+      new: true,
+    });
   },
 
   async deleteTrade(id) {
@@ -25,5 +27,3 @@ const tradeRepository = {
     });
   },
 };
-
-export { tradeRepository };
