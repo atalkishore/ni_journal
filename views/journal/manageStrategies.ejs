@@ -1,0 +1,111 @@
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-3">
+      <%- include('../partials/_Sidebar.ejs') %>
+    </div>
+
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold mb-0">Manage Strategies</h5>
+          <button id="addStrategyButton" class="btn btn-warning me-1 mb-1" data-bs-toggle="modal" data-bs-target="#addStrategyModal">
+            <i class="fa-solid fa-plus"></i> Add Strategy
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle border rounded">
+              <thead class="table-primary">
+                <tr>
+                  <th class="fw-bold">Name</th>
+                  <th class="fw-bold">ID</th>
+                  <th class="fw-bold">User ID</th>
+                  <th class="fw-bold">Created At</th>
+                  <th class="fw-bold">Updated At</th>
+                  <th class="fw-bold">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="strategyTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addStrategyModal" tabindex="-1" aria-labelledby="addStrategyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-black">
+        <h5 class="modal-title" id="addStrategyModalLabel">Add New Strategy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addStrategyForm">
+          <div class="mb-3">
+            <label for="strategyName" class="form-label">Name of Strategy</label>
+            <input type="text" class="form-control" id="strategyName" placeholder="Enter strategy name" required />
+          </div>
+          <button type="submit" class="btn btn-outline-primary me-1 mb-1">Add Strategy</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    const fetchStrategies = () => {
+      $.ajax({
+        url: '/api/journal/strategies',
+        type: 'GET',
+        success: function (strategies) {
+          const tableBody = $('#strategyTableBody');
+          tableBody.empty();
+
+          strategies.forEach((strategy) => {
+            tableBody.append(`
+              <tr>
+                <td>${strategy.name}</td>
+                <td>${strategy._id}</td>
+                <td>1</td>
+                <td>${new Date(strategy.createdAt).toLocaleString()}</td>
+                <td>-</td>
+                <td><i class="fa-solid fa-file-pen"></i>Edit</td>
+              </tr>
+            `);
+          });
+        },
+        error: function () {
+          alert('Failed to fetch strategies. Please try again.');
+        },
+      });
+    };
+
+    $('#addStrategyForm').on('submit', function (e) {
+      e.preventDefault();
+      const strategyName = $('#strategyName').val();
+
+      $.ajax({
+        url: '/api/journal/addStrategy',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ name: strategyName }),
+        success: function () {
+          $('#addStrategyModal').modal('hide');
+          $('#strategyName').val('');
+          fetchStrategies();
+          alert('Strategy added successfully!');
+        },
+        error: function () {
+          alert('Failed to add strategy. Please try again.');
+        },
+      });
+    });
+
+    fetchStrategies();
+  });
+</script>

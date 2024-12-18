@@ -5,6 +5,7 @@ import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware as auth } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
 import { getAuditLogs } from '../repository/logRepository.js';
+import { strategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 
 router.get(
@@ -161,6 +162,33 @@ router.put('/updateTrade/:tradeId', async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: 'Failed to update trade.' });
+  }
+});
+
+router.get('/strategies', async (req, res) => {
+  try {
+    const strategies = await strategyRepository.getAllStrategies();
+    res.json(strategies);
+  } catch (error) {
+    res.status(500).send('Failed to fetch strategies');
+  }
+});
+
+router.post('/addStrategy', async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).send('Strategy name is required');
+  }
+
+  try {
+    const newStrategy = {
+      name,
+      createdAt: new Date(),
+    };
+    await strategyRepository.addStrategy(newStrategy);
+    res.status(201).send('Strategy added successfully');
+  } catch (error) {
+    res.status(500).send('Failed to add strategy');
   }
 });
 
