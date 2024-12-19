@@ -92,12 +92,13 @@
 
           <div class="col-md-4">
             <label for="strategies" class="form-label">Strategies*</label>
-            <select id="strategies" name="strategies" class="form-select">
+            <select
+              id="strategies"
+              name="strategies"
+              class="form-select"
+              required
+            >
               <option selected disabled value="">Choose...</option>
-              <option value="Scalping">Scalping</option>
-              <option value="Swing">Swing</option>
-              <option value="Day Trading">Day Trading</option>
-              <option value="Position">Position</option>
             </select>
             <div class="invalid-feedback">Please select a valid strategy.</div>
           </div>
@@ -342,4 +343,27 @@
       },
     });
   }
+</script>
+
+<script>
+  function loadStrategies() {
+    $.ajax({
+      url: '/api/journal/strategies', // Your API endpoint
+      type: 'GET',
+      success: function (strategies) {
+        const strategiesDropdown = $('#strategies');
+        strategies.forEach((strategy) => {
+          const option = `<option value="${strategy.name}">${strategy.name}</option>`;
+          strategiesDropdown.append(option);
+        });
+      },
+      error: function (xhr) {
+        alert('Failed to load strategies: ' + xhr.responseText);
+      },
+    });
+  }
+
+  $(document).ready(function () {
+    loadStrategies();
+  });
 </script>
