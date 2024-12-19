@@ -5,4 +5,5 @@ export * from './env.constant.js';
 export * from './error-handler.config-app.js';
 export * from './mail.config.js';
 export * from './passport.config-app.js';
+export * from './responseMiddleware.config.js';
 export * from './winston-logger.config.js';

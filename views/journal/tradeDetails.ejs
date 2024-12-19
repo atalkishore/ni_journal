@@ -61,7 +61,6 @@
 <script>
   $(document).ready(function() {
     const tradeId = "<%= tradeId %>";
-    debugger
     if (!tradeId) {
       alert('Invalid Trade ID. Please try again.');
       window.location.href = '/journal/trades';
@@ -70,9 +69,10 @@
 
     function fetchTradeDetails() {
       $.ajax({
-        url: `/api/journal/tradeDetails/${tradeId}`,
+        url: `/api/journal/trades/${tradeId}`,
         type: 'GET',
-        success: function(trade) {
+        success: function(tradeJson) {
+          const trade = tradeJson.data;
           $('#loadingSpinner').hide();
 
           $('#tradeDateTime').text(

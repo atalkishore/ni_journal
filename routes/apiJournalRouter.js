@@ -127,25 +127,15 @@ router.delete('/trades/:id', async (req, res) => {
     const result = await tradeRepository.deleteTrade(id);
 
     if (result.modifiedCount > 0) {
-      res.status(200).json({ message: 'Trade deleted successfully' });
+      res.sendJsonResponse(200, 'Trade deleted successfully');
+      // res.status(200).json({ message: 'Trade deleted successfully' });
     } else {
-      res.status(404).json({ message: 'Trade not found' });
+      res.sendJsonResponse(400, 'Trade not found');
+      // res.status(404).json({ message: 'Trade not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete trade' });
-  }
-});
-
-router.get('/tradeDetails/:tradeId', async (req, res) => {
-  const { tradeId } = req.params;
-  try {
-    const trade = await tradeRepository.getTradeById(tradeId);
-    if (!trade) {
-      return res.status(404).json({ message: 'Trade not found.' });
-    }
-    return res.status(200).json(trade);
-  } catch (error) {
-    return res.status(500).json({ message: 'Failed to fetch trade details.' });
+    res.sendJsonResponse(500, 'Failed to delete trade');
+    // res.status(500).json({ message: 'Failed to delete trade' });
   }
 });
 
@@ -153,11 +143,14 @@ router.get('/trades/:id', async (req, res) => {
   try {
     const trade = await tradeRepository.getTradeById(req.params.id);
     if (!trade) {
-      return res.status(404).json({ message: 'Trade not found' });
+      res.sendJsonResponse(400, 'Trade not found');
+      // return res.status(404).json({ message: 'Trade not found' });
     }
-    res.json(trade);
+    res.sendJsonResponse(200, 'Trade fetched successfully', trade);
+    // res.json(trade);
   } catch (err) {
-    res.status(500).json({ message: 'Server Error', error: err.message });
+    res.sendJsonResponse(500, 'Server Error', { error: err.message });
+    // res.status(500).json({ message: 'Server Error', error: err.message });
   }
 });
 

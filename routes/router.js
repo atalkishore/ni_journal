@@ -1,7 +1,7 @@
-import apiJournalRouter from './apiJornalRouter.js';
+import apiJournalRouter from './apiJournalRouter.js';
 import authRouter from './authRouter.js';
 import indexRouter from './indexRouter.js';
-import journalRouter from './jornalRouter.js';
+import journalRouter from './journalRouter.js';
 // import tradeRouter from './tradeRouter.js';
 import userRouter from './userRouter.js';
 import { redirectTo404 } from '../utils/helpers.js';

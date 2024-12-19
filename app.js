@@ -11,6 +11,7 @@ import {
   errorHandler,
   PassportConfigHandler,
   ENVNAME,
+  responseMiddleware,
 } from './config/index.js';
 import {
   createLoggerMiddleware,
@@ -55,6 +56,8 @@ PassportConfigHandler(app);
 
 // config logging
 createLoggerMiddleware(app);
+
+responseMiddleware(app);
 
 // Routes setup
 setupRouter(app);
