@@ -192,4 +192,26 @@ router.post('/addStrategy', async (req, res) => {
   }
 });
 
+router.put('/editStrategy/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ error: 'Strategy name is required' });
+  }
+
+  try {
+    const updatedStrategy = await strategyRepository.updateStrategy(id, {
+      name,
+      updatedAt: new Date(),
+    });
+    if (!updatedStrategy) {
+      return res.status(404).json({ error: 'Strategy not found' });
+    }
+    res.status(200).json(updatedStrategy);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to edit strategy' });
+  }
+});
+
 export default router;

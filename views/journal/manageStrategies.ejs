@@ -1,4 +1,3 @@
-
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-3">
@@ -39,7 +38,7 @@
 <div class="modal fade" id="addStrategyModal" tabindex="-1" aria-labelledby="addStrategyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header bg-info text-black">
+      <div class="modal-header bg-info text-white">
         <h5 class="modal-title" id="addStrategyModalLabel">Add New Strategy</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -49,7 +48,28 @@
             <label for="strategyName" class="form-label">Name of Strategy</label>
             <input type="text" class="form-control" id="strategyName" placeholder="Enter strategy name" required />
           </div>
-          <button type="submit" class="btn btn-outline-primary me-1 mb-1">Add Strategy</button>
+          <button type="submit" class="btn btn-primary w-100">Add Strategy</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editStrategyModal" tabindex="-1" aria-labelledby="editStrategyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="editStrategyModalLabel">Edit Strategy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editStrategyForm">
+          <input type="hidden" id="editStrategyId" />
+          <div class="mb-3">
+            <label for="editStrategyName" class="form-label">Name of Strategy</label>
+            <input type="text" class="form-control" id="editStrategyName" placeholder="Enter strategy name" required />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Update Strategy</button>
         </form>
       </div>
     </div>
@@ -73,10 +93,23 @@
                 <td>${strategy._id}</td>
                 <td>1</td>
                 <td>${new Date(strategy.createdAt).toLocaleString()}</td>
-                <td>-</td>
-                <td><i class="fa-solid fa-file-pen"></i>Edit</td>
+                <td>${strategy.updatedAt ? new Date(strategy.updatedAt).toLocaleString() : '-'}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning editStrategyButton" data-id="${strategy._id}" data-name="${strategy.name}">
+                    <i class="fa-solid fa-pen"></i> Edit
+                  </button>
+                </td>
               </tr>
             `);
+          });
+
+          $('.editStrategyButton').on('click', function () {
+            const strategyId = $(this).data('id');
+            const strategyName = $(this).data('name');
+
+            $('#editStrategyId').val(strategyId);
+            $('#editStrategyName').val(strategyName);
+            $('#editStrategyModal').modal('show');
           });
         },
         error: function () {
@@ -102,6 +135,28 @@
         },
         error: function () {
           alert('Failed to add strategy. Please try again.');
+        },
+      });
+    });
+
+    $('#editStrategyForm').on('submit', function (e) {
+      e.preventDefault();
+
+      const strategyId = $('#editStrategyId').val();
+      const strategyName = $('#editStrategyName').val();
+
+      $.ajax({
+        url: `/api/journal/editStrategy/${strategyId}`,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ name: strategyName }),
+        success: function () {
+          $('#editStrategyModal').modal('hide');
+          fetchStrategies();
+          alert('Strategy updated successfully!');
+        },
+        error: function () {
+          alert('Failed to update strategy. Please try again.');
         },
       });
     });

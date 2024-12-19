@@ -10,4 +10,10 @@ export const strategyRepository = {
   async getAllStrategies() {
     return await baseRepository.find(collectionName, {});
   },
+
+  async updateStrategy(id, updateData) {
+    return await baseRepository.updateOneById(collectionName, id, updateData, {
+      new: true,
+    });
+  },
 };
