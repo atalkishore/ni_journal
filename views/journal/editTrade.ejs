@@ -11,6 +11,9 @@
           >
             Edit Trade
           </h3>
+          <button id="backButton" class="btn btn-secondary me-1 mb-1">
+            <i class="fa-solid fa-arrow-left"></i> Back to List
+          </button>
         </div>
 
         <form id="editTradeForm" class="row g-2 needs-validation" novalidate>
@@ -66,13 +69,12 @@
 
           <div class="col-md-4">
             <label for="strategies" class="form-label">Strategies*</label>
-            <select id="strategies" name="strategies" class="form-select">
-              <option value="Scalping">Scalping</option>
-              <option value="Swing">Swing</option>
-              <option value="Day Trading">Day Trading</option>
-              <option value="Position">Position</option>
-            </select>
-          </div>
+            <select
+              id="strategies"
+              name="strategies"
+              class="form-select"
+              required
+            >
 
           <div class="col-md-4">
             <label for="account" class="form-label">Account</label>
@@ -171,6 +173,9 @@
         })
         .catch(() => alert('Failed to load trade data'));
     }
+    $('#backButton').on('click', function () {
+      window.location.href = '/journal/trades';
+    });
 
     document
       .getElementById('editTradeForm')
@@ -205,5 +210,28 @@
           })
           .catch(() => alert('An error occurred while updating the trade'));
       });
+  });
+</script>
+
+<script>
+  function loadStrategies() {
+    $.ajax({
+      url: '/api/journal/strategies',
+      type: 'GET',
+      success: function (strategies) {
+        const strategiesDropdown = $('#strategies');
+        strategies.forEach((strategy) => {
+          const option = `<option value="${strategy.name}">${strategy.name}</option>`;
+          strategiesDropdown.append(option);
+        });
+      },
+      error: function (xhr) {
+        alert('Failed to load strategies: ' + xhr.responseText);
+      },
+    });
+  }
+
+  $(document).ready(function () {
+    loadStrategies();
   });
 </script>

@@ -335,8 +335,35 @@
       contentType: 'application/json',
       data: JSON.stringify(tradeData),
       success: function (response) {
-        alert(response.message);
-        window.location.href = '/journal/trades';
+        const showToast = (message, color) => {
+          const toastHtml = `<div class="toast align-items-center text-bg-${color} border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
+        <div class="d-flex">
+          <div class="toast-body">
+            <span class="fas fa-check-circle text-white me-2"></span>
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>`;
+
+          const toastContainer = $(toastHtml);
+          $('body').append(toastContainer);
+          const toast = new bootstrap.Toast(toastContainer[0]);
+          toast.show();
+
+          setTimeout(() => {
+            toastContainer.toast('hide');
+          }, 2000);
+
+          toastContainer.on('hidden.bs.toast', function () {
+            toastContainer.remove();
+          });
+        };
+
+        showToast('Trade added successfully!', 'success');
+        setTimeout(() => {
+          window.location.href = '/journal/trades';
+        }, 2000);
       },
       error: function (xhr) {
         alert('Error adding trade: ' + xhr.responseJSON.message);
@@ -348,7 +375,7 @@
 <script>
   function loadStrategies() {
     $.ajax({
-      url: '/api/journal/strategies', // Your API endpoint
+      url: '/api/journal/strategies',
       type: 'GET',
       success: function (strategies) {
         const strategiesDropdown = $('#strategies');

@@ -22,7 +22,7 @@
             <table
               class="table table-hover table-striped align-middle border rounded"
             >
-              <thead class="table-primary">
+              <thead class="table-primary text-center">
                 <tr>
                   <th class="fw-bold">Name</th>
                   <th class="fw-bold">ID</th>
@@ -50,7 +50,7 @@
 >
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header bg-info text-white">
+      <div class="modal-header bg-info text-black">
         <h5 class="modal-title" id="addStrategyModalLabel">Add New Strategy</h5>
         <button
           type="button"
@@ -126,6 +126,8 @@
 
 <script>
   $(document).ready(function () {
+    const MAX_STRATEGIES = 10;
+
     const fetchStrategies = () => {
       $.ajax({
         url: '/api/journal/strategies',
@@ -151,6 +153,14 @@
             `);
           });
 
+          if (strategies.length >= MAX_STRATEGIES) {
+            $('#addStrategyButton')
+              .prop('disabled', true)
+              .attr('title', 'Maximum strategies limit reached.');
+          } else {
+            $('#addStrategyButton').prop('disabled', false).removeAttr('title');
+          }
+
           $('.editStrategyButton').on('click', function () {
             const strategyId = $(this).data('id');
             const strategyName = $(this).data('name');
@@ -171,18 +181,54 @@
       const strategyName = $('#strategyName').val();
 
       $.ajax({
-        url: '/api/journal/addStrategy',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ name: strategyName }),
-        success: function () {
-          $('#addStrategyModal').modal('hide');
-          $('#strategyName').val('');
-          fetchStrategies();
-          alert('Strategy added successfully!');
+        url: '/api/journal/strategies',
+        type: 'GET',
+        success: function (strategies) {
+          if (strategies.length >= MAX_STRATEGIES) {
+            alert('You cannot add more than 10 strategies.');
+            return;
+          }
+
+          $.ajax({
+            url: '/api/journal/addStrategy',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ name: strategyName }),
+            success: function () {
+              $('#addStrategyModal').modal('hide');
+              $('#strategyName').val('');
+              fetchStrategies();
+
+              const toastHtml = `<div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
+                <div class="d-flex">
+                  <div class="toast-body">
+                    <span class="fas fa-check-circle text-white me-2"></span>
+                    Strategy added successfully!
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+              </div>`;
+
+              const toastContainer = $(toastHtml);
+              $('body').append(toastContainer);
+              const toast = new bootstrap.Toast(toastContainer[0]);
+              toast.show();
+
+              setTimeout(() => {
+                toast.hide();
+              }, 2000);
+
+              toastContainer.on('hidden.bs.toast', function () {
+                toastContainer.remove();
+              });
+            },
+            error: function () {
+              alert('Failed to add strategy. Please try again.');
+            },
+          });
         },
         error: function () {
-          alert('Failed to add strategy. Please try again.');
+          alert('Failed to check strategy count. Please try again.');
         },
       });
     });
