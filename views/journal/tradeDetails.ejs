@@ -1,12 +1,3 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  rel="stylesheet"
-/>
-
 <div class="container mt-4">
   <div class="card ">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -88,10 +79,9 @@
 </div>
 
 <script>
-  $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tradeId = urlParams.get('tradeId');
-
+  $(document).ready(function() {
+    const tradeId = "<%= tradeId %>";
+    debugger
     if (!tradeId) {
       alert('Invalid Trade ID. Please try again.');
       window.location.href = '/journal/trades';
@@ -102,7 +92,7 @@
       $.ajax({
         url: `/api/journal/tradeDetails/${tradeId}`,
         type: 'GET',
-        success: function (trade) {
+        success: function(trade) {
           $('#loadingSpinner').hide();
 
           $('#tradeDateTime').text(
@@ -118,7 +108,7 @@
           $('#strategy').text(trade.strategy || '-');
 
           if (trade.tags && trade.tags.length > 0) {
-            const tagBadges = trade.tags.map(tag => 
+            const tagBadges = trade.tags.map(tag =>
               `<span class="badge bg-info">${tag}</span>`
             ).join('');
             $('#tags').html(tagBadges);
@@ -133,7 +123,7 @@
             const screenshotLinks = trade.screenshots
               .map(
                 (url, index) =>
-                  `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
+                `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
                     1}</a>`
               )
               .join(' ');
@@ -144,7 +134,7 @@
 
           $('#tradeDetailsContent').show();
         },
-        error: function () {
+        error: function() {
           alert('Failed to fetch trade details. Please try again.');
           window.location.href = '/journal/trades';
         },
@@ -152,7 +142,7 @@
     }
 
 
-    $('#backButton').on('click', function () {
+    $('#backButton').on('click', function() {
       window.location.href = '/journal/trades';
     });
 

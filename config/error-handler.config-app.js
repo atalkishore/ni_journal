@@ -11,8 +11,18 @@ function config(app) {
     res.locals.message = err.message;
     req.logger.error(err.message);
     res.locals.error = {};
+    const errorResponse = {
+      message: err.message,
+      ...(ENVNAME !== 'prod' && { stack: err.stack }), // Include stack trace only in non-production environments
+    };
+    if (req.originalUrl.startsWith('/api')) {
+      // API-specific error response
+      return res.status(err.status || 500).json({
+        error: errorResponse,
+      });
+    }
     if (err.status === 404) {
-      res.status(404).render('404', {
+      return res.status(404).render('404', {
         menu: '404',
         title: 'Not Found',
         description: 'Page not found',

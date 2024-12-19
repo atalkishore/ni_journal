@@ -25,7 +25,7 @@ class AuthenticationMiddleware {
     return function (req, res, next) {
       if (!req.isAuthenticated || !req.isAuthenticated()) {
         return res.status(401).json({
-          success: false,
+          status: 'Error',
           message: 'Unauthorized: Please log in to access this resource.',
         });
       }
@@ -33,7 +33,7 @@ class AuthenticationMiddleware {
         return next(); // User is admin, allow access
       } else {
         return res.status(403).json({
-          success: false,
+          status: 'Error',
           message: 'Forbidden: You are not authorized to access this resource.',
         });
       }
@@ -54,7 +54,7 @@ class AuthenticationMiddleware {
     return function (req, res, next) {
       if (!req.isAuthenticated || !req.isAuthenticated()) {
         return res.status(401).json({
-          success: false,
+          status: 'Error',
           message: 'Unauthorized: Please log in to access this resource.',
         });
       }
