@@ -28,9 +28,7 @@ jobs:
             git reset --hard
             git clean -df
             git pull origin main
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/sec1.enc -out .uat/env.list
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/sec1.enc -out .uat/db/env.list
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/lib/sec2.enc -out .uat/lib/serviceAccountKey.json
+            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in deployment/uat/sec1.enc -out deployment/uat/env.list
             mv -f deployment/uat/* .
             cd /var/myprojects/ni_journal_uat
             docker build --build-arg IMAGE_NAME=uat_ni_journal_img --build-arg IMAGE_TAG=latest -t uat_ni_journal_img:latest .

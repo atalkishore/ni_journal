@@ -25,4 +25,4 @@ services:
     environment:
       - DISP_NAME=uat_0_ni_journal
     ports:
-      - '1001:5001'
+      - '1101:5001'
