@@ -3,11 +3,11 @@ import cookieParser from 'cookie-parser';
 import express, { json, urlencoded } from 'express';
 import expressLayouts from 'express-ejs-layouts';
 import flash from 'express-flash';
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 import {
   PORT,
-  ROOT_DIR_BASE,
   errorHandler,
   PassportConfigHandler,
   ENVNAME,
@@ -39,16 +39,14 @@ app.use(cookieParser());
 app.use(json({ limit: '10mb' }));
 app.use(urlencoded({ limit: '10mb', extended: false }));
 const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-app.use(
-  express.static(path.join(ROOT_DIR_BASE, 'public'), { maxAge: oneWeek })
-);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: oneWeek }));
 app.use(flash());
-app.set('views', path.join(ROOT_DIR_BASE, 'views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.set(
-  'layout',
-  path.join(ROOT_DIR_BASE, 'views/layouts/withHeaderAndFooter')
-);
+app.set('layout', path.join(__dirname, 'views/layouts/withHeaderAndFooter'));
 app.use(expressLayouts);
 
 // Passport configuration
