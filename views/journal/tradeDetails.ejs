@@ -88,7 +88,7 @@
           $('#strategy').text(trade.strategy || '-');
 
           if (trade.tags && trade.tags.length > 0) {
-            const tagBadges = trade.tags.map(tag => 
+            const tagBadges = trade.tags.map(tag =>
               `<span class="badge bg-info">${tag}</span>`
             ).join('');
             $('#tags').html(tagBadges);
@@ -103,7 +103,7 @@
             const screenshotLinks = trade.screenshots
               .map(
                 (url, index) =>
-                  `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
+                `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
                     1}</a>`
               )
               .join(' ');
@@ -120,6 +120,7 @@
         },
       });
     }
+
 
     $('#backButton').on('click', function() {
       window.location.href = '/journal/trades';

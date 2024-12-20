@@ -152,14 +152,14 @@
   function attachDetailsEvent() {
     $('.details-trade').on('click', function () {
       const tradeId = $(this).data('id');
-      window.location.href = `/journal/trades?tradeId=${tradeId}`;
+      window.location.href = `/journal/trades/${tradeId}`;
     });
   }
 
   function attachEditEvent() {
     $('.edit-trade').on('click', function () {
       const tradeId = $(this).data('id');
-      window.location.href = `/journal/trades?tradeId=${tradeId}&mode=edit`;
+      window.location.href = `/journal/trades/${tradeId}/edit`;
     });
   }
 
@@ -171,7 +171,7 @@
     $('#confirmDeleteTrade').on('click', function () {
       if (tradeToDeleteId) {
         $.ajax({
-          url: `/api/journal/trades/${tradeToDeleteId}`,
+          url: `/api/journal/trades/${tradeId}`,
           type: 'DELETE',
           success: function (response) {
             $('#deleteTradeModal').modal('hide');
