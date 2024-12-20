@@ -1,10 +1,10 @@
 x-niftyinvestui_base:
   &niftyinvestui_base # Define a YAML anchor for the common configuration
-  image: uat_ni_ui_img:latest
+  image: uat_ni_journal_img:latest
   env_file:
     - env.list
   volumes:
-    - /var/myprojects/uat/logs/niftyinvestui:/app/logs
+    - /var/myprojects/uat/logs/ni_journal:/app/logs
   healthcheck:
     test: ['CMD', 'curl', '-f', 'http://localhost:5001/health']
     interval: 1m
@@ -19,10 +19,10 @@ x-niftyinvestui_base:
         memory: 500M
 
 services:
-  uat_0_niftyinvestui:
+  uat_0_ni_journal:
     <<: *niftyinvestui_base # Use YAML reference to include common settings
-    container_name: uat_0_niftyinvestui
+    container_name: uat_0_ni_journal
     environment:
-      - DISP_NAME=uat_0_niftyinvestui
+      - DISP_NAME=uat_0_ni_journal
     ports:
       - '1001:5001'
