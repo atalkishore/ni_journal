@@ -1,4 +1,5 @@
 import moment from 'moment-timezone';
+import { ObjectId } from 'mongodb';
 
 const istOffset = 5.5 * 60 * 60 * 1000;
 const dateFormat = 'DDMMMYYYY';
@@ -171,7 +172,21 @@ function capitalizeFirstLetterOfEachWord(name) {
       ?.replace(/\b\w/g, (char) => char.toUpperCase()) ?? ''
   ); // Capitalize the first letter of each word
 }
+function toObjectID(resourceId) {
+  if (resourceId instanceof ObjectId) {
+    return resourceId;
+  }
 
+  if (
+    typeof resourceId === 'string' &&
+    resourceId.trim() !== '' &&
+    ObjectId.isValid(resourceId)
+  ) {
+    return new ObjectId(resourceId);
+  }
+
+  throw new Error('Invalid resource ID');
+}
 export {
   getTextForPCR,
   getClassNameForPCR,
@@ -192,4 +207,5 @@ export {
   indexSymbol,
   isDateGreaterThanOrEqualToTodayInIST,
   capitalizeFirstLetterOfEachWord,
+  toObjectID,
 };

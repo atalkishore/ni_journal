@@ -59,10 +59,9 @@
 </div>
 
 <script>
-  $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tradeId = urlParams.get('tradeId');
-
+  $(document).ready(function() {
+    const tradeId = "<%= tradeId %>";
+    debugger
     if (!tradeId) {
       alert('Invalid Trade ID. Please try again.');
       window.location.href = '/journal/trades';
@@ -73,7 +72,7 @@
       $.ajax({
         url: `/api/journal/tradeDetails/${tradeId}`,
         type: 'GET',
-        success: function (trade) {
+        success: function(trade) {
           $('#loadingSpinner').hide();
 
           $('#tradeDateTime').text(
@@ -89,9 +88,9 @@
           $('#strategy').text(trade.strategy || '-');
 
           if (trade.tags && trade.tags.length > 0) {
-            const tagBadges = trade.tags
-              .map((tag) => `<span class="badge bg-info">${tag}</span>`)
-              .join('');
+            const tagBadges = trade.tags.map(tag => 
+              `<span class="badge bg-info">${tag}</span>`
+            ).join('');
             $('#tags').html(tagBadges);
           } else {
             $('#tags').text('-');
@@ -104,9 +103,8 @@
             const screenshotLinks = trade.screenshots
               .map(
                 (url, index) =>
-                  `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${
-                    index + 1
-                  }</a>`
+                  `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
+                    1}</a>`
               )
               .join(' ');
             $('#screenshots').html(screenshotLinks);
@@ -116,14 +114,14 @@
 
           $('#tradeDetailsContent').show();
         },
-        error: function () {
+        error: function() {
           alert('Failed to fetch trade details. Please try again.');
           window.location.href = '/journal/trades';
         },
       });
     }
 
-    $('#backButton').on('click', function () {
+    $('#backButton').on('click', function() {
       window.location.href = '/journal/trades';
     });
 

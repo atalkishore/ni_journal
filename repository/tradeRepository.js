@@ -1,14 +1,21 @@
 import { baseRepository } from './baseMongoDbRepository.js';
+import { toObjectID } from '../utils/helpers.js';
 
 const collectionName = 'journal_trades';
 
 export const tradeRepository = {
-  async addTrade(trade) {
-    return await baseRepository.insertOne(collectionName, trade);
+  async addTrade(trade, userId) {
+    return await baseRepository.insertOne(collectionName, {
+      ...trade,
+      user_id: toObjectID(userId),
+    });
   },
 
-  async getTrades() {
-    return await baseRepository.find(collectionName, { status: 'Active' });
+  async getTrades(userId) {
+    return await baseRepository.find(collectionName, {
+      status: 'Active',
+      user_id: toObjectID(userId),
+    });
   },
 
   async getTradeById(id) {
