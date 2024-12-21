@@ -7,75 +7,8 @@ import {
   AuthenticationMiddleware,
 } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
-import { getAuditLogs } from '../repository/logRepository.js';
 import { strategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
-
-router.get(
-  '/audit-logs',
-  auth.ensureLoggedInApi(),
-  asyncMiddleware(async (req, res) => {
-    try {
-      const { resourceType, resourceId, action } = req.query;
-
-      // Validate mandatory parameters
-      if (!resourceType || !resourceId) {
-        return res
-          .status(400)
-          .json({ error: 'resourceType and resourceId are required' });
-      }
-
-      // Fetch audit logs from the controller
-      const logs = await getAuditLogs(resourceType, resourceId, action);
-
-      // Return the result
-      res.status(200).json(logs);
-    } catch (error) {
-      LOGGER.error('Error fetching audit logs:', error);
-      res
-        .status(500)
-        .json({ message: 'An error occurred while fetching audit logs.' });
-    }
-  })
-);
-
-router.get(
-  '/test-api-login',
-  auth.ensureLoggedInApi(),
-  asyncMiddleware(async (req, res) => {
-    try {
-      const data = {
-        status: 'ok',
-        message: 'your test api is working with login',
-      };
-      // Return the result
-      res.status(200).json(data);
-    } catch (error) {
-      LOGGER.error('Error fetching audit logs:', error);
-      res
-        .status(500)
-        .json({ message: 'An error occurred while fetching audit logs.' });
-    }
-  })
-);
-
-router.get(
-  '/test-api',
-  asyncMiddleware(async (req, res) => {
-    try {
-      const data = {
-        status: 'ok',
-        message: 'your test api is working without login',
-      };
-      res.status(200).json(data);
-    } catch (error) {
-      LOGGER.error('Error fetching audit logs:', error);
-      res
-        .status(500)
-        .json({ message: 'An error occurred while fetching audit logs.' });
-    }
-  })
-);
 
 // post- localhost:5110/api/journal/addTrade
 
@@ -177,19 +110,23 @@ router.put('/updateTrade/:tradeId', async (req, res) => {
   }
 });
 
-router.get('/strategies', async (req, res) => {
-  try {
-    const strategies = await strategyRepository.getAllStrategies();
-    res.json(strategies);
-  } catch (error) {
-    res.status(500).send('Failed to fetch strategies');
+router.get(
+  '/strategies',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  async (req, res) => {
+    try {
+      const strategies = await strategyRepository.getAllStrategies();
+      res.json(strategies);
+    } catch (error) {
+      res.sendJsonResponse(500, 'Failed to fetch strategy');
+    }
   }
-});
+);
 
 router.post('/addStrategy', async (req, res) => {
   const { name } = req.body;
   if (!name) {
-    return res.status(400).send('Strategy name is required');
+    res.sendJsonResponse(404, 'Strategy name is required');
   }
 
   try {
@@ -198,18 +135,20 @@ router.post('/addStrategy', async (req, res) => {
       createdAt: new Date(),
     };
     await strategyRepository.addStrategy(newStrategy);
-    res.status(201).send('Strategy added successfully');
+    res.sendJsonResponse(200, 'Strategy added successfully');
   } catch (error) {
-    res.status(500).send('Failed to add strategy');
+    res.sendJsonResponse(500, 'Failed to add strategy successfully');
   }
 });
+
+// res.sendJsonResponse(200, 'Trade deleted successfully');
 
 router.put('/editStrategy/:id', async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
   if (!name) {
-    return res.status(400).json({ error: 'Strategy name is required' });
+    res.sendJsonResponse(404, 'Strategy name is required');
   }
 
   try {
@@ -218,12 +157,16 @@ router.put('/editStrategy/:id', async (req, res) => {
       updatedAt: new Date(),
     });
     if (!updatedStrategy) {
-      return res.status(404).json({ error: 'Strategy not found' });
+      res.sendJsonResponse(404, 'Strategy not found');
     }
     res.status(200).json(updatedStrategy);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to edit strategy' });
+    res.sendJsonResponse(500, 'Failed to update Strategy', {
+      error: err.message,
+    });
   }
 });
+
+// res.sendJsonResponse(200, 'Trade deleted successfully');
 
 export default router;

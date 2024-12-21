@@ -140,15 +140,19 @@ router.get(
   })
 );
 
-router.get('/manageStrategies', (req, res) => {
-  res.render('journal/manageStrategies', {
-    menu: 'Journal',
-    currentPath: '/journal/manageStrategies',
-    title: 'Add Trade - Nifty Invest',
-    description: 'Easily add your trades.',
-    keywords: 'add trade, investments, stock journal, nifty invest',
-    CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
-  });
-});
+router.get(
+  '/manageStrategies',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  asyncMiddleware(async (req, res) => {
+    res.render('journal/manageStrategies', {
+      menu: 'Journal',
+      currentPath: '/journal/manageStrategies',
+      title: 'Add Trade - Nifty Invest',
+      description: 'Easily add your trades.',
+      keywords: 'add trade, investments, stock journal, nifty invest',
+      CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
+    });
+  })
+);
 
 export default router;
