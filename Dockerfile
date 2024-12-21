@@ -1,19 +1,26 @@
-# Use the official Node.js image as base
-FROM node:18.18.2
+# Stage 1: Build the app
+FROM node:18.18.2-alpine AS build
 
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json files
+# Copy package.json and package-lock.json files, then install dependencies
 COPY package*.json ./
+RUN npm ci --only=production
 
-# Install dependencies
-RUN npm install
-
-# Copy all files from current directory to /app directory in the container
+# Copy the rest of the application code
 COPY . .
 
-# Expose port 3000 (assuming your app will run on this port)
+# Stage 2: Run the app
+FROM node:18.18.2-alpine AS production
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy only necessary files from the build stage (i.e., node_modules and source code)
+COPY --from=build /app /app
+
+# Expose the production port
 EXPOSE 5001
 
 # Command to run the application
