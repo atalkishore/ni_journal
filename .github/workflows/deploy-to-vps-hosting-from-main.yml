@@ -5,7 +5,7 @@ name: Deploy-to-vps-hosting-from-main
 'on':
   push:
     branches:
-      - main1
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,27 +21,19 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
           script: |
-            cd /var/myprojects/niftyinvestui_uat
+            cd /var/myprojects/ni_journal_uat
             git reset --hard
             git clean -df
             git checkout main
             git reset --hard
             git clean -df
             git pull origin main
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/sec1.enc -out .uat/env.list
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/sec1.enc -out .uat/db/env.list
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in .uat/lib/sec2.enc -out .uat/lib/serviceAccountKey.json
-            rm -rf lib db
-            mv -f .uat/* .
-            chmod +x docker-stop-uat.sh
-            cd /var/myprojects/niftyinvestui_uat/db
-            docker-compose build
-            docker-compose down
-            docker-compose up -d
-            cd /var/myprojects/niftyinvestui_uat
-            docker build --build-arg IMAGE_NAME=uat_ni_ui_img --build-arg IMAGE_TAG=latest -t uat_ni_ui_img:latest .
+            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in deployment/uat/sec1.enc -out deployment/uat/env.list
+            mv -f deployment/uat/* .
+            cd /var/myprojects/ni_journal_uat
+            docker build --build-arg IMAGE_NAME=uat_ni_journal_img --build-arg IMAGE_TAG=latest -t uat_ni_journal_img:latest .
 
-            service_name="uat_0_niftyinvestui"
+            service_name="uat_0_ni_journal"
             running_containers=$(docker compose ps --filter "status=running" --format "{{.Names}}" | grep -v $service_name)
             running_containers+=" $service_name"
 

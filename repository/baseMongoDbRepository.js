@@ -44,6 +44,11 @@ const baseRepository = {
     const collection = db.collection(collectionName);
     return await collection.findOne({ _id: new ObjectId(id) });
   },
+  async findOne(collectionName, query = {}, options = {}) {
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    return await collection.findOne(query, options);
+  },
 
   async updateOneById(collectionName, id, updateData) {
     const db = await connect();
@@ -52,6 +57,11 @@ const baseRepository = {
       { _id: new ObjectId(id) },
       { $set: updateData }
     );
+  },
+  async updateOne(collectionName, query = {}, updateData) {
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    return await collection.updateOne(query, { $set: updateData });
   },
 
   async deleteOneById(collectionName, id) {

@@ -9,7 +9,7 @@ import { seoHeadTagValues, PAGE_NAME } from '../utils/index.js';
 router.get(
   '/',
   asyncMiddleware(async (req, res) => {
-    res.render('journal/dashboard', {
+    res.render('journal/Dashboard', {
       menu: 'Journal',
       currentPath: 'journal/dashboard',
       ...seoHeadTagValues(PAGE_NAME.HOME),

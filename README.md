@@ -76,8 +76,7 @@ mongorestore --host 91.108.105.210:1003 --username niuat --authenticationDatabas
 
 # Encrption
 
-openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .uat/env.list -out .uat/sec1.enc
-openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .uat/lib/serviceAccountKey.json -out .uat/lib/sec2.enc
+openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/uat/env.list -out deployment/uat/sec1.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/local/www -out deployment/local/www.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .env -out deployment/local/.env.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in env.list -out env.list.enc
@@ -87,8 +86,7 @@ openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/lib/serviceAccount
 
 # Decryption
 
-openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .uat/sec1.enc -out .uat/env.list
-openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .uat/lib/sec2.enc -out .uat/lib/serviceAccountKey.json
+openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/uat/sec1.enc -out deployment/uat/env.list
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in lib/sec2.enc -out lib/serviceAccountKey.json
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/local/.env.enc -out .env
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in env.list.enc -out env.list
