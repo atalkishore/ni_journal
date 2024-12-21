@@ -46,6 +46,7 @@ jobs:
                 echo "Starting container: $container"
                 docker-compose up -d $container
             done
+            docker rmi $(docker images -f "dangling=true" -q)
 
             echo "All containers have been restarted."
 
