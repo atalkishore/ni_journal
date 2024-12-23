@@ -12,7 +12,7 @@ function setupRouter(app) {
     app.use('/auth', authRouter);
     app.use('/user', userRouter);
     app.use('/journal/', journalRouter);
-    app.use('/api/journal/', apiJournalRouter);
+    // app.use('/api/journal/', apiJournalRouter);
     app.use('/journal/api/', apiJournalRouter);
 
     app.use('*', (req, res) => {

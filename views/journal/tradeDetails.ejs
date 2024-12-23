@@ -1,6 +1,8 @@
 <div class="container mt-4">
   <div class="card shadow">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <div
+      class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+    >
       <h5 class="fw-bold mb-0">Trade Details</h5>
       <button id="backButton" class="btn btn-secondary me-1 mb-1">
         <i class="fa-solid fa-arrow-left"></i> Back to List
@@ -14,7 +16,7 @@
         <p>Loading trade details...</p>
       </div>
 
-      <div id="tradeDetailsContent" style="display: none;">
+      <div id="tradeDetailsContent" style="display: none">
         <div class="table-responsive">
           <table class="table table-bordered table-striped align-middle">
             <thead class="table-primary text-center">
@@ -58,74 +60,6 @@
   </div>
 </div>
 
-<script>
-  $(document).ready(function() {
-    const tradeId = "<%= tradeId %>";
-    if (!tradeId) {
-      alert('Invalid Trade ID. Please try again.');
-      window.location.href = '/journal/trades';
-      return;
-    }
-
-    function fetchTradeDetails() {
-      $.ajax({
-        url: `/api/journal/trades/${tradeId}`,
-        type: 'GET',
-        success: function(tradeJson) {
-          const trade = tradeJson.data;
-          $('#loadingSpinner').hide();
-
-          $('#tradeDateTime').text(
-            new Date(trade.tradeDate).toLocaleString() || '-'
-          );
-          $('#instrument').text(trade.instrument || '-');
-          $('#symbol').text(trade.symbol || '-');
-          $('#quantity').text(trade.quantity || '-');
-          $('#position').text(trade.position || '-');
-          $('#entryPrice').text(trade.entryPrice || '-');
-          $('#targetPrice').text(trade.targetPrice || '-');
-          $('#stopLoss').text(trade.stopLoss || '-');
-          $('#strategy').text(trade.strategy || '-');
-
-          if (trade.tags && trade.tags.length > 0) {
-            const tagBadges = trade.tags.map(tag =>
-              `<span class="badge bg-info">${tag}</span>`
-            ).join('');
-            $('#tags').html(tagBadges);
-          } else {
-            $('#tags').text('-');
-          }
-
-          $('#transactionCost').text(trade.brokerage || '0');
-          $('#tradeNotes').text(trade.tradeNotes || '-');
-
-          if (trade.screenshots && trade.screenshots.length > 0) {
-            const screenshotLinks = trade.screenshots
-              .map(
-                (url, index) =>
-                `<a href="${url}" target="_blank" class="btn btn-link btn-sm">Screenshot ${index +
-                    1}</a>`
-              )
-              .join(' ');
-            $('#screenshots').html(screenshotLinks);
-          } else {
-            $('#screenshots').text('-');
-          }
-
-          $('#tradeDetailsContent').show();
-        },
-        error: function() {
-          alert('Failed to fetch trade details. Please try again.');
-          window.location.href = '/journal/trades';
-        },
-      });
-    }
-
-
-    $('#backButton').on('click', function() {
-      window.location.href = '/journal/trades';
-    });
-
-    fetchTradeDetails();
-  });
+<script src="/public/journal_scripts/tradeDetails.js">
+  const tradeId = "<%= tradeId %>"
 </script>

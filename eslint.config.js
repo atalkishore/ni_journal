@@ -6,7 +6,8 @@ import prettierPlugin from 'eslint-plugin-prettier';
 export default [
   js.configs.recommended,
   {
-    files: ['**/*.js'], // Apply these settings to all JS files
+    files: ['**/*.js'],
+    ignores: ['public/**/*.js'], // Apply these settings to all JS files
     plugins: {
       import: importPlugin,
       prettier: prettierPlugin,

@@ -148,90 +148,11 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tradeId = urlParams.get('tradeId');
-
-    if (tradeId) {
-      fetch(`/api/journal/trades/${tradeId}`)
-        .then((res) => res.json())
-        .then((trade) => {
-          document.getElementById('instrument').value = trade.instrument || '';
-          document.getElementById('symbol').value = trade.symbol || '';
-          document.getElementById('position').value = trade.position || '';
-          document.getElementById('quantity').value = trade.quantity || '';
-          document.getElementById('price').value = trade.price || '';
-          document.getElementById('strategies').value = trade.strategies || '';
-          document.getElementById('tags').value = trade.tags || '';
-          document.getElementById('transactionCost').value =
-            trade.transactionCost || '0.00';
-          document.getElementById('targetPrice').value =
-            trade.targetPrice || '';
-          document.getElementById('stopLoss').value = trade.stopLoss || '';
-          document.getElementById('tradeNotes').value = trade.tradeNotes || '';
-        })
-        .catch(() => alert('Failed to load trade data'));
-    }
-    $('#backButton').on('click', function () {
-      window.location.href = '/journal/trades';
-    });
-
-    document
-      .getElementById('editTradeForm')
-      .addEventListener('submit', function (e) {
-        e.preventDefault();
-        const updatedTrade = {
-          instrument: document.getElementById('instrument').value,
-          symbol: document.getElementById('symbol').value,
-          position: document.getElementById('position').value,
-          quantity: document.getElementById('quantity').value,
-          price: document.getElementById('price').value,
-          strategy: document.getElementById('strategies').value,
-          tags: document.getElementById('tags').value,
-          transactionCost: document.getElementById('transactionCost').value,
-          targetPrice: document.getElementById('targetPrice').value,
-          stopLoss: document.getElementById('stopLoss').value,
-          tradeNotes: document.getElementById('tradeNotes').value,
-        };
-
-        fetch(`/api/journal/updateTrade/${tradeId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedTrade),
-        })
-          .then((response) => {
-            if (response.ok) {
-              alert('Trade updated successfully!');
-              window.location.href = '/journal/trades';
-            } else {
-              alert('Failed to update trade');
-            }
-          })
-          .catch(() => alert('An error occurred while updating the trade'));
-      });
-  });
-</script>
-
-<script>
-  function loadStrategies() {
-    $.ajax({
-      url: '/api/journal/strategies',
-      type: 'GET',
-      success: function (strategies) {
-        const strategiesDropdown = $('#strategies');
-        strategies.forEach((strategy) => {
-          const option = `<option value="${strategy.name}">${strategy.name}</option>`;
-          strategiesDropdown.append(option);
-        });
-      },
-      error: function (xhr) {
-        alert('Failed to load strategies: ' + xhr.responseText);
-      },
-    });
-  }
-
-  $(document).ready(function () {
-    loadStrategies();
-  });
-</script>
+<script src="/public/journal_scripts/editTrade.js" ></script>
+ 
+ 
+ 
+   
+ 
+ 
+ 
