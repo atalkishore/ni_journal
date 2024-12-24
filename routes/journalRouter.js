@@ -141,10 +141,10 @@ router.get(
 );
 
 router.get(
-  '/manageStrategies',
+  '/manage-strategy',
   AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
-    res.render('journal/manage-strategy', {
+    res.render('journal/manageStrategies', {
       menu: 'Journal',
       currentPath: '/journal/manageStrategies',
       title: 'Add Trade - Nifty Invest',
