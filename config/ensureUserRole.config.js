@@ -10,11 +10,10 @@ class AuthenticationMiddleware {
         if (req.user && req.user.isAdmin) {
           return next(); // User is admin, allow access
         } else {
-          return res
-            .status(403)
-            .send(
-              "Forbidden: You are not authorized to access. <a href='/'>Go home</a>"
-            );
+          return res.sendJsonResponse(
+            403,
+            "Forbidden: You are not authorized to access. <a href='/'>Go home</a>"
+          );
         }
       });
     };
@@ -24,10 +23,10 @@ class AuthenticationMiddleware {
   static ensureAdminApi() {
     return function (req, res, next) {
       if (!req.isAuthenticated || !req.isAuthenticated()) {
-        return res.status(401).json({
-          status: 'Error',
-          message: 'Unauthorized: Please log in to access this resource.',
-        });
+        return res.sendJsonResponse(
+          401,
+          'Unauthorized: Please log in to access this resource.'
+        );
       }
       if (req.user && req.user.isAdmin) {
         return next(); // User is admin, allow access
@@ -53,10 +52,10 @@ class AuthenticationMiddleware {
   static ensureLoggedInApi() {
     return function (req, res, next) {
       if (!req.isAuthenticated || !req.isAuthenticated()) {
-        return res.status(401).json({
-          status: 'Error',
-          message: 'Unauthorized: Please log in to access this resource.',
-        });
+        return res.sendJsonResponse(
+          401,
+          'Unauthorized: Please log in to access this resource.'
+        );
       }
       return next();
     };
