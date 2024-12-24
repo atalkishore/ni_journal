@@ -1,8 +1,37 @@
 <%
 let header = [
-    {name: "Forum", link: "/coming-soon", children: []},
-    {name: "Journal", link: "/journal", children: []},
-
+    <!-- {name: "SGX Nifty", link: "/sgx-nifty", children: []}, -->
+   
+    {name: "Max Pain", link: "/max-pain", children: []},
+    {name: "Put Call Ratio", link: "/put-call-ratio", children: []},
+    {name: "Option Chain", link: "/option-chain", children: []},
+    <!-- {name: "Screener", link: "/screener", children: [], isNew: true}, -->
+    {
+      name: "Company", link: "", children: [
+      {name: "About", link: "/company?dest=about"},
+      {name: "Charts", link: "/company?dest=chart"},
+      {name: "Financials", link: "/company?dest=financials"},
+      {name: "Technicals", link: "/company?dest=technical"},
+      {name: "Related News", link: "/company?dest=related-news"},
+      {name: "Lot Size", link: "/lot-size"}
+      ]
+    },
+    {
+      name: "Live News", link: "/news", children: [
+      
+      <!-- {name: "Pre Open Market Analysis", link: "/pre-open-market-analysis"}, -->
+      <!-- {name: "Post Market Analysis", link: "/post-close-market-analysis"}, -->
+      {name: "Indian News", link: "/indian-news"},
+      {name: "Stock News", link: "/stock-news"}
+      ]
+    },
+    ...(!(isAuthenticated && user?.isAdmin)
+      ? []  
+      : [{ name: "Journal", link: "/journal", children: [] }]),
+    ...(isAuthenticated && (user?.isSubscribedUser)
+      ? []  
+      : [{ name: "Pricing", link: "/subscription/pricing", children: [] }]),
+    <!-- {name: "Books", link: "/affiliate/books", children: []} -->
 ]
 var activeMenu = menu
 %>
