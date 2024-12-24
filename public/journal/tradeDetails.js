@@ -1,4 +1,7 @@
 $(document).ready(function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tradeId = urlParams.get('tradeId');
+
   if (!tradeId) {
     alert('Invalid Trade ID. Please try again.');
     window.location.href = '/journal/trades';
@@ -7,7 +10,7 @@ $(document).ready(function () {
 
   function fetchTradeDetails() {
     $.ajax({
-      url: `/journal/api/trades/${tradeId}`,
+      url: `/api/journal/trades/${tradeId}`,
       type: 'GET',
       success: function (tradeJson) {
         const trade = tradeJson.data;

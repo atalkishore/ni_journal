@@ -1,5 +1,5 @@
 import { Router } from 'express';
-
+import Joi from 'joi';
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import {
@@ -10,15 +10,78 @@ import { LOGGER } from '../config/winston-logger.config.js';
 import { strategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 
-// post- localhost:5110/api/journal/addTrade
+const tradeSchema = Joi.object({
+  tradeDate: Joi.string().isoDate().required().messages({
+    'any.required': 'Trade date is required.',
+    'string.isoDate': 'Invalid trade date format.',
+  }),
+  instrument: Joi.string()
+    .valid('Stock', 'Option', 'Futures')
+    .required()
+    .messages({
+      'any.required': 'Instrument is required.',
+      'any.only': 'Instrument must be one of Stock, Option, or Futures.',
+    }),
+  symbol: Joi.string().trim().required().messages({
+    'any.required': 'Symbol is required.',
+    'string.empty': 'Symbol cannot be empty.',
+  }),
+  position: Joi.string().valid('Buy', 'Sell').required().messages({
+    'any.required': 'Position is required.',
+    'any.only': 'Position must be either Buy or Sell.',
+  }),
+  quantity: Joi.number().integer().min(1).required().messages({
+    'any.required': 'Quantity is required.',
+    'number.min': 'Quantity must be at least 1.',
+  }),
+  entryPrice: Joi.number().positive().required().messages({
+    'any.required': 'Entry price is required.',
+    'number.positive': 'Entry price must be greater than 0.',
+  }),
+  targetPrice: Joi.number().positive().allow(null, 0).messages({
+    'number.positive': 'Target price must be greater than 0.',
+  }),
+  stopLoss: Joi.number().positive().allow(null, 0).messages({
+    'number.positive': 'Stop loss must be greater than 0.',
+  }),
+  strategy: Joi.string().trim().required().messages({
+    'any.required': 'Strategy is required.',
+    'string.empty': 'Strategy cannot be empty.',
+  }),
+  account: Joi.string().trim().allow(null, '').messages({
+    'string.empty': 'Account cannot be empty.',
+  }),
+  transactionCost: Joi.number().positive().allow(null, 0).messages({
+    'number.positive': 'Transaction cost must be greater than 0.',
+  }),
+  tradeNotes: Joi.string().trim().allow(null, '').messages({
+    'string.empty': 'Trade notes cannot be empty.',
+  }),
+  tags: Joi.array().items(Joi.string().trim().max(20)).max(5).messages({
+    'array.max': 'You can add a maximum of 5 tags.',
+    'string.max': 'Each tag must be at most 20 characters long.',
+  }),
+});
 
+// post- localhost:5110/api/journal/addTrade
 router.post(
   '/addTrade',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     try {
+      const { error } = tradeSchema.validate(req.body, { abortEarly: false });
+
+      if (error) {
+        return res.status(400).json({
+          status: 'Failure',
+          message: 'Validation errors',
+          errors: error.details.map((err) => err.message),
+        });
+      }
+
       const userId = req.user._id;
       const trade = req.body;
+
       await tradeRepository.addTrade(
         {
           ...trade,
@@ -26,6 +89,7 @@ router.post(
         },
         userId
       );
+
       res
         .status(200)
         .json({ status: 'Success', message: 'Trade added successfully.' });
@@ -72,7 +136,7 @@ router.delete('/trades/:id', async (req, res) => {
   }
 });
 
-router.get('/trades/:id', async (req, res) => {
+router.get('/trades/:tradeid', async (req, res) => {
   try {
     const trade = await tradeRepository.getTradeById(req.params.id);
     if (!trade) {
@@ -110,18 +174,14 @@ router.put('/updateTrade/:tradeId', async (req, res) => {
   }
 });
 
-router.get(
-  '/strategies',
-  AuthenticationMiddleware.ensureLoggedInApi(),
-  async (req, res) => {
-    try {
-      const strategies = await strategyRepository.getAllStrategies();
-      res.json(strategies);
-    } catch (error) {
-      res.sendJsonResponse(500, 'Failed to fetch strategy');
-    }
+router.get('/strategies', async (req, res) => {
+  try {
+    const strategies = await strategyRepository.getAllStrategies();
+    res.json(strategies);
+  } catch (error) {
+    res.status(500).send('Failed to fetch strategies');
   }
-);
+});
 
 router.post('/addStrategy', async (req, res) => {
   const { name } = req.body;

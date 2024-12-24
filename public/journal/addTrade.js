@@ -116,7 +116,7 @@ function showToast(message, color) {
 
 function loadStrategies() {
   $.ajax({
-    url: '/journal/apistrategies',
+    url: '/journal/api/strategies',
     type: 'GET',
     success: function (strategies) {
       const strategiesDropdown = $('#strategies');
@@ -131,6 +131,7 @@ function loadStrategies() {
   });
 }
 
+// Call the loadStrategies function when the page is loaded
 $(document).ready(function () {
   loadStrategies();
 });

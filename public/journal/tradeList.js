@@ -1,3 +1,4 @@
+const tradeId = '<%= tradeId %>';
 let tradeToDeleteId = null;
 
 function fetchTrades() {

@@ -121,7 +121,7 @@ router.get(
       const userId = req.user._id;
 
       const trades = await tradeRepository.getTrades(userId);
-      return res.render('journal/tradeList', {
+      return res.render('journal/executionList', {
         menu: 'Journal',
         currentPath: '/journal/trades',
         title: 'Trades - Nifty Invest',
@@ -153,6 +153,21 @@ router.get(
       CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
     });
   })
+);
+
+router.get(
+  '/tradeHistory',
+  AuthenticationMiddleware.ensureLoggedIn(),
+  async (req, res) => {
+    res.render('journal/tradeHistory', {
+      menu: 'Journal',
+      currentPath: '/journal/tradeHistory',
+      title: 'Trade  - Nifty Invest',
+      description: 'Easily add your trades.',
+      keywords: 'Trade History, investments, stock journal, nifty invest',
+      CANONICAL_URL: 'https://niftyinvest.com/journal/tradeHistory',
+    });
+  }
 );
 
 export default router;
