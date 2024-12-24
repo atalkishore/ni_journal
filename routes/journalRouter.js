@@ -142,7 +142,7 @@ router.get(
 
 router.get(
   '/manageStrategies',
-  AuthenticationMiddleware.ensureLoggedInApi(),
+  AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
     res.render('journal/manageStrategies', {
       menu: 'Journal',
