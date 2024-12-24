@@ -49,8 +49,67 @@ var activeMenu = menu
           </div>
         </a>
       </div>
-
+      <% var INDICES_PAGES=[{"s":"constituents","n":"Constituents Heat Map","p1":""},
+      {s:"call-oi-vs-put-oi",n:"Call OI vs Put OI","p1":""},
+      {s:"call-change-oi-vs-put-change-oi",n:"Call Change OI vs Put Change OI","p1":""},
+      {s:"call-volume-vs-put-volume",n:"Call Volume vs Put Volume","p1":""},
+      {s:"call-oi-vs-put-oi",n:"Historical OI Analysis","p1":"/history"},
+      ] %>
       <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
+        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"></span>Index Analysis<span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
+          <ul class="dropdown-menu navbar-dropdown-caret dropdown-menu-card py-0" style="min-width: 700px;">
+            <div class="border-0 scrollbar" style="max-height: 70vh;">
+              <div class="px-2 pt-4 pb-3">
+                <div class="row g-2">
+                  <div class="col-12 col-sm-6 col-md-4">
+                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Nifty 50</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/NIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+                    <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Bank Nifty</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+  
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-4">
+                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Mid Cap Select Nifty</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/MIDCPNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+                    <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Finnifty</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/FINNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+  
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-4">
+                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Sensex</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/SENSEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+                    <div class="dropdown-item-group mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                      <h6 class="dropdown-item-title">Bankex</h6>
+                    </div>
+                    <% INDICES_PAGES.forEach(function (x) { %>
+                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ul>
+        </li>
         <% header.forEach(function (menu, mCount) { %>
         <% if(menu.children.length > 0) { %>
         <li class="nav-item dropdown">
