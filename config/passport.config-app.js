@@ -19,6 +19,7 @@ import { sendTemplateMail } from './mail.config.js'; // Path to mail.config.js
 import { LOGGER } from './winston-logger.config.js';
 import { mongodb } from '../repository/baseMongoDbRepository.js';
 import { redisClient as redisClient } from '../repository/baseRedisRepository.js';
+import { UserRepository } from '../repository/userRepository.js';
 
 function config(app) {
   // Passport initialization
@@ -152,8 +153,30 @@ function config(app) {
     done(null, sessionData);
   });
 
-  passport.deserializeUser((user, done) => {
-    done(null, user);
+  passport.deserializeUser(async (sessionData, done) => {
+    try {
+      const userId = sessionData._id;
+
+      // Fetch extra details from Redis
+      let extraDetails = await UserRepository.getUserDetailsFromRedis(userId);
+      // let extraDetails = null;
+      if (!extraDetails) {
+        const userDetail = await UserRepository.findByEmail(sessionData.email);
+        extraDetails =
+          await UserRepository.formAndStoreExtraUserDetail(userDetail);
+      }
+
+      // Combine session data with extra details
+      const user = {
+        ...sessionData,
+        ...extraDetails,
+      };
+
+      done(null, user);
+    } catch (error) {
+      LOGGER.error('Error deserializing user:', error);
+      done(error, null);
+    }
   });
 
   app.use((req, res, next) => {
