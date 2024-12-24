@@ -44,11 +44,9 @@ router.get(
     try {
       const userId = req.user._id;
       const trades = await tradeRepository.getTrades(userId);
-      res.status(200).json(trades);
+      res.sendJsonResponse(200, 'Trade fetched successfully', trades);
     } catch (error) {
-      res
-        .status(500)
-        .json({ status: 'Failure', message: 'Failed to fetch trades.' });
+      res.sendJsonResponse(500, 'Failed to fetch trades.');
     }
   }
 );

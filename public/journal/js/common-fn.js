@@ -1,5 +1,42 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+
+$(document).ready(function () {
+  $.ajaxSetup({
+    beforeSend: function (jqXHR, settings) {
+      myModal.show(); // Show the modal loader
+    },
+    dataFilter: function (data, type) {
+      try {
+        // Check if the response is a string and attempt to parse it as JSON
+        if (typeof data === 'string') {
+          let dataMod = JSON.parse(data); // Attempt to parse the string as JSON
+          if (dataMod?.__i) {
+            data = JSON.stringify(_dec(dataMod)); // Decrypt the response payload
+          }
+        }
+      } catch (error) {
+        console.error('Error handling response:', error);
+      }
+      return data;
+    },
+    complete: function (jqXHR, textStatus) {
+      setTimeout(() => {
+        myModal.hide();
+      }, 500);
+    },
+    success: function (data, textStatus, jqXHR) {
+      // Optionally handle success
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error('AJAX Request Failed:', textStatus, errorThrown); // Log the error
+      setTimeout(() => {
+        myModal.hide();
+      }, 500);
+    },
+  });
+});
+
 function redirectToPage(symbol) {
   const uri = encodeURIComponent(symbol);
   console.log(navLink);

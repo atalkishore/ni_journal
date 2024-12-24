@@ -1,5 +1,6 @@
 import { compare } from 'bcrypt';
 import RedisStore from 'connect-redis';
+import crypto from 'crypto';
 import session from 'express-session';
 import moment from 'moment-timezone';
 import passport from 'passport';
@@ -138,20 +139,17 @@ function config(app) {
     )
   );
 
-  passport.serializeUser((user, done) => {
-    const { _id, name, email, image, userType, adFreeUntil } = user;
-    const image1 = image || '../assets/img/team/avatar-rounded.webp';
-    const isAdmin = userType === 'admin';
-    let isAdsfree = false;
-    if (adFreeUntil) {
-      const now = moment().tz('Asia/Kolkata').toDate();
-      const adFreeDate = moment(adFreeUntil).tz('Asia/Kolkata').toDate();
-      isAdsfree = adFreeDate > now;
-    }
-    const isAdDisabled = isAdmin || isAdsfree;
-    // eslint-disable-next-line no-undef, no-console
-    console.log('New Login  \n' + JSON.stringify({ name, email, image1 }));
-    done(null, { _id, name, email, image, isAdmin, isAdDisabled });
+  passport.serializeUser(async (req, user, done) => {
+    // const sessionId = req.sessionID;
+    const { _id, name, email } = user;
+    // Determine roles and privileges
+
+    const encKey = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+    const sessionData = { _id, name, email, encKey };
+    // await UserRepository.formAndStoreExtraUserDetail(user);
+    done(null, sessionData);
   });
 
   passport.deserializeUser((user, done) => {
@@ -160,6 +158,7 @@ function config(app) {
 
   app.use((req, res, next) => {
     res.locals.isAuthenticated = req.isAuthenticated();
+    res.locals.ENVNAME = ENVNAME;
     res.locals.CANONICAL_URL = `https://niftyinvest.com${req.originalUrl}`;
     if (!req.originalUrl.includes('auth/login')) {
       delete req.session.returnTo;
