@@ -45,10 +45,10 @@ var activeMenu = menu
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center"><img src="<%= process.env.STATIC_FILES %>/public/images/logo.png" alt="Nifty Invest Logo" width="27" />
               <% if(isAuthenticated && user?.isSubscribedUser) { %>
-                <p class="logo-text ms-2"><span class="text-info">NiftyInvest</span><span class="text-warning"> +</span></p>
-                <% }else{%>
-                <p class="logo-text ms-2">NiftyInvest</p>
-                <% }%>
+              <p class="logo-text ms-2"><span class="text-info">NiftyInvest</span><span class="text-warning"> +</span></p>
+              <% }else{%>
+              <p class="logo-text ms-2">NiftyInvest</p>
+              <% }%>
             </div>
           </div>
         </a>
@@ -59,88 +59,90 @@ var activeMenu = menu
       {s:"call-volume-vs-put-volume",n:"Call Volume vs Put Volume","p1":""},
       {s:"call-oi-vs-put-oi",n:"Historical OI Analysis","p1":"/history"},
       ] %>
-      <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"></span>Index Analysis<span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
-          <ul class="dropdown-menu navbar-dropdown-caret dropdown-menu-card py-0" style="min-width: 700px;">
-            <div class="border-0 scrollbar" style="max-height: 70vh;">
-              <div class="px-2 pt-4 pb-3">
-                <div class="row g-2">
-                  <div class="col-12 col-sm-6 col-md-4">
-                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Nifty 50</h6>
+      <div class=" d-none d-lg-block">
+        <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"></span>Index Analysis<span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
+            <ul class="dropdown-menu navbar-dropdown-caret dropdown-menu-card py-0" style="min-width: 700px;">
+              <div class="border-0 scrollbar" style="max-height: 70vh;">
+                <div class="px-2 pt-4 pb-3">
+                  <div class="row g-2">
+                    <div class="col-12 col-sm-6 col-md-4">
+                      <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Nifty 50</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/NIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
+                      <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Bank Nifty</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
+
                     </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/NIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
-                    <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Bank Nifty</h6>
+                    <div class="col-12 col-sm-6 col-md-4">
+                      <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Mid Cap Select Nifty</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/MIDCPNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
+                      <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Finnifty</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/FINNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
+
                     </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
-  
-                  </div>
-                  <div class="col-12 col-sm-6 col-md-4">
-                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Mid Cap Select Nifty</h6>
+                    <div class="col-12 col-sm-6 col-md-4">
+                      <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Sensex</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/SENSEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
+                      <div class="dropdown-item-group mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
+                        <h6 class="dropdown-item-title">Bankex</h6>
+                      </div>
+                      <% INDICES_PAGES.forEach(function (x) { %>
+                      <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
+                      <% }) %>
                     </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/MIDCPNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
-                    <div class="dropdown-item-group  mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Finnifty</h6>
-                    </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/FINNIFTY/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
-  
-                  </div>
-                  <div class="col-12 col-sm-6 col-md-4">
-                    <div class="dropdown-item-group"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Sensex</h6>
-                    </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/SENSEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
-                    <div class="dropdown-item-group mt-3"><span class="me-2" data-feather="columns" style="stroke-width:2;"></span>
-                      <h6 class="dropdown-item-title">Bankex</h6>
-                    </div>
-                    <% INDICES_PAGES.forEach(function (x) { %>
-                    <a class="dropdown-link px-1" href="/indices<%= x.p1 %>/BANKEX/<%= x.s %>"><span class="uil uil-angle-right fs--1 me-1"></span><%= x.n %></a>
-                    <% }) %>
                   </div>
                 </div>
               </div>
-            </div>
-          </ul>
-        </li>
-        <% header.forEach(function (menu, mCount) { %>
-        <% if(menu.children.length > 0) { %>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><%= menu.name %><span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
-          <ul class="dropdown-menu navbar-dropdown-caret">
-            <% menu.children.forEach(function (subMenu) { %>
-            <li><a class="dropdown-item" href="<%= menu.link + subMenu.link %>">
-                <div class="dropdown-item-wrapper"><span class="fab fa-strava me-2"></span><%= subMenu.name %></div>
-              </a></li>
-            <% }) %>
-          </ul>
-        </li>
-        <% }else{ %>
+            </ul>
+          </li>
+          <% header.forEach(function (menu, mCount) { %>
+          <% if(menu.children.length > 0) { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><%= menu.name %><span class="fas fa-caret-down fs-0 ms-2 d-lg-block d-none"></span></a>
+            <ul class="dropdown-menu navbar-dropdown-caret">
+              <% menu.children.forEach(function (subMenu) { %>
+              <li><a class="dropdown-item" href="<%= menu.link + subMenu.link %>">
+                  <div class="dropdown-item-wrapper"><span class="fab fa-strava me-2"></span><%= subMenu.name %></div>
+                </a></li>
+              <% }) %>
+            </ul>
+          </li>
+          <% }else{ %>
 
-        <li class="nav-item">
-          <a class="nav-link lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="<%= menu.link %>"><%= menu.name %></a>
-        </li>
-        <% } }) 
+          <li class="nav-item">
+            <a class="nav-link lh-1 <%= activeMenu.toLowerCase() === menu.name.toLowerCase() ? 'text-info' : '' %>" href="<%= menu.link %>"><%= menu.name %></a>
+          </li>
+          <% } }) 
        if (!isAuthenticated) { %>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="/auth/login">Login</a>
-        </li>
-        <li class="nav-item d-lg-none">
-          <a class="nav-link" href="/auth/register">Sign-up</a>
-        </li>
-        <% } %>
-      </ul>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/auth/login">Login</a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/auth/register">Sign-up</a>
+          </li>
+          <% } %>
+        </ul>
+      </div>
       <ul class="navbar-nav navbar-nav-icons flex-row">
         <li class="nav-item">
           <div class="theme-control-toggle fa-icon-wait px-0"><input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" /><label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="moon"></span></label><label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="sun"></span></label></div>
