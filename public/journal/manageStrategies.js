@@ -3,7 +3,7 @@ $(document).ready(function () {
 
   const fetchStrategies = () => {
     $.ajax({
-      url: '/journal/api/strategies',
+      url: '/journal/api/strategy',
       type: 'GET',
       success: function (strategies) {
         const tableBody = $('#strategyTableBody');
@@ -54,7 +54,7 @@ $(document).ready(function () {
     const strategyName = $('#strategyName').val();
 
     $.ajax({
-      url: '/journal/api/strategies',
+      url: '/journal/api/strategy',
       type: 'GET',
       success: function (strategies) {
         if (strategies.length >= MAX_STRATEGIES) {
@@ -63,7 +63,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-          url: '/journal/api/addStrategy',
+          url: '/journal/api/strategy/add',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ name: strategyName }),
@@ -113,7 +113,7 @@ $(document).ready(function () {
     const strategyName = $('#editStrategyName').val();
 
     $.ajax({
-      url: `/journal/api/editStrategy/${strategyId}`,
+      url: `/journal/api/strategy/edit/${strategyId}`,
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({ name: strategyName }),

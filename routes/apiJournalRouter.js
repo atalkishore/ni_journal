@@ -108,63 +108,6 @@ router.put('/updateTrade/:tradeId', async (req, res) => {
   }
 });
 
-router.get(
-  '/strategies',
-  AuthenticationMiddleware.ensureLoggedInApi(),
-  async (req, res) => {
-    try {
-      const strategies = await strategyRepository.getAllStrategies();
-      res.json(strategies);
-    } catch (error) {
-      res.sendJsonResponse(500, 'Failed to fetch strategy');
-    }
-  }
-);
-
-router.post('/addStrategy', async (req, res) => {
-  const { name } = req.body;
-  if (!name) {
-    res.sendJsonResponse(404, 'Strategy name is required');
-  }
-
-  try {
-    const newStrategy = {
-      name,
-      createdAt: new Date(),
-    };
-    await strategyRepository.addStrategy(newStrategy);
-    res.sendJsonResponse(200, 'Strategy added successfully');
-  } catch (error) {
-    res.sendJsonResponse(500, 'Failed to add strategy successfully');
-  }
-});
-
-// res.sendJsonResponse(200, 'Trade deleted successfully');
-
-router.put('/editStrategy/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  if (!name) {
-    res.sendJsonResponse(404, 'Strategy name is required');
-  }
-
-  try {
-    const updatedStrategy = await strategyRepository.updateStrategy(id, {
-      name,
-      updatedAt: new Date(),
-    });
-    if (!updatedStrategy) {
-      res.sendJsonResponse(404, 'Strategy not found');
-    }
-    res.status(200).json(updatedStrategy);
-  } catch (err) {
-    res.sendJsonResponse(500, 'Failed to update Strategy', {
-      error: err.message,
-    });
-  }
-});
-
 // res.sendJsonResponse(200, 'Trade deleted successfully');
 
 export default router;
