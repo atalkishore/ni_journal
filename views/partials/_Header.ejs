@@ -44,7 +44,11 @@ var activeMenu = menu
         <a class="navbar-brand ms-0 me-sm-3" href="/">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center"><img src="<%= process.env.STATIC_FILES %>/public/images/logo.png" alt="Nifty Invest Logo" width="27" />
-              <p class="logo-text ms-2">NiftyInvest</p>
+              <% if(isAuthenticated && user?.isSubscribedUser) { %>
+                <p class="logo-text ms-2"><span class="text-info">NiftyInvest</span><span class="text-warning"> +</span></p>
+                <% }else{%>
+                <p class="logo-text ms-2">NiftyInvest</p>
+                <% }%>
             </div>
           </div>
         </a>
@@ -158,6 +162,9 @@ var activeMenu = menu
                     <img class="rounded-circle " src="<%= user.image %>" alt="Profile Image" />
                   </div>
                   <h6 class="mt-2 text-black"><%= user.email %></h6>
+                  <span class="badge badge-phoenix fs--2 badge-phoenix-<%= user?.isSubscribedUser ? 'success':'warning' %>">
+                    <span class="badge-label"></span><%= user?.isSubscribedUser? 'Premium Member':'Free Member' %> </span>
+                  </span>
                 </div>
               </div>
               <div class="overflow-auto scrollbar">
