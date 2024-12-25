@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 $(document).ready(function () {
   const MAX_STRATEGIES = 10;
 
@@ -12,7 +13,6 @@ $(document).ready(function () {
         } else if (response.data && Array.isArray(response.data)) {
           strategies = response.data;
         } else {
-          console.error('Unexpected response format:', response);
           alert('Failed to load strategies: invalid response format.');
           return;
         }
@@ -67,6 +67,11 @@ $(document).ready(function () {
     e.preventDefault();
     const strategyName = $('#strategyName').val();
 
+    if (!strategyName) {
+      alert('Please enter a strategy name.');
+      return;
+    }
+
     $.ajax({
       url: '/journal/api/strategy',
       type: 'GET',
@@ -87,15 +92,14 @@ $(document).ready(function () {
             fetchStrategies();
 
             const toastHtml = `<div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
-                <div class="d-flex">
-                  <div class="toast-body">
-                    <span class="fas fa-check-circle text-white me-2"></span>
-                    Strategy added successfully!
+                  <div class="d-flex">
+                    <div class="toast-body">
+                      <span class="fas fa-check-circle text-white me-2"></span>
+                      Strategy added successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                   </div>
-                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-              </div>`;
-
+                </div>`;
             const toastContainer = $(toastHtml);
             $('body').append(toastContainer);
             const toast = new bootstrap.Toast(toastContainer[0]);
@@ -125,6 +129,11 @@ $(document).ready(function () {
 
     const strategyId = $('#editStrategyId').val();
     const strategyName = $('#editStrategyName').val();
+
+    if (!strategyId || !strategyName) {
+      alert('Invalid strategy details.');
+      return;
+    }
 
     $.ajax({
       url: `/journal/api/strategy/edit/${strategyId}`,

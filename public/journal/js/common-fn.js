@@ -1,7 +1,32 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-
 $(document).ready(function () {
+  const originalAjax = $.ajax;
+  $.ajax = function (options) {
+    // Wrap the success callback, if it exists
+    if (options.success) {
+      const originalSuccess = options.success;
+      options.success = function (data, textStatus, jqXHR) {
+        try {
+          originalSuccess(data, textStatus, jqXHR); // Execute original success
+        } catch (error) {
+          console.error('Error in success callback:', error);
+          // Hide the loader in case of an error
+          if (options.defaultLoader !== false) {
+            setTimeout(() => {
+              myModal.hide();
+            }, 500);
+          }
+          // Rethrow the error for further handling
+          // throw error;
+        }
+      };
+    }
+
+    // Pass the modified options to the original $.ajax
+    return originalAjax(options);
+  };
+
   $.ajaxSetup({
     beforeSend: function (jqXHR, settings) {
       // Show the modal loader only if disableLoader is not set to true
