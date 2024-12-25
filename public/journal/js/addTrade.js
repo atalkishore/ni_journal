@@ -30,6 +30,11 @@ function setMaxDateTime() {
 }
 document.addEventListener('DOMContentLoaded', setMaxDateTime);
 
+const symbolInput = document.getElementById('symbol');
+symbolInput.addEventListener('input', (event) => {
+  symbolInput.value = symbolInput.value.toUpperCase();
+});
+
 (function () {
   'use strict';
   const forms = document.querySelectorAll('.needs-validation');
@@ -116,11 +121,11 @@ function showToast(message, color) {
 
 function loadStrategies() {
   $.ajax({
-    url: '/journal/api/strategy',
+    url: '/journal/api/strategies',
     type: 'GET',
     success: function (strategies) {
       const strategiesDropdown = $('#strategies');
-      strategies?.data?.forEach((strategy) => {
+      strategies.forEach((strategy) => {
         const option = `<option value="${strategy.name}">${strategy.name}</option>`;
         strategiesDropdown.append(option);
       });
