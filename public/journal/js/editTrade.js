@@ -1,41 +1,76 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const tradeId = window.location.pathname.split('/')[3];
+  const tradeId = window.location.pathname.split('/')[3]; // Extract trade ID from the URL
 
-  if (tradeId) {
+  // Function to load trade data and auto-populate the form
+  function loadTradeData() {
+    if (!tradeId) {
+      alert('Trade ID is missing in the URL. Please try again.');
+      return;
+    }
+
     fetch(`/journal/api/trades/${tradeId}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch trade data');
         return res.json();
       })
       .then((trade) => {
+        // Populate form fields with trade data
         document.getElementById('instrument').value = trade.instrument || '';
         document.getElementById('symbol').value = trade.symbol || '';
         document.getElementById('position').value = trade.position || '';
         document.getElementById('quantity').value = trade.quantity || '';
         document.getElementById('price').value = trade.price || '';
-        document.getElementById('strategies').value = trade.strategy || '';
-        document.getElementById('tags').value = trade.tags
-          ? trade.tags.join(', ')
-          : '';
         document.getElementById('transactionCost').value =
           trade.transactionCost || '0.00';
         document.getElementById('targetPrice').value = trade.targetPrice || '';
         document.getElementById('stopLoss').value = trade.stopLoss || '';
         document.getElementById('tradeNotes').value = trade.tradeNotes || '';
+        document.getElementById('tags').value = trade.tags
+          ? trade.tags.join(', ')
+          : '';
+        loadStrategies(trade.strategy); // Load strategies and pre-select the current strategy
       })
       .catch(() => alert('Failed to load trade data. Please try again.'));
-  } else {
-    alert('Trade ID is missing in the URL. Please try again.');
   }
 
+  // Function to load strategies and populate the dropdown
+  function loadStrategies(selectedStrategy = '') {
+    $.ajax({
+      url: '/journal/api/strategies',
+      type: 'GET',
+      success: function (strategies) {
+        const strategiesDropdown = $('#strategies');
+        strategiesDropdown.empty(); // Clear existing options
+
+        // Add default placeholder option
+        strategiesDropdown.append(
+          '<option value="">Select a strategy</option>'
+        );
+
+        // Append strategies to the dropdown
+        strategies.forEach((strategy) => {
+          const isSelected =
+            strategy.name === selectedStrategy ? 'selected' : '';
+          const option = `<option value="${strategy.name}" ${isSelected}>${strategy.name}</option>`;
+          strategiesDropdown.append(option);
+        });
+      },
+      error: function (xhr) {
+        alert('Failed to load strategies: ' + xhr.responseText);
+      },
+    });
+  }
+
+  // Back button navigation
   document.getElementById('backButton').addEventListener('click', function () {
     window.location.href = '/journal/trades';
   });
 
+  // Handle form submission for editing the trade
   document
     .getElementById('editTradeForm')
     .addEventListener('submit', function (e) {
-      e.preventDefault();
+      e.preventDefault(); // Prevent default form submission
 
       if (!tradeId) {
         alert('Trade ID is missing. Cannot update trade.');
@@ -81,24 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     });
 
-  function loadStrategies() {
-    $.ajax({
-      url: '/journal/api/strategies',
-      type: 'GET',
-      success: function (strategies) {
-        const strategiesDropdown = $('#strategies');
-        strategies.forEach((strategy) => {
-          const option = `<option value="${strategy.name}">${strategy.name}</option>`;
-          strategiesDropdown.append(option);
-        });
-      },
-      error: function (xhr) {
-        alert('Failed to load strategies: ' + xhr.responseText);
-      },
-    });
-  }
-
-  $(document).ready(function () {
-    loadStrategies();
-  });
+  // Load trade data and strategies on page load
+  loadTradeData();
 });
