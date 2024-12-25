@@ -16,7 +16,7 @@ function fetchTrades() {
         return;
       }
 
-      trades.forEach((trade) => {
+      trades.data.forEach((trade) => {
         const row = `
           <tr>
             <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
@@ -118,4 +118,6 @@ $('#tradeFilter').on('keyup', function () {
   });
 });
 
-fetchTrades();
+$(document).ready(function () {
+  fetchTrades();
+});

@@ -18,3 +18,19 @@
 <link href="<%= process.env.STATIC_FILES %>/public/assets/css/theme.min.css" type="text/css" rel="stylesheet" id="style-default">
 <link href="<%= process.env.STATIC_FILES %>/public/images/logo.png" rel="icon" type="image/x-icon" />
 <link rel="stylesheet" href="/css/main.css?v=28">
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+<script>
+
+  function _dec(e) {
+    let k = CryptoJS.enc.Utf8.parse("<%= isAuthenticated ? user?.encKey:'' %>"),
+      i = CryptoJS.enc.Hex.parse(e.__i),
+      d = e.__d,
+      t = CryptoJS.AES.decrypt(d, k, {
+        iv: i,
+        padding: CryptoJS.pad.Pkcs7,
+        mode: CryptoJS.mode.CBC
+      });
+    return JSON.parse(t.toString(CryptoJS.enc.Utf8));
+  }
+</script>
+<script src="/journal/js/common-fn.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>

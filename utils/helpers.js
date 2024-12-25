@@ -1,9 +1,31 @@
+import CryptoJS from 'crypto-js';
 import moment from 'moment-timezone';
 import { ObjectId } from 'mongodb';
+
+import { ENVNAME } from '../config/env.constant.js';
 
 const istOffset = 5.5 * 60 * 60 * 1000;
 const dateFormat = 'DDMMMYYYY';
 
+function encryptData(data, secretKey) {
+  const iv = CryptoJS.lib.WordArray.random(16); // Generate random IV
+  const encrypted = CryptoJS.AES.encrypt(
+    JSON.stringify(data),
+    CryptoJS.enc.Utf8.parse(secretKey),
+    {
+      iv: iv,
+      padding: CryptoJS.pad.Pkcs7,
+      mode: CryptoJS.mode.CBC,
+    }
+  );
+
+  // Return encrypted data along with IV and optionally _data based on environment
+  return {
+    ...(ENVNAME !== 'prod' ? { ...data } : {}), // Conditionally add _data if not 'prod'
+    __i: iv.toString(CryptoJS.enc.Hex), // IV in hex
+    __d: encrypted.toString(), // Encrypted data
+  };
+}
 const notFoundPage = (res) => {
   res.render('404', {
     page: '404',
@@ -208,4 +230,5 @@ export {
   isDateGreaterThanOrEqualToTodayInIST,
   capitalizeFirstLetterOfEachWord,
   toObjectID,
+  encryptData,
 };
