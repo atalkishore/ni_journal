@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 $(document).ready(function () {
   const MAX_STRATEGIES = 10;
 
@@ -9,16 +10,11 @@ $(document).ready(function () {
         const tableBody = $('#strategyTableBody');
         tableBody.empty();
 
-        strategies.forEach((strategy) => {
+        strategies.data?.forEach((strategy, index) => {
           tableBody.append(`
               <tr>
-                <td>${strategy.name}</td>
-                <td>${strategy._id}</td>
-                <td>1</td>
-                <td>${new Date(strategy.createdAt).toLocaleString()}</td>
-                <td>${strategy.updatedAt ? new Date(strategy.updatedAt).toLocaleString() : '-'}</td>
-                <td>
-                  <button class="btn btn-outline-info me-1 mb-1 editStrategyButton"  style ="font-size: 12px; padding: 2px 6px;"data-id="${strategy._id}" data-name="${strategy.name}">
+                <td>${index + 1}) <span class='ms-3'>${strategy.name}</span>
+                  <button class="btn btn-outline-info ms-2 mb-1 editStrategyButton"  style ="font-size: 12px; padding: 2px 6px;"data-id="${strategy._id}" data-name="${strategy.name}">
                     <i class="uil uil-edit"></i> Edit
                   </button>
                 </td>
