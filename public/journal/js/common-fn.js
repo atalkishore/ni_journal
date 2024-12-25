@@ -4,7 +4,10 @@
 $(document).ready(function () {
   $.ajaxSetup({
     beforeSend: function (jqXHR, settings) {
-      myModal.show(); // Show the modal loader
+      // Show the modal loader only if disableLoader is not set to true
+      if (settings.defaultLoader !== false) {
+        myModal.show();
+      }
     },
     dataFilter: function (data, type) {
       try {
@@ -21,14 +24,18 @@ $(document).ready(function () {
       return data;
     },
     complete: function (jqXHR, textStatus) {
-      setTimeout(() => {
-        myModal.hide();
-      }, 500);
+      if (this.defaultLoader !== false) {
+        setTimeout(() => {
+          myModal.hide();
+        }, 500);
+      }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      setTimeout(() => {
-        myModal.hide();
-      }, 500);
+      if (this.defaultLoader !== false) {
+        setTimeout(() => {
+          myModal.hide();
+        }, 500);
+      }
     },
   });
 });

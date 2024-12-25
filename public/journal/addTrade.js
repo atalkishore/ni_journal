@@ -116,11 +116,11 @@ function showToast(message, color) {
 
 function loadStrategies() {
   $.ajax({
-    url: '/journal/api/strategies',
+    url: '/journal/api/strategy',
     type: 'GET',
     success: function (strategies) {
       const strategiesDropdown = $('#strategies');
-      strategies.forEach((strategy) => {
+      strategies?.data?.forEach((strategy) => {
         const option = `<option value="${strategy.name}">${strategy.name}</option>`;
         strategiesDropdown.append(option);
       });

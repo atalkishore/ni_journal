@@ -42,7 +42,7 @@ router.get(
 // get- localhost:5110/journal/addTrade
 
 router.get(
-  '/addTrade',
+  '/add-trade',
   AuthenticationMiddleware.ensureLoggedIn(),
   async (req, res) => {
     res.render('journal/addTrade', {
@@ -141,8 +141,8 @@ router.get(
 );
 
 router.get(
-  '/manageStrategies',
-  AuthenticationMiddleware.ensureLoggedInApi(),
+  '/manage-strategy',
+  AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
     res.render('journal/manageStrategies', {
       menu: 'Journal',

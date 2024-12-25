@@ -5,6 +5,7 @@ function fetchTrades() {
   $.ajax({
     url: '/journal/api/trades',
     type: 'GET',
+    // defaultLoader: false
     success: function (trades) {
       const tableBody = $('#tradeTable');
       tableBody.empty();

@@ -12,8 +12,9 @@ function config(app) {
     req.logger.error(err.message);
     res.locals.error = {};
     const errorResponse = {
-      message: err.message,
-      ...(ENVNAME !== 'prod' && { stack: err.stack }), // Include stack trace only in non-production environments
+      ...(ENVNAME !== 'prod' || (req.Authenticated && req.user?.isAdmin)
+        ? { stack: err.stack, message: err.message }
+        : { message: 'oops! something went wrong' }), // Include stack trace only in non-production environments
     };
     if (req.originalUrl.startsWith('/api')) {
       // API-specific error response

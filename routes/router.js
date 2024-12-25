@@ -1,8 +1,8 @@
 import apiJournalRouter from './apiJournalRouter.js';
+import apiStrategyRouter from './apiStrategyRouter.js';
 import authRouter from './authRouter.js';
 import indexRouter from './indexRouter.js';
 import journalRouter from './journalRouter.js';
-// import tradeRouter from './tradeRouter.js';
 import userRouter from './userRouter.js';
 import { redirectTo404 } from '../utils/helpers.js';
 
@@ -13,6 +13,7 @@ function setupRouter(app) {
     app.use('/user', userRouter);
     app.use('/journal/', journalRouter);
     // app.use('/api/journal/', apiJournalRouter);
+    app.use('/journal/api/strategy', apiStrategyRouter);
     app.use('/journal/api/', apiJournalRouter);
 
     app.use('*', (req, res) => {
