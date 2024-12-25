@@ -5,25 +5,39 @@ $(document).ready(function () {
     $.ajax({
       url: '/journal/api/strategy',
       type: 'GET',
-      success: function (strategies) {
+      success: function (response) {
+        let strategies = [];
+        if (Array.isArray(response)) {
+          strategies = response;
+        } else if (response.data && Array.isArray(response.data)) {
+          strategies = response.data;
+        } else {
+          console.error('Unexpected response format:', response);
+          alert('Failed to load strategies: invalid response format.');
+          return;
+        }
+
         const tableBody = $('#strategyTableBody');
         tableBody.empty();
 
         strategies.forEach((strategy) => {
           tableBody.append(`
-              <tr>
-                <td>${strategy.name}</td>
-                <td>${strategy._id}</td>
-                <td>1</td>
-                <td>${new Date(strategy.createdAt).toLocaleString()}</td>
-                <td>${strategy.updatedAt ? new Date(strategy.updatedAt).toLocaleString() : '-'}</td>
-                <td>
-                  <button class="btn btn-outline-info me-1 mb-1 editStrategyButton"  style ="font-size: 12px; padding: 2px 6px;"data-id="${strategy._id}" data-name="${strategy.name}">
-                    <i class="uil uil-edit"></i> Edit
-                  </button>
-                </td>
-              </tr>
-            `);
+            <tr>
+              <td>${strategy.name}</td>
+              <td>${strategy._id}</td>
+              <td>1</td>
+              <td>${new Date(strategy.createdAt).toLocaleString()}</td>
+              <td>${strategy.updatedAt ? new Date(strategy.updatedAt).toLocaleString() : '-'}</td>
+              <td>
+                <button class="btn btn-outline-info me-1 mb-1 editStrategyButton" 
+                  style="font-size: 12px; padding: 2px 6px;" 
+                  data-id="${strategy._id}" 
+                  data-name="${strategy.name}">
+                  <i class="uil uil-edit"></i> Edit
+                </button>
+              </td>
+            </tr>
+          `);
         });
 
         if (strategies.length >= MAX_STRATEGIES) {
