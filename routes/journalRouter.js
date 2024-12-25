@@ -156,12 +156,12 @@ router.get(
 );
 
 router.get(
-  '/tradeHistory',
+  '/trade-history',
   AuthenticationMiddleware.ensureLoggedIn(),
   async (req, res) => {
     res.render('journal/tradeHistory', {
       menu: 'Journal',
-      currentPath: '/journal/tradeHistory',
+      currentPath: '/journal/trade-history',
       title: 'Trade  - Nifty Invest',
       description: 'Easily add your trades.',
       keywords: 'Trade History, investments, stock journal, nifty invest',

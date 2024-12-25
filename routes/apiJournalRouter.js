@@ -90,13 +90,9 @@ router.post(
         userId
       );
 
-      res
-        .status(200)
-        .json({ status: 'Success', message: 'Trade added successfully.' });
+      res.sendJsonResponse(200, 'Trade added successfully');
     } catch (error) {
-      res
-        .status(500)
-        .json({ status: 'Failure', message: 'Failed to add trade.' });
+      res.sendJsonResponse(500, 'Failed to add trades.');
     }
   })
 );
@@ -157,29 +153,27 @@ router.put('/updateTrade/:tradeId', async (req, res) => {
     const result = await tradeRepository.updateTrade(tradeId, updatedData);
 
     if (result.modifiedCount === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Trade not found or no changes applied.',
-      });
+      res.sendJsonResponse(400, 'Trade not found or no changes applied');
     }
-
-    res.json({ message: 'Trade updated successfully' });
+    res.sendJsonResponse(200, 'Trade fetched successfully');
   } catch (error) {
     LOGGER.error('Error updating trade:', error);
-    res
-      .status(500)
-      .json({ success: false, message: 'Failed to update trade.' });
+    res.sendJsonResponse(500, 'Failed to update trade');
   }
 });
 
-router.get('/strategies', async (req, res) => {
-  try {
-    const strategies = await strategyRepository.getAllStrategies();
-    res.json(strategies);
-  } catch (error) {
-    res.status(500).send('Failed to fetch strategies');
+router.get(
+  '/strategies',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  async (req, res) => {
+    try {
+      const strategies = await strategyRepository.getAllStrategies();
+      res.json(strategies);
+    } catch (error) {
+      res.status(500).send('Failed to fetch strategies');
+    }
   }
-});
+);
 
 router.post('/addStrategy', async (req, res) => {
   const { name } = req.body;
