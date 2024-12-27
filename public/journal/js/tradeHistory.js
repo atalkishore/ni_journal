@@ -9,6 +9,7 @@ $(document).ready(function () {
           let tableBody = '';
           const groupedTrades = {};
 
+          // Group trades by group_id
           trades.forEach((trade) => {
             if (!groupedTrades[trade.group_id]) {
               groupedTrades[trade.group_id] = [];
@@ -16,40 +17,38 @@ $(document).ready(function () {
             groupedTrades[trade.group_id].push(trade);
           });
 
+          // Render only one row per group
           Object.keys(groupedTrades).forEach((groupId) => {
             const group = groupedTrades[groupId];
             const firstTrade = group[0];
-            const groupRowSpan = group.length;
 
             tableBody += `
-              <tr class="table-group-header">
-                <td colspan="10" class="fw-bold bg-light">
-                  Group ID: ${groupId} (${group.length} Trades)
+              <tr>
+                <td>${firstTrade.openDate || '-'}</td>
+                <td>${firstTrade.closeDate || '-'}</td>
+                <td>${firstTrade.symbol || '-'}</td>
+                <td>${firstTrade.position || '-'}</td>
+                <td>${firstTrade.buyQuantity || 0}</td>
+                <td>${firstTrade.sellQuantity || 0}</td>
+                <td>${firstTrade.buyPrice || '-'}</td>
+                <td>${firstTrade.sellPrice || '-'}</td>
+                <td>${firstTrade.tags ? firstTrade.tags.join(', ') : '-'}</td>
+                <td>
+                  <button class="btn btn-link btn-sm text-info" data-group-id="${groupId}" data-bs-toggle="modal" data-bs-target="#groupModal">
+                    <i class="fa-solid fa-link"></i>
+                  </button>
                 </td>
               </tr>
             `;
-
-            group.forEach((trade, index) => {
-              tableBody += `
-                <tr>
-                  ${index === 0 ? `<td rowspan="${groupRowSpan}">${firstTrade.openDate || '-'}</td>` : ''}
-                  ${index === 0 ? `<td rowspan="${groupRowSpan}">${firstTrade.closeDate || '-'}</td>` : ''}
-                  <td>${trade.symbol || '-'}</td>
-                  <td>${trade.position || '-'}</td>
-                  <td>${trade.buyQuantity || 0}</td>
-                  <td>${trade.sellQuantity || 0}</td>
-                  <td>${trade.buyPrice || '-'}</td>
-                  <td>${trade.sellPrice || '-'}</td>
-                  <td>${trade.tags ? trade.tags.join(', ') : '-'}</td>
-                  <td>
-                    <button class="btn btn-info btn-sm">Edit</button>
-                  </td>
-                </tr>
-              `;
-            });
           });
 
           $('#tradeHistoryTableBody').html(tableBody);
+
+          // Attach click event to group link buttons
+          $('.btn-link').on('click', function () {
+            const groupId = $(this).data('group-id');
+            displayGroupDetails(groupedTrades[groupId]);
+          });
         } else {
           alert('Failed to fetch trade history: ' + response.message);
         }
@@ -59,6 +58,25 @@ $(document).ready(function () {
         alert('An error occurred while fetching trade history.');
       },
     });
+  }
+
+  function displayGroupDetails(group) {
+    let groupDetails = `<ul class="list-group">`;
+    group.forEach((trade) => {
+      groupDetails += `
+        <li class="list-group-item">
+          <strong>Symbol:</strong> ${trade.symbol || '-'} |
+          <strong>Position:</strong> ${trade.position || '-'} |
+          <strong>Buy Qty:</strong> ${trade.buyQuantity || 0} |
+          <strong>Sell Qty:</strong> ${trade.sellQuantity || 0} |
+          <strong>Buy Price:</strong> ${trade.buyPrice || '-'} |
+          <strong>Sell Price:</strong> ${trade.sellPrice || '-'} |
+          <strong>Tags:</strong> ${trade.tags ? trade.tags.join(', ') : '-'}
+        </li>
+      `;
+    });
+    groupDetails += `</ul>`;
+    $('#groupDetails').html(groupDetails);
   }
 
   fetchTradeHistory();
