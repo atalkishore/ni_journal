@@ -7,5 +7,6 @@ export * from './instamojo.js';
 export * from './logRepository.js';
 export * from './strategyRepository.js';
 export * from './tickerRepository.js';
+export * from './tradeHistoryRepository.js';
 export * from './tradeRepository.js';
 export * from './userRepository.js';
