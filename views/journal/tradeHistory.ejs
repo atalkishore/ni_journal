@@ -7,28 +7,31 @@
         <div class="table-responsive">
           <table class="table align-middle rounded">
             <thead class="table-info text-center">
-                <tr>
-                  <th class="fw-bold">Open Date</th>
-                  <th class="fw-bold">Close Date</th>
-                  <th class="fw-bold">Symbol</th>
-                  <th class="fw-bold">Position</th>
-                  <th class="fw-bold">Buy Qty</th>
-                  <th class="fw-bold">Sell Qty</th>
-                  <th class="fw-bold">Buy Price</th>
-                  <th class="fw-bold">Sell Price</th>
-                  <th class="fw-bold">Gross</th>
-                  <th class="fw-bold">Commission</th>
-                  <th class="fw-bold">Fees</th>
-                  <th class="fw-bold">Net</th>
-                  <th class="fw-bold">Tags</th>
-                  <th class="fw-bold">Percentage</th>
-                  <th class="fw-bold">Actions</th>
-                </tr>
-              </thead>
-            <tbody id="tradeHistoryTableBody"></tbody>
+              <tr>
+                <th class="fw-bold">Open Date</th>
+                <th class="fw-bold">Close Date</th>
+                <th class="fw-bold">Symbol</th>
+                <th class="fw-bold">Position</th>
+                <th class="fw-bold">Buy Qty</th>
+                <th class="fw-bold">Sell Qty</th>
+                <th class="fw-bold">Buy Price</th>
+                <th class="fw-bold">Sell Price</th>
+                <!-- <th class="fw-bold">Gross</th>
+                <th class="fw-bold">Commission</th>
+                <th class="fw-bold">Fees</th>
+                <th class="fw-bold">Net</th> -->
+                <th class="fw-bold">Tags</th>
+                <!-- <th class="fw-bold">Percentage</th> -->
+                <th class="fw-bold">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tradeHistoryTableBody">
+            </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
   
+
+  <script src="/journal/js/tradeHistory.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
