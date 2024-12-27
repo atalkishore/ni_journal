@@ -5,10 +5,19 @@ const collectionName = 'journal_tradeHistory';
 
 export const tradeHistoryRepository = {
   async addTradeHistory(tradeHistory, userId) {
-    return await baseRepository.insertOne(collectionName, {
-      ...tradeHistory,
-      user_id: toObjectID(userId),
-    });
+    const openGroup = await this.getOpenTradeGroups(tradeHistory.symbol);
+
+    if (openGroup.length > 0) {
+      const groupId = openGroup[0].group_id;
+      tradeHistory.group_id = groupId;
+    } else {
+      tradeHistory.group_id = `GRP-${new Date().getTime()}`;
+    }
+
+    tradeHistory.status = 'Open';
+    tradeHistory.user_id = toObjectID(userId);
+
+    return await baseRepository.insertOne(collectionName, tradeHistory);
   },
 
   async getTradeHistories(userId) {

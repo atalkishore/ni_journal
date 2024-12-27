@@ -82,6 +82,7 @@ router.post(
 
       const userId = req.user._id;
       const trade = req.body;
+
       await tradeRepository.addTrade(
         {
           ...trade,
@@ -90,10 +91,21 @@ router.post(
         userId
       );
 
+      const openGroup = await tradeHistoryRepository.getOpenTradeGroups(
+        trade.symbol
+      );
+
+      let groupId;
+      if (openGroup.length > 0) {
+        groupId = openGroup[0].group_id;
+      } else {
+        groupId = `GRP-${new Date().getTime()}`;
+      }
+
       await tradeHistoryRepository.addTradeHistory(
         {
           ...trade,
-          groupId: null,
+          group_id: groupId,
           openDate: trade.tradeDate,
           status: 'OPEN',
         },
@@ -102,10 +114,9 @@ router.post(
 
       res.sendJsonResponse(
         200,
-        'Trade added successfully to both repositories'
+        'Trade added successfully to both repositories with grouping logic'
       );
     } catch (error) {
-      console.error('Error adding trade:', error);
       res.sendJsonResponse(500, 'Failed to add trade.');
     }
   })
