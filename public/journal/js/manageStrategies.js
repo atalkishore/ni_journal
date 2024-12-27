@@ -115,10 +115,47 @@ $(document).ready(function () {
       success: function () {
         $('#editStrategyModal').modal('hide');
         fetchStrategies();
-        alert('Strategy updated successfully!');
+
+        const toastHtml = `
+          <div class="d-flex position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <div class="toast show align-items-center text-white bg-success border-0" role="alert" data-bs-autohide="true" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  Strategy updated successfully!
+                </div>
+                <button class="btn ms-2 p-0 btn-close-white" type="button" data-bs-dismiss="toast" aria-label="Close">
+                  <span class="uil uil-times fs-1"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        $('body').append(toastHtml);
+        setTimeout(() => {
+          $('.toast').remove();
+        }, 2000);
       },
       error: function () {
-        alert('Failed to update strategy. Please try again.');
+        const toastHtml = `
+          <div class="d-flex position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <div class="toast show align-items-center text-white bg-danger border-0" role="alert" data-bs-autohide="true" aria-live="assertive" aria-atomic="true">
+              <div class="d-flex">
+                <div class="toast-body">
+                  Failed to update strategy. Please try again.
+                </div>
+                <button class="btn ms-2 p-0 btn-close-white" type="button" data-bs-dismiss="toast" aria-label="Close">
+                  <span class="uil uil-times fs-1"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        $('body').append(toastHtml);
+        setTimeout(() => {
+          $('.toast').remove();
+        }, 2000);
       },
     });
   });
