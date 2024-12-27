@@ -9,6 +9,7 @@ import {
 import { LOGGER } from '../config/winston-logger.config.js';
 import { strategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
+import { tradeHistoryRepository } from '../repository/tradeHistoryRepository.js';
 
 const tradeSchema = Joi.object({
   tradeDate: Joi.string().isoDate().required().messages({
@@ -81,7 +82,6 @@ router.post(
 
       const userId = req.user._id;
       const trade = req.body;
-
       await tradeRepository.addTrade(
         {
           ...trade,
@@ -90,9 +90,23 @@ router.post(
         userId
       );
 
-      res.sendJsonResponse(200, 'Trade added successfully');
+      await tradeHistoryRepository.addTradeHistory(
+        {
+          ...trade,
+          groupId: null,
+          openDate: trade.tradeDate,
+          status: 'OPEN',
+        },
+        userId
+      );
+
+      res.sendJsonResponse(
+        200,
+        'Trade added successfully to both repositories'
+      );
     } catch (error) {
-      res.sendJsonResponse(500, 'Failed to add trades.');
+      console.error('Error adding trade:', error);
+      res.sendJsonResponse(500, 'Failed to add trade.');
     }
   })
 );
@@ -145,7 +159,7 @@ router.get('/trades/:tradeid', async (req, res) => {
   }
 });
 
-router.put('/updateTrade/:tradeId', async (req, res) => {
+router.put('/updateTrade/:tradeid', async (req, res) => {
   try {
     const { tradeId } = req.params;
     const updatedData = req.body;
@@ -216,6 +230,73 @@ router.put('/editStrategy/:id', async (req, res) => {
     res.sendJsonResponse(500, 'Failed to update Strategy', {
       error: err.message,
     });
+  }
+});
+
+router.post('/add-trade', async (req, res) => {
+  try {
+    const trade = req.body;
+
+    // Add trade to the execution list
+    const executionResult = await tradeRepository.addTrade(trade);
+
+    if (!executionResult.insertedId) {
+      return res
+        .status(500)
+        .json({ message: 'Failed to add trade to execution list' });
+    }
+
+    // Check for existing groups for the same symbol
+    const existingGroup = await tradeHistoryRepository.getOpenGroupBySymbol(
+      trade.symbol
+    );
+
+    let groupId;
+    if (existingGroup) {
+      // If a group is OPEN, assign its ID and update the group's quantity
+      groupId = existingGroup.groupId;
+
+      const updatedGroupData = {
+        buyQuantity: existingGroup.buyQuantity + trade.quantity,
+        status: 'OPEN', // Keep status open
+      };
+      await tradeHistoryRepository.updateTradeHistory(
+        groupId,
+        updatedGroupData
+      );
+    } else {
+      // If no OPEN group exists, create a new Group ID
+      groupId = new Date().getTime().toString(); // Simple unique ID for demo purposes
+    }
+
+    // Add trade to the trade history
+    const tradeHistoryEntry = {
+      openDate: new Date(),
+      closeDate: null, // Will remain null until all trades in the group are sold
+      symbol: trade.symbol,
+      position: trade.position,
+      buyQuantity: trade.quantity,
+      sellQuantity: 0, // Default value until sold
+      buyPrice: trade.price,
+      sellPrice: null, // Will remain null until sold
+      tags: trade.tags || [],
+      groupId, // Assign the determined Group ID
+      status: 'OPEN', // Default status
+    };
+
+    const tradeHistoryResult =
+      await tradeHistoryRepository.addTradeHistory(tradeHistoryEntry);
+
+    res.status(201).json({
+      message:
+        'Trade added successfully to both execution list and trade history',
+      executionId: executionResult.insertedId,
+      tradeHistoryId: tradeHistoryResult.insertedId,
+      groupId,
+    });
+  } catch (error) {
+    console.error('Error adding trade:', error);
+    res.status(500).json({ message: 'Failed to add trade', error });
   }
 });
 
