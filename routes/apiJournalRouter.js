@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Joi from 'joi';
+
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import {
@@ -8,8 +9,8 @@ import {
 } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
 import { strategyRepository } from '../repository/strategyRepository.js';
-import { tradeRepository } from '../repository/tradeRepository.js';
 import { tradeHistoryRepository } from '../repository/tradeHistoryRepository.js';
+import { tradeRepository } from '../repository/tradeRepository.js';
 
 const tradeSchema = Joi.object({
   tradeDate: Joi.string().isoDate().required().messages({
@@ -186,19 +187,6 @@ router.put('/updateTrade/:tradeid', async (req, res) => {
     res.sendJsonResponse(500, 'Failed to update trade');
   }
 });
-
-router.get(
-  '/strategies',
-  AuthenticationMiddleware.ensureLoggedInApi(),
-  async (req, res) => {
-    try {
-      const strategies = await strategyRepository.getAllStrategies();
-      res.json(strategies);
-    } catch (error) {
-      res.status(500).send('Failed to fetch strategies');
-    }
-  }
-);
 
 router.post('/addStrategy', async (req, res) => {
   const { name } = req.body;

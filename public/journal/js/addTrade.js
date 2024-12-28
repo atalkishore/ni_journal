@@ -121,7 +121,7 @@ function showToast(message, color) {
 
 function loadStrategies() {
   $.ajax({
-    url: '/journal/api/strategies',
+    url: '/journal/api/strategy',
     type: 'GET',
     success: function (strategies) {
       const strategiesDropdown = $('#strategies');

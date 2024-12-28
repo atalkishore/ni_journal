@@ -3,11 +3,11 @@ import createError from 'http-errors';
 import { ENVNAME } from './env.constant.js';
 
 function config(app) {
-  if (ENVNAME !== 'prod') {
-    return;
-  }
+  // if (ENVNAME !== 'prod') {
+  //   return;
+  // }
 
-  app.use((err, req, res) => {
+  app.use((err, req, res, next) => {
     res.locals.message = err.message;
     req.logger.error(err.message);
     res.locals.error = {};
@@ -16,9 +16,11 @@ function config(app) {
         ? { stack: err.stack, message: err.message }
         : { message: 'oops! something went wrong' }), // Include stack trace only in non-production environments
     };
-    if (req.originalUrl.startsWith('/api')) {
+    if (req.originalUrl.startsWith('/journal/api')) {
       // API-specific error response
       return res.status(err.status || 500).json({
+        status: 'error',
+        message: 'Error encountered',
         error: errorResponse,
       });
     }

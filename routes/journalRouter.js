@@ -44,7 +44,7 @@ router.get(
 router.get(
   '/add-trade',
   AuthenticationMiddleware.ensureLoggedIn(),
-  async (req, res) => {
+  asyncMiddleware(async (req, res) => {
     res.render('journal/addTrade', {
       menu: 'Journal',
       currentPath: '/journal/addTrade',
@@ -53,7 +53,7 @@ router.get(
       keywords: 'add trade, investments, stock journal, nifty invest',
       CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
     });
-  }
+  })
 );
 
 // get- localhost:5110/journal/trades/11111
