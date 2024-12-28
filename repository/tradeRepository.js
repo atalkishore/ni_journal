@@ -1,20 +1,20 @@
 import { baseRepository, connect } from './baseMongoDbRepository.js';
 import { toObjectID } from '../utils/helpers.js';
 
-const collectionName = '1_journal_trades';
+const collectionName = 'journal_trades';
 
 export const tradeRepository = {
   async addTrade(trade, userId) {
     return await baseRepository.insertOne(collectionName, {
       ...trade,
-      user_id: toObjectID(userId),
+      userId: toObjectID(userId),
     });
   },
 
   async getTrades(userId, filters) {
     return await baseRepository.find(collectionName, {
       status: 'Active',
-      user_id: toObjectID(userId),
+      userId: toObjectID(userId),
       ...filters,
     });
   },
@@ -22,7 +22,7 @@ export const tradeRepository = {
   async getTradeById(id, userId) {
     return await baseRepository.findOneById(collectionName, {
       _id: toObjectID(id),
-      user_id: toObjectID(userId),
+      userId: toObjectID(userId),
     });
   },
 
@@ -38,7 +38,7 @@ export const tradeRepository = {
     });
   },
   async getTradesBySymbolSinceDate(symbol, userId, startDate = null) {
-    const filter = { status: 'Active', symbol, user_id: toObjectID(userId) };
+    const filter = { status: 'Active', symbol, userId: toObjectID(userId) };
     if (startDate) {
       filter.tradeDate = { $gte: startDate };
     }

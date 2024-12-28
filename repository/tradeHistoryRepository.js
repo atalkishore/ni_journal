@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { baseRepository, connect } from './baseMongoDbRepository.js';
 import { toObjectID } from '../utils/helpers.js';
 
-const collectionName = '1_journal_tradeHistory';
+const collectionName = 'journal_tradeHistory';
 
 class TradeHistoryRepository {
   static async getTradeHistoryByGroupId(groupId) {
