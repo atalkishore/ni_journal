@@ -78,7 +78,7 @@ function submitTrade() {
   };
 
   $.ajax({
-    url: '/journal/api/addTrade',
+    url: '/journal/api/trades',
     type: 'POST',
     contentType: 'application/json',
     data: JSON.stringify(tradeData),
@@ -125,7 +125,7 @@ function loadStrategies() {
     type: 'GET',
     success: function (strategies) {
       const strategiesDropdown = $('#strategies');
-      strategies.forEach((strategy) => {
+      strategies?.data.forEach((strategy) => {
         const option = `<option value="${strategy.name}">${strategy.name}</option>`;
         strategiesDropdown.append(option);
       });

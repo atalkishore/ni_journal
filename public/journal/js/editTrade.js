@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
 
       try {
-        const response = await fetch(`/journal/api/updateTrade/${tradeId}`, {
+        const response = await fetch(`/journal/api/trades/${tradeId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedTrade),

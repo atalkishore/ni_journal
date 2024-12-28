@@ -1,74 +1,83 @@
-import { baseRepository } from './baseMongoDbRepository.js';
+import moment from 'moment-timezone';
+import { nanoid } from 'nanoid';
+
+import { baseRepository, connect } from './baseMongoDbRepository.js';
 import { toObjectID } from '../utils/helpers.js';
 
-const collectionName = 'journal_tradeHistory';
+const collectionName = '1_journal_tradeHistory';
 
-export const tradeHistoryRepository = {
-  async addTradeHistory(tradeHistory, userId) {
-    const openGroup = await this.getOpenTradeGroups(tradeHistory.symbol);
-
-    if (openGroup.length > 0) {
-      const groupId = openGroup[0].group_id;
-      tradeHistory.group_id = groupId;
-    } else {
-      tradeHistory.group_id = `GRP-${new Date().getTime()}`;
-    }
-
-    tradeHistory.status = 'Open';
-    tradeHistory.user_id = toObjectID(userId);
-
-    return await baseRepository.insertOne(collectionName, tradeHistory);
-  },
-
-  async getTradeHistories(userId) {
-    return await baseRepository.find(collectionName, {
-      status: { $ne: 'Deleted' },
-      user_id: toObjectID(userId),
-    });
-  },
-
-  async getTradeHistoryById(id) {
-    return await baseRepository.findOneById(collectionName, id);
-  },
-
-  async updateTradeHistory(id, updateData) {
-    return await baseRepository.updateOneById(collectionName, id, updateData, {
-      new: true,
-    });
-  },
-
-  async deleteTradeHistory(id) {
-    return await baseRepository.updateOneById(collectionName, id, {
-      status: 'Deleted',
-    });
-  },
-
-  async closeTradeGroup(groupId) {
-    return await baseRepository.updateMany(
+class TradeHistoryRepository {
+  static async getTradeHistoryByGroupId(groupId) {
+    return await baseRepository.findOne(collectionName, { groupId });
+  }
+  static async markGroupAsDeleted(groupId) {
+    await baseRepository.updateOne(
       collectionName,
+      { groupId },
       {
-        group_id: groupId,
-      },
-      {
-        status: 'Closed',
-        close_date: new Date(),
+        status: 'DELETED',
+        expires_at: moment().utcOffset(330).add(7, 'days').toDate(),
       }
     );
-  },
-
-  async getOpenTradeGroups(symbol) {
+  }
+  static async getGroupTrades(userId) {
     return await baseRepository.find(collectionName, {
-      symbol: symbol,
-      status: 'Open',
+      status: { $ne: 'DELETED' },
+      userId: toObjectID(userId),
     });
-  },
+  }
 
-  async addOrUpdateTradeGroup(groupId, tradeData) {
-    return await baseRepository.updateOne(
-      collectionName,
-      { group_id: groupId },
-      { $push: { trades: tradeData } },
-      { upsert: true }
-    );
-  },
-};
+  static async createGroup(
+    userId,
+    symbol,
+    trades,
+    buyQty,
+    sellQty,
+    buyAvg,
+    sellAvg,
+    isOpen = true
+  ) {
+    const groupId = nanoid();
+    const group = {
+      groupId,
+      userId: toObjectID(userId),
+      symbol,
+      startDate: trades[0].tradeDate,
+      endDate: trades[trades.length - 1].tradeDate,
+      position: trades[0].position,
+      buyQty,
+      sellQty,
+      buyAvg,
+      sellAvg,
+      trades: trades.map((t) => t._id),
+      isOpen,
+      status: 'ACTIVE',
+    };
+    await baseRepository.insertOne(collectionName, group);
+    return groupId;
+  }
+
+  static async findFirstAffectedGroupBySymbol(symbol, userId, tradeDate) {
+    try {
+      const db = await connect();
+      // Find the first group where the trade date affects its start or end date
+      const affectedGroup = await db.collection(collectionName).findOne({
+        symbol,
+        userId: toObjectID(userId),
+        status: 'ACTIVE',
+        $or: [
+          { startDate: { $lte: tradeDate }, endDate: { $gte: tradeDate } }, // Trade date is within group
+          { startDate: { $gte: tradeDate }, endDate: { $lte: tradeDate } }, // Trade modifies start/end date
+        ],
+      });
+      // .sort({ startDate: 1 }); // Sort to get the first group based on startDate
+
+      return affectedGroup;
+    } catch (error) {
+      // console.error('Error finding affected group:', error);
+      throw new Error('Failed to find affected group');
+    }
+  }
+}
+
+export { TradeHistoryRepository };

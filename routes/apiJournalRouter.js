@@ -3,14 +3,10 @@ import Joi from 'joi';
 
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
-import {
-  AuthenticationMiddleware as auth,
-  AuthenticationMiddleware,
-} from '../config/ensureUserRole.config.js';
+import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
-import { strategyRepository } from '../repository/strategyRepository.js';
-import { tradeHistoryRepository } from '../repository/tradeHistoryRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
+import { TradingJournalService } from '../service/tradeGroupService.js';
 
 const tradeSchema = Joi.object({
   tradeDate: Joi.string().isoDate().required().messages({
@@ -67,11 +63,13 @@ const tradeSchema = Joi.object({
 
 // post- localhost:5110/api/journal/addTrade
 router.post(
-  '/addTrade',
+  '/trades',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     try {
-      const { error } = tradeSchema.validate(req.body, { abortEarly: false });
+      const userId = req.user._id;
+      const trade = req.body;
+      const { error } = tradeSchema.validate(trade, { abortEarly: false });
 
       if (error) {
         return res.status(400).json({
@@ -81,55 +79,50 @@ router.post(
         });
       }
 
-      const userId = req.user._id;
-      const trade = req.body;
+      await TradingJournalService.addTrade(trade, userId);
 
-      await tradeRepository.addTrade(
-        {
-          ...trade,
-          status: 'Active',
-        },
-        userId
-      );
-
-      const openGroup = await tradeHistoryRepository.getOpenTradeGroups(
-        trade.symbol
-      );
-
-      let groupId;
-      if (openGroup.length > 0) {
-        groupId = openGroup[0].group_id;
-      } else {
-        groupId = `GRP-${new Date().getTime()}`;
-      }
-
-      await tradeHistoryRepository.addTradeHistory(
-        {
-          ...trade,
-          group_id: groupId,
-          openDate: trade.tradeDate,
-          status: 'OPEN',
-        },
-        userId
-      );
-
-      res.sendJsonResponse(
-        200,
-        'Trade added successfully to both repositories with grouping logic'
-      );
+      res.sendJsonResponse(200, 'Trade added successfully');
     } catch (error) {
-      res.sendJsonResponse(500, 'Failed to add trade.');
+      LOGGER.info(error);
+      throw error;
+      // res.sendJsonResponse(500, 'Failed to add trade.');
     }
   })
 );
-// localhost:5110/api/journal/trades
+
+function extractFilters(query) {
+  const { symbol, startDate, endDate, position, status, groupId } = query;
+
+  const filters = {};
+  if (symbol) {
+    filters.symbol = symbol;
+  }
+  if (startDate) {
+    filters.startDate = new Date(startDate);
+  }
+  if (endDate) {
+    filters.endDate = new Date(endDate);
+  }
+  if (position) {
+    filters.position = position;
+  } // e.g., 'Buy' or 'Sell'
+  if (status) {
+    filters.status = status;
+  } // e.g., 'Active', 'Closed'
+  if (groupId) {
+    filters.groupId = groupId;
+  }
+
+  return filters;
+}
 router.get(
   '/trades',
   AuthenticationMiddleware.ensureLoggedInApi(),
   async (req, res) => {
     try {
       const userId = req.user._id;
-      const trades = await tradeRepository.getTrades(userId);
+      const filters = extractFilters(req.query);
+      const trades = await tradeRepository.getTrades(userId, filters);
       res.sendJsonResponse(200, 'Trade fetched successfully', trades);
     } catch (error) {
       res.sendJsonResponse(500, 'Failed to fetch trades.');
@@ -171,134 +164,28 @@ router.get('/trades/:tradeid', async (req, res) => {
   }
 });
 
-router.put('/updateTrade/:tradeid', async (req, res) => {
-  try {
-    const { tradeId } = req.params;
-    const updatedData = req.body;
+router.put('/trades/:tradeid', async (req, res) => {
+  const userId = req.user._id;
+  const { tradeId } = req.params;
+  const updatedData = req.body;
+  const { error } = tradeSchema.validate(updatedData, { abortEarly: false });
 
-    const result = await tradeRepository.updateTrade(tradeId, updatedData);
-
-    if (result.modifiedCount === 0) {
-      res.sendJsonResponse(400, 'Trade not found or no changes applied');
-    }
-    res.sendJsonResponse(200, 'Trade fetched successfully');
-  } catch (error) {
-    LOGGER.error('Error updating trade:', error);
-    res.sendJsonResponse(500, 'Failed to update trade');
-  }
-});
-
-router.post('/addStrategy', async (req, res) => {
-  const { name } = req.body;
-  if (!name) {
-    res.sendJsonResponse(404, 'Strategy name is required');
-  }
-
-  try {
-    const newStrategy = {
-      name,
-      createdAt: new Date(),
-    };
-    await strategyRepository.addStrategy(newStrategy);
-    res.sendJsonResponse(200, 'Strategy added successfully');
-  } catch (error) {
-    res.sendJsonResponse(500, 'Failed to add strategy successfully');
-  }
-});
-
-// res.sendJsonResponse(200, 'Trade deleted successfully');
-
-router.put('/editStrategy/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  if (!name) {
-    res.sendJsonResponse(404, 'Strategy name is required');
-  }
-
-  try {
-    const updatedStrategy = await strategyRepository.updateStrategy(id, {
-      name,
-      updatedAt: new Date(),
-    });
-    if (!updatedStrategy) {
-      res.sendJsonResponse(404, 'Strategy not found');
-    }
-    res.status(200).json(updatedStrategy);
-  } catch (err) {
-    res.sendJsonResponse(500, 'Failed to update Strategy', {
-      error: err.message,
+  if (error) {
+    return res.sendJsonResponse(400, 'Validation errors', {
+      errors: error.details.map((err) => err.message),
     });
   }
-});
-
-router.post('/add-trade', async (req, res) => {
-  try {
-    const trade = req.body;
-
-    // Add trade to the execution list
-    const executionResult = await tradeRepository.addTrade(trade);
-
-    if (!executionResult.insertedId) {
-      return res
-        .status(500)
-        .json({ message: 'Failed to add trade to execution list' });
-    }
-
-    // Check for existing groups for the same symbol
-    const existingGroup = await tradeHistoryRepository.getOpenGroupBySymbol(
-      trade.symbol
-    );
-
-    let groupId;
-    if (existingGroup) {
-      // If a group is OPEN, assign its ID and update the group's quantity
-      groupId = existingGroup.groupId;
-
-      const updatedGroupData = {
-        buyQuantity: existingGroup.buyQuantity + trade.quantity,
-        status: 'OPEN', // Keep status open
-      };
-      await tradeHistoryRepository.updateTradeHistory(
-        groupId,
-        updatedGroupData
-      );
-    } else {
-      // If no OPEN group exists, create a new Group ID
-      groupId = new Date().getTime().toString(); // Simple unique ID for demo purposes
-    }
-
-    // Add trade to the trade history
-    const tradeHistoryEntry = {
-      openDate: new Date(),
-      closeDate: null, // Will remain null until all trades in the group are sold
-      symbol: trade.symbol,
-      position: trade.position,
-      buyQuantity: trade.quantity,
-      sellQuantity: 0, // Default value until sold
-      buyPrice: trade.price,
-      sellPrice: null, // Will remain null until sold
-      tags: trade.tags || [],
-      groupId, // Assign the determined Group ID
-      status: 'OPEN', // Default status
-    };
-
-    const tradeHistoryResult =
-      await tradeHistoryRepository.addTradeHistory(tradeHistoryEntry);
-
-    res.status(201).json({
-      message:
-        'Trade added successfully to both execution list and trade history',
-      executionId: executionResult.insertedId,
-      tradeHistoryId: tradeHistoryResult.insertedId,
-      groupId,
-    });
-  } catch (error) {
-    console.error('Error adding trade:', error);
-    res.status(500).json({ message: 'Failed to add trade', error });
+  const existingTrade = await TradingJournalService.getTrade(tradeId, userId);
+  if (!existingTrade) {
+    res.sendJsonResponse(400, 'Trade not found or no changes applied');
   }
+  await TradingJournalService.editTrade(
+    tradeId,
+    existingTrade,
+    updatedData,
+    userId
+  );
+  res.sendJsonResponse(200, 'Trade fetched successfully');
 });
-
-// res.sendJsonResponse(200, 'Trade deleted successfully');
 
 export default router;

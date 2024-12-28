@@ -1,59 +1,63 @@
 <div class="container-fluid">
-    <div class="card">
-      <div class="card-header p-2 m-0 bg-info-100 text-white d-flex justify-content-between align-items-center">
-        <h1 class="fw-bold mb-0 fs-0">Trading History</h1>
+  <div class="card">
+    <div class="card-header p-2 m-0 bg-info-100 text-white d-flex justify-content-between align-items-center">
+      <h1 class="fw-bold mb-0 fs-0">Trading History</h1>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle rounded">
+          <thead class="table-info text-center">
+            <tr class="text-start">
+              <th class="fw-bold">Open Date</th>
+              <th class="fw-bold">Close Date</th>
+              <th class="fw-bold">Symbol</th>
+              <th class="fw-bold">Position</th>
+              <th class="fw-bold">Buy Qty</th>
+              <th class="fw-bold">Sell Qty</th>
+              <th class="fw-bold">Buy Price</th>
+              <th class="fw-bold">Sell Price</th>
+              <th class="fw-bold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tradeHistoryTableBody">
+          </tbody>
+        </table>
       </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table align-middle rounded">
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="groupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" style="max-width: 80%; height: 80%;">
+    <div class="modal-content" style="height: 100%; overflow-y: auto;">
+      <div class="modal-header">
+        <h5 class="modal-title">Group Details</h5>
+        <button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-solid fa-xmark fs--1"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="groupDetails">
+          <table class="table table-sm fs--1 mb-0 table-bordered table-hover align-middle">
             <thead class="table-info text-center">
-              <tr>
-                <th class="fw-bold">Open Date</th>
-                <th class="fw-bold">Close Date</th>
-                <th class="fw-bold">Symbol</th>
+              <tr class="text-start">
+                <th class="fw-bold">Date and Time</th>
+                <th class="fw-bold">Quantity</th>
                 <th class="fw-bold">Position</th>
-                <th class="fw-bold">Buy Qty</th>
-                <th class="fw-bold">Sell Qty</th>
-                <th class="fw-bold">Buy Price</th>
-                <th class="fw-bold">Sell Price</th>
-                <th class="fw-bold">Tags</th>
-                <th class="fw-bold">Actions</th>
+                <th class="fw-bold">Price</th>
               </tr>
             </thead>
-            <tbody id="tradeHistoryTableBody">
-            </tbody>
+            <tbody id="tradeTable"></tbody>
           </table>
         </div>
       </div>
-    </div>
-  </div>
-  
-  <div class="modal fade" id="groupModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 80%; height: 80%;">
-      <div class="modal-content" style="height: 100%; overflow-y: auto;">
-        <div class="modal-header">
-          <h5 class="modal-title">Group Details</h5>
-          <button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close">
-            <i class="fa-solid fa-xmark fs--1"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div id="groupDetails"></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" type="button">Edit</button>
-          <button class="btn btn-outline-primary" type="button" data-bs-dismiss="modal">Close</button>
-        </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button">Edit</button>
+        <button class="btn btn-outline-primary" type="button" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-      
-
-  <script src="/journal/js/tradeHistory.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
+</div>
 
 
-  <!-- <th class="fw-bold">Gross</th>
-                <th class="fw-bold">Commission</th>
-                <th class="fw-bold">Fees</th>
-                <th class="fw-bold">Net</th> -->
-                                <!-- <th class="fw-bold">Percentage</th> -->
+<script src="/journal/js/tradeHistory.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
