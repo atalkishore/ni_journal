@@ -3,9 +3,9 @@ import createError from 'http-errors';
 import { ENVNAME } from './env.constant.js';
 
 function config(app) {
-  // if (ENVNAME !== 'prod') {
-  //   return;
-  // }
+  if (ENVNAME !== 'prod') {
+    return;
+  }
 
   app.use((err, req, res, next) => {
     res.locals.message = err.message;

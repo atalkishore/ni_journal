@@ -1,24 +1,27 @@
 import { Router } from 'express';
 
-const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
+const router = Router();
 import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
-import { strategyRepository } from '../repository/strategyRepository.js';
+import { StrategyRepository } from '../repository/strategyRepository.js';
 
 router.get(
   '/',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
-    const strategies = await strategyRepository.getAllStrategies();
+    const userId = req.user._id;
+    const strategies = await StrategyRepository.getAllStrategies(userId);
     res.sendJsonResponse(200, 'Success', strategies);
   })
 );
 
 router.post(
-  '/add',
+  '/',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     const { name } = req.body;
+    const userId = req.user._id;
+
     if (!name) {
       res.sendJsonResponse(404, 'Strategy name is required');
     }
@@ -27,28 +30,31 @@ router.post(
       name,
       createdAt: new Date(),
     };
-    await strategyRepository.addStrategy(newStrategy);
+    await StrategyRepository.addStrategy(userId, newStrategy);
     res.sendJsonResponse(200, 'Strategy added successfully');
   })
 );
 
-// res.sendJsonResponse(200, 'Trade deleted successfully');
-
 router.put(
-  '/edit/:id',
+  '/:id',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
+    const userId = req.user._id;
 
     if (!name) {
       res.sendJsonResponse(404, 'Strategy name is required');
     }
 
-    const updatedStrategy = await strategyRepository.updateStrategy(id, {
-      name,
-      updatedAt: new Date(),
-    });
+    const updatedStrategy = await StrategyRepository.updateStrategy(
+      id,
+      userId,
+      {
+        name,
+        updatedAt: new Date(),
+      }
+    );
     if (!updatedStrategy) {
       res.sendJsonResponse(404, 'Strategy not found');
     }

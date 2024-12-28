@@ -4,7 +4,7 @@ const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
-import { seoHeadTagValues, PAGE_NAME } from '../utils/index.js';
+import { seoHeadTagValues, PAGE_NAME, redirectTo404 } from '../utils/index.js';
 
 router.get(
   '/',
@@ -61,14 +61,12 @@ router.get(
   '/trades/:tradeid/edit',
   AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
-    const tradeId = req.params.tradeid?.toLowerCase();
-    const tradeDetails = await tradeRepository.getTradeById(tradeId);
+    const tradeId = req.params.tradeid;
+    const userId = req.user._id;
+
+    const tradeDetails = await tradeRepository.getTradeById(tradeId, userId);
     if (!tradeDetails) {
-      return res.status(404).render('error', {
-        status: 'Failure',
-        message: 'Trade not found.',
-        data: null,
-      });
+      return redirectTo404(res);
     }
 
     return res.render('journal/editTrade', {

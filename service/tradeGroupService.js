@@ -8,7 +8,7 @@ class TradingJournalService {
   }
 
   static async getTrade(tradeId, userId) {
-    const existingTrade = await tradeRepository.getTradeById(tradeId);
+    const existingTrade = await tradeRepository.getTradeById(tradeId, userId);
 
     return existingTrade;
   }

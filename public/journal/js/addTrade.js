@@ -76,7 +76,6 @@ function submitTrade() {
       })
       .get(),
   };
-
   $.ajax({
     url: '/journal/api/trades',
     type: 'POST',

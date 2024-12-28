@@ -58,7 +58,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-          url: '/journal/api/strategy/add',
+          url: '/journal/api/strategy',
           type: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({ name: strategyName }),
@@ -108,7 +108,7 @@ $(document).ready(function () {
     const strategyName = $('#editStrategyName').val();
 
     $.ajax({
-      url: `/journal/api/strategy/edit/${strategyId}`,
+      url: `/journal/api/strategy/${strategyId}`,
       type: 'PUT',
       contentType: 'application/json',
       data: JSON.stringify({ name: strategyName }),

@@ -20,7 +20,7 @@ export const tradeRepository = {
   },
 
   async getTradeById(id, userId) {
-    return await baseRepository.findOneById(collectionName, {
+    return await baseRepository.findOne(collectionName, {
       _id: toObjectID(id),
       userId: toObjectID(userId),
     });
