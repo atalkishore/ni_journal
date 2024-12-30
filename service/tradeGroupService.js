@@ -56,12 +56,14 @@ class TradingJournalService {
         trade.position === 'Buy' ? trade.quantity : -trade.quantity;
       currentGroup.push(trade);
 
+      if (trade.groupId) {
+        orphanedGroups.add(trade.groupId);
+      }
+
       if (cumulativeQty === 0) {
         // Create a closed group
         await this._processGroup(currentGroup, symbol, userId, false); // Group is now closed
         currentGroup = [];
-      } else if (trade.groupId) {
-        orphanedGroups.add(trade.groupId);
       }
     }
 
@@ -91,8 +93,8 @@ class TradingJournalService {
       }
     }
 
-    const buyAvg = buyQty ? buyTotal / buyQty : 0;
-    const sellAvg = sellQty ? sellTotal / sellQty : 0;
+    const buyAvg = (buyQty ? buyTotal / buyQty : 0)?.toFixed(2);
+    const sellAvg = (sellQty ? sellTotal / sellQty : 0)?.toFixed(2);
 
     if (isOpen) {
       const initialPosition = groupTrades[0]?.position;
