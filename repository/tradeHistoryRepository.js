@@ -21,10 +21,14 @@ class TradeHistoryRepository {
     );
   }
   static async getGroupTrades(userId) {
-    return await baseRepository.find(collectionName, {
-      status: { $ne: 'DELETED' },
-      userId: toObjectID(userId),
-    });
+    return await baseRepository.find(
+      collectionName,
+      {
+        status: { $ne: 'DELETED' },
+        userId: toObjectID(userId),
+      },
+      { sort: { endDate: -1 } } // Sort by endDate in ascending order (1 for ascending, -1 for descending)
+    );
   }
 
   static async createGroup(

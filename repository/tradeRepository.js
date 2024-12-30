@@ -12,11 +12,15 @@ export const tradeRepository = {
   },
 
   async getTrades(userId, filters) {
-    return await baseRepository.find(collectionName, {
-      status: 'Active',
-      userId: toObjectID(userId),
-      ...filters,
-    });
+    return await baseRepository.find(
+      collectionName,
+      {
+        status: 'Active',
+        userId: toObjectID(userId),
+        ...filters,
+      },
+      { sort: { tradeDate: -1 } }
+    );
   },
 
   async getTradeById(id, userId) {
