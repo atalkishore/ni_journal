@@ -1,14 +1,20 @@
-const tradeId = '<%= tradeId %>';
 let tradeToDeleteId = null;
+let currentPage = 1;
+let totalPages = 0;
 
-function fetchTrades() {
+function fetchTrades(page = 1) {
   $.ajax({
-    url: '/journal/api/trades',
+    url: `/journal/api/trades?page=${page}&limit=4`,
     type: 'GET',
-    // defaultLoader: false
-    success: function (trades) {
+    success: function (response) {
+      const {
+        data: trades,
+        currentPage: currPage,
+        totalPages: total,
+      } = response;
       const tableBody = $('#tradeTable');
       tableBody.empty();
+      totalPages = total;
 
       if (trades.length === 0) {
         tableBody.append(
@@ -17,10 +23,12 @@ function fetchTrades() {
         return;
       }
 
-      trades.data.forEach((trade) => {
+      trades.forEach((trade) => {
         const row = `
           <tr>
-            <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
+            <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(
+              trade.tradeDate
+            ).toLocaleTimeString()}</td>
             <td>${trade.instrument}</td>
             <td>${trade.symbol}</td>
             <td>${trade.quantity}</td>
@@ -31,16 +39,24 @@ function fetchTrades() {
             <td>${trade.strategy || '-'}</td>
             <td>${trade.tradeNotes || '-'}</td>
             <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm delete-trade me-1" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
+              <button class="btn btn-outline-danger btn-sm delete-trade" data-id="${
+                trade._id
+              }" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
                 <i class="fa-solid fa-trash"></i>
               </button>
-              <button class="btn btn-outline-info btn-sm details-trade me-1" data-id="${trade._id}">
+              <button class="btn btn-outline-info btn-sm details-trade" data-id="${
+                trade._id
+              }">
                 <i class="fa-solid fa-circle-info"></i>
               </button>
-              <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
+              <button class="btn btn-outline-warning btn-sm edit-trade" data-id="${
+                trade._id
+              }">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
-              <button class="btn btn-outline-primary btn-sm link-trade me-1" data-id="${trade._id}">
+              <button class="btn btn-outline-primary btn-sm link-trade" data-id="${
+                trade._id
+              }">
                 <i class="uil uil-link-h"></i>
               </button>
             </td>
@@ -48,12 +64,54 @@ function fetchTrades() {
         tableBody.append(row);
       });
 
+      updatePagination(currPage, totalPages);
       attachEventHandlers();
     },
-    error: function (xhr, status, error) {
-      console.error('Error fetching trades:', error);
+    error: function () {
       alert('Failed to fetch trades. Please try again later.');
     },
+  });
+}
+
+function updatePagination(currentPage, totalPages) {
+  const pagination = $('.pagination');
+  pagination.empty();
+
+  const prevDisabled = currentPage === 1 ? 'disabled' : '';
+  const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+
+  pagination.append(`
+    <li class="page-item ${prevDisabled}">
+      <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+    </li>
+  `);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const active = i === currentPage ? 'active' : '';
+    pagination.append(`
+      <li class="page-item ${active}">
+        <a class="page-link" href="#" data-page="${i}">${i}</a>
+      </li>
+    `);
+  }
+
+  pagination.append(`
+    <li class="page-item ${nextDisabled}">
+      <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+    </li>
+  `);
+
+  attachPaginationHandlers();
+}
+
+function attachPaginationHandlers() {
+  $('.pagination .page-link').on('click', function (e) {
+    e.preventDefault();
+    const page = parseInt($(this).data('page'));
+    if (page && page > 0 && page <= totalPages) {
+      currentPage = page;
+      fetchTrades(currentPage);
+    }
   });
 }
 
