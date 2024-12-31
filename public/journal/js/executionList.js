@@ -1,20 +1,16 @@
+const tradeId = '<%= tradeId %>';
 let tradeToDeleteId = null;
 let currentPage = 1;
-let totalPages = 0;
+const pageSize = 4;
 
 function fetchTrades(page = 1) {
   $.ajax({
-    url: `/journal/api/trades?page=${page}&limit=4`,
+    url: `/journal/api/trades?page=${page}&pageSize=${pageSize}`,
     type: 'GET',
     success: function (response) {
-      const {
-        data: trades,
-        currentPage: currPage,
-        totalPages: total,
-      } = response;
+      const { trades, total } = response;
       const tableBody = $('#tradeTable');
       tableBody.empty();
-      totalPages = total;
 
       if (trades.length === 0) {
         tableBody.append(
@@ -26,9 +22,7 @@ function fetchTrades(page = 1) {
       trades.forEach((trade) => {
         const row = `
           <tr>
-            <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(
-              trade.tradeDate
-            ).toLocaleTimeString()}</td>
+            <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
             <td>${trade.instrument}</td>
             <td>${trade.symbol}</td>
             <td>${trade.quantity}</td>
@@ -39,24 +33,16 @@ function fetchTrades(page = 1) {
             <td>${trade.strategy || '-'}</td>
             <td>${trade.tradeNotes || '-'}</td>
             <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm delete-trade" data-id="${
-                trade._id
-              }" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
+              <button class="btn btn-outline-danger btn-sm delete-trade me-1" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
                 <i class="fa-solid fa-trash"></i>
               </button>
-              <button class="btn btn-outline-info btn-sm details-trade" data-id="${
-                trade._id
-              }">
+              <button class="btn btn-outline-info btn-sm details-trade me-1" data-id="${trade._id}">
                 <i class="fa-solid fa-circle-info"></i>
               </button>
-              <button class="btn btn-outline-warning btn-sm edit-trade" data-id="${
-                trade._id
-              }">
+              <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
-              <button class="btn btn-outline-primary btn-sm link-trade" data-id="${
-                trade._id
-              }">
+              <button class="btn btn-outline-primary btn-sm link-trade me-1" data-id="${trade._id}">
                 <i class="uil uil-link-h"></i>
               </button>
             </td>
@@ -64,53 +50,51 @@ function fetchTrades(page = 1) {
         tableBody.append(row);
       });
 
-      updatePagination(currPage, totalPages);
+      renderPagination(total, page, pageSize);
       attachEventHandlers();
     },
-    error: function () {
+    error: function (xhr, status, error) {
+      console.error('Error fetching trades:', error);
       alert('Failed to fetch trades. Please try again later.');
     },
   });
 }
 
-function updatePagination(currentPage, totalPages) {
-  const pagination = $('.pagination');
+function renderPagination(totalItems, currentPage, pageSize) {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const pagination = $('#pagination');
   pagination.empty();
 
-  const prevDisabled = currentPage === 1 ? 'disabled' : '';
-  const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+  if (totalPages <= 1) return;
 
-  pagination.append(`
-    <li class="page-item ${prevDisabled}">
-      <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
-    </li>
-  `);
+  const prevClass = currentPage === 1 ? 'disabled' : '';
+  pagination.append(
+    `<li class="page-item ${prevClass}">
+      <a class="page-link" href="#" tabindex="-1" aria-disabled="${prevClass}" data-page="${currentPage - 1}">Previous</a>
+    </li>`
+  );
 
   for (let i = 1; i <= totalPages; i++) {
-    const active = i === currentPage ? 'active' : '';
-    pagination.append(`
-      <li class="page-item ${active}">
+    const activeClass = currentPage === i ? 'active' : '';
+    pagination.append(
+      `<li class="page-item ${activeClass}">
         <a class="page-link" href="#" data-page="${i}">${i}</a>
-      </li>
-    `);
+      </li>`
+    );
   }
 
-  pagination.append(`
-    <li class="page-item ${nextDisabled}">
-      <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
-    </li>
-  `);
+  const nextClass = currentPage === totalPages ? 'disabled' : '';
+  pagination.append(
+    `<li class="page-item ${nextClass}">
+      <a class="page-link" href="#" aria-disabled="${nextClass}" data-page="${currentPage + 1}">Next</a>
+    </li>`
+  );
 
-  attachPaginationHandlers();
-}
-
-function attachPaginationHandlers() {
-  $('.pagination .page-link').on('click', function (e) {
+  pagination.find('a').on('click', function (e) {
     e.preventDefault();
-    const page = parseInt($(this).data('page'));
-    if (page && page > 0 && page <= totalPages) {
-      currentPage = page;
-      fetchTrades(currentPage);
+    const page = $(this).data('page');
+    if (page && !$(this).parent().hasClass('disabled')) {
+      fetchTrades(page);
     }
   });
 }
@@ -128,7 +112,7 @@ function attachEventHandlers() {
         success: function (response) {
           $('#deleteTradeModal').modal('hide');
           showToast(response.message, 'success');
-          fetchTrades();
+          fetchTrades(currentPage);
         },
         error: function () {
           $('#deleteTradeModal').modal('hide');
