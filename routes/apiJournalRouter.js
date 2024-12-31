@@ -5,6 +5,7 @@ const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { LOGGER } from '../config/winston-logger.config.js';
+import { StrategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { TradingJournalService } from '../service/tradeGroupService.js';
 
@@ -127,6 +128,17 @@ router.get(
       const userId = req.user._id;
       const filters = extractFilters(req.query);
       const trades = await tradeRepository.getTrades(userId, filters);
+
+      const strategies = await StrategyRepository.getAllStrategies(userId);
+      const strategyMap = Object.fromEntries(
+        strategies.map((strategy) => [strategy._id, strategy.name]) // Convert array to map
+      );
+      trades.forEach((trade) => {
+        if (trade.strategy && strategyMap[trade.strategy]) {
+          trade.strategy = strategyMap[trade.strategy]; // Replace _id with the corresponding name
+        }
+      });
+
       res.sendJsonResponse(200, 'Trade fetched successfully', trades);
     } catch (error) {
       res.sendJsonResponse(500, 'Failed to fetch trades.');

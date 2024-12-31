@@ -113,28 +113,20 @@ router.get(
 router.get(
   '/trades',
   AuthenticationMiddleware.ensureLoggedIn(),
-  asyncMiddleware(async (req, res) => {
-    try {
-      const userId = req.user._id;
+  asyncMiddleware(async (req, res) =>
+    // const userId = req.user._id;
 
-      const trades = await tradeRepository.getTrades(userId);
-      return res.render('journal/executionList', {
-        menu: 'Journal',
-        currentPath: '/journal/trades',
-        title: 'Trades - Nifty Invest',
-        description: 'List of trades.',
-        keywords: 'trades list, investments, stock journal, nifty invest',
-        CANONICAL_URL: 'https://niftyinvest.com/journal/trades',
-        trades,
-      });
-    } catch (error) {
-      return res.status(500).render('error', {
-        status: 'Failure',
-        message: 'Failed to fetch trades.',
-        data: null,
-      });
-    }
-  })
+    // const trades = await tradeRepository.getTrades(userId);
+    res.render('journal/executionList', {
+      menu: 'Journal',
+      currentPath: '/journal/trades',
+      title: 'Trades - Nifty Invest',
+      description: 'List of trades.',
+      keywords: 'trades list, investments, stock journal, nifty invest',
+      CANONICAL_URL: 'https://niftyinvest.com/journal/trades',
+      // trades,
+    })
+  )
 );
 
 router.get(
