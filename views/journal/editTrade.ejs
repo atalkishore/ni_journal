@@ -3,10 +3,7 @@
     <div class="col-12">
       <div class="card p-4">
         <div class="d-flex justify-content-between align-items-center">
-          <h3
-            class="text-primary mb-3"
-            style="border-bottom: 2px solid #4071db"
-          >
+          <h3 class="text-primary mb-3" style="border-bottom: 2px solid #4071db">
             Edit Trade
           </h3>
           <button id="backButton" class="btn btn-secondary me-1 mb-1">
@@ -15,6 +12,13 @@
         </div>
 
         <form id="editTradeForm" class="row g-2 needs-validation" novalidate>
+          <div class="col-md-4">
+            <label for="tradeDateTime" class="form-label">Date and Time*</label>
+            <input type="datetime-local" id="tradeDateTime" name="tradeDateTime" class="form-control" max="" required />
+            <div class="invalid-feedback">
+              Please provide a valid trade date and time.
+            </div>
+          </div>
           <div class="col-md-4">
             <label for="instrument" class="form-label">Instrument*</label>
             <select id="instrument" name="instrument" class="form-select">
@@ -26,13 +30,7 @@
 
           <div class="col-md-4">
             <label for="symbol" class="form-label">Symbol*</label>
-            <input
-              type="text"
-              id="symbol"
-              name="symbol"
-              class="form-control"
-              required
-            />
+            <input type="text" id="symbol" name="symbol" class="form-control" required />
           </div>
 
           <div class="col-md-4">
@@ -45,112 +43,61 @@
 
           <div class="col-md-4">
             <label for="quantity" class="form-label">Quantity*</label>
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              class="form-control"
-              required
-            />
+            <input type="number" id="quantity" name="quantity" class="form-control" required />
           </div>
 
           <div class="col-md-4">
             <label for="price" class="form-label">Price*</label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              class="form-control"
-              required
-            />
+            <input type="number" id="price" name="price" class="form-control" required />
           </div>
 
           <div class="col-md-4">
             <label for="strategies" class="form-label">Strategies*</label>
-            <select
-              id="strategies"
-              name="strategies"
-              class="form-select"
-              required
-            >
+            <select id="strategies" name="strategies" class="form-select" required>
 
-          <div class="col-md-4">
-            <label for="account" class="form-label">Account</label>
-            <select id="account" name="account" class="form-select">
-              <option value="Default Account" selected>Default Account</option>
-            </select>
-          </div>
+              <div class="col-md-4">
+                <label for="account" class="form-label">Account</label>
+                <select id="account" name="account" class="form-select">
+                  <option value="Default Account" selected>Default Account</option>
+                </select>
+              </div>
 
-          <div class="col-md-4">
-            <label for="tags" class="form-label">Tags</label>
-            <input
-              type="text"
-              id="tags"
-              name="tags"
-              class="form-control"
-              placeholder="Comma-separated tags"
-            />
-          </div>
+              <div class="col-md-4">
+                <label for="tags" class="form-label">Tags</label>
+                <input type="text" id="tags" name="tags" class="form-control" placeholder="Comma-separated tags" />
+              </div>
 
-          <div class="col-md-4">
-            <label for="transactionCost" class="form-label"
-              >Brokerage/Transaction Cost</label
-            >
-            <input
-              type="number"
-              id="transactionCost"
-              name="transactionCost"
-              class="form-control"
-              value="0.00"
-            />
-          </div>
+              <div class="col-md-4">
+                <label for="transactionCost" class="form-label">Brokerage/Transaction Cost</label>
+                <input type="number" id="transactionCost" name="transactionCost" class="form-control" value="0.00" />
+              </div>
 
-          <div class="col-md-4">
-            <label for="targetPrice" class="form-label">Target Price</label>
-            <input
-              type="number"
-              id="targetPrice"
-              name="targetPrice"
-              class="form-control"
-            />
-          </div>
+              <div class="col-md-4">
+                <label for="targetPrice" class="form-label">Target Price</label>
+                <input type="number" id="targetPrice" name="targetPrice" class="form-control" />
+              </div>
 
-          <div class="col-md-4">
-            <label for="stopLoss" class="form-label">Stop Loss</label>
-            <input
-              type="number"
-              id="stopLoss"
-              name="stopLoss"
-              class="form-control"
-            />
-          </div>
+              <div class="col-md-4">
+                <label for="stopLoss" class="form-label">Stop Loss</label>
+                <input type="number" id="stopLoss" name="stopLoss" class="form-control" />
+              </div>
 
-          <div class="col-md-12">
-            <label for="tradeNotes" class="form-label">Trade Notes</label>
-            <textarea
-              id="tradeNotes"
-              name="tradeNotes"
-              class="form-control"
-              rows="4"
-            ></textarea>
-          </div>
+              <div class="col-md-12">
+                <label for="tradeNotes" class="form-label">Trade Notes</label>
+                <textarea id="tradeNotes" name="tradeNotes" class="form-control" rows="4"></textarea>
+              </div>
 
-          <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary" id="saveChangesBtn">
-              Save Changes
-            </button>
-          </div>
+              <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary" id="saveChangesBtn">
+                  Save Changes
+                </button>
+              </div>
         </form>
       </div>
     </div>
   </div>
 </div>
-
+<script>
+  const tradeId = '<%=trade._id%>';
+</script>
 <script src="/journal/js/editTrade.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
- 
- 
- 
-   
- 
- 
- 

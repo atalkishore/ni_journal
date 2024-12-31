@@ -3,6 +3,7 @@ import { Router } from 'express';
 const router = Router();
 import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
+import { StrategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { seoHeadTagValues, PAGE_NAME, redirectTo404 } from '../utils/index.js';
 
@@ -45,13 +46,13 @@ router.get(
   '/add-trade',
   AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
-    res.render('journal/addTrade', {
+    const userId = req.user._id;
+    const strategies = await StrategyRepository.getAllStrategies(userId);
+    res.render('journal/addEditTrade', {
       menu: 'Journal',
-      currentPath: '/journal/addTrade',
-      title: 'Add Trade - Nifty Invest',
-      description: 'Easily add your trades.',
-      keywords: 'add trade, investments, stock journal, nifty invest',
-      CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
+      ...seoHeadTagValues(),
+      strategies,
+      trade: null,
     });
   })
 );
@@ -68,14 +69,12 @@ router.get(
     if (!tradeDetails) {
       return redirectTo404(res);
     }
+    const strategies = await StrategyRepository.getAllStrategies(userId);
 
-    return res.render('journal/editTrade', {
+    return res.render('journal/addEditTrade', {
       menu: 'Journal',
-      currentPath: `/journal/trades?tradeId=${tradeId}&mode=edit`,
-      title: 'Edit Trade - Nifty Invest',
-      description: 'Edit trade details.',
-      keywords: 'edit trade, investments, stock journal, nifty invest',
-      CANONICAL_URL: `https://niftyinvest.com/journal/trades/editTrade/${tradeId}`,
+      ...seoHeadTagValues(),
+      strategies,
       trade: tradeDetails,
     });
   })

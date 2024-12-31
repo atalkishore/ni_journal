@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const tradeId = window.location.pathname.split('/').pop();
-
   async function loadTradeData() {
     if (!tradeId) {
       alert('Trade ID is missing in the URL.');
@@ -13,12 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const data = await response.json();
       const trade = data.data;
-
+      document.getElementById('tradeDateTime').value = trade.tradeDate || '';
       document.getElementById('instrument').value = trade.instrument || '';
       document.getElementById('symbol').value = trade.symbol || '';
       document.getElementById('position').value = trade.position || '';
       document.getElementById('quantity').value = trade.quantity || '';
-      document.getElementById('price').value = trade.price || '';
+      document.getElementById('price').value = trade.entryPrice || '';
       document.getElementById('transactionCost').value =
         trade.transactionCost || '0.00';
       document.getElementById('targetPrice').value = trade.targetPrice || '';
@@ -37,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function loadStrategies(selectedStrategy = '') {
     try {
-      const response = await fetch('/journal/api/strategies');
+      const response = await fetch('/journal/api/strategy');
       if (!response.ok) throw new Error('Failed to fetch strategies');
 
       const strategies = await response.json();
@@ -66,11 +64,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       const updatedTrade = {
+        tradeDate: document.getElementById('tradeDateTime').value,
         instrument: document.getElementById('instrument').value,
         symbol: document.getElementById('symbol').value,
         position: document.getElementById('position').value,
         quantity: parseInt(document.getElementById('quantity').value, 10) || 0,
-        price: parseFloat(document.getElementById('price').value) || 0,
+        entryPrice: parseFloat(document.getElementById('price').value) || 0,
         strategy: document.getElementById('strategies').value,
         tags: document
           .getElementById('tags')

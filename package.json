@@ -10,7 +10,7 @@
   "scripts": {
     "generate-index": "node ./deployment/local/generateIndex.js",
     "generate-index-watch": "node ./deployment/local/generateIndex.js --watch",
-    "dev": "nodemon app.js",
+    "dev": "nodemon app.js --ignore public/*",
     "start": "concurrently \"npm run dev\" \"npm run generate-index-watch\"",
     "start-app": "node app.js",
     "sass": "node-sass views/main.scss public/css/main.css --output-style compressed",

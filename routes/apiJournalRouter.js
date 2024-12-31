@@ -55,10 +55,14 @@ const tradeSchema = Joi.object({
   tradeNotes: Joi.string().trim().allow(null, '').messages({
     'string.empty': 'Trade notes cannot be empty.',
   }),
-  tags: Joi.array().items(Joi.string().trim().max(20)).max(5).messages({
-    'array.max': 'You can add a maximum of 5 tags.',
-    'string.max': 'Each tag must be at most 20 characters long.',
-  }),
+  tags: Joi.array()
+    .allow(null, null)
+    .items(Joi.string().trim().max(20))
+    .max(5)
+    .messages({
+      'array.max': 'You can add a maximum of 5 tags.',
+      'string.max': 'Each tag must be at most 20 characters long.',
+    }),
 });
 
 // post- localhost:5110/api/journal/addTrade
@@ -149,43 +153,53 @@ router.delete('/trades/:id', async (req, res) => {
   }
 });
 
-router.get('/trades/:tradeid', async (req, res) => {
-  try {
-    const trade = await tradeRepository.getTradeById(req.params.id);
-    if (!trade) {
-      res.sendJsonResponse(400, 'Trade not found');
-      // return res.status(404).json({ message: 'Trade not found' });
+router.get(
+  '/trades/:tradeid',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  async (req, res) => {
+    try {
+      const trade = await tradeRepository.getTradeById(
+        req.params.tradeid,
+        req.user?._id
+      );
+      if (!trade) {
+        res.sendJsonResponse(400, 'Trade not found');
+        // return res.status(404).json({ message: 'Trade not found' });
+      }
+      res.sendJsonResponse(200, 'Trade fetched successfully', trade);
+      // res.json(trade);
+    } catch (err) {
+      res.sendJsonResponse(500, 'Server Error', { error: err.message });
+      // res.status(500).json({ message: 'Server Error', error: err.message });
     }
-    res.sendJsonResponse(200, 'Trade fetched successfully', trade);
-    // res.json(trade);
-  } catch (err) {
-    res.sendJsonResponse(500, 'Server Error', { error: err.message });
-    // res.status(500).json({ message: 'Server Error', error: err.message });
   }
-});
+);
 
-router.put('/trades/:tradeid', async (req, res) => {
-  const userId = req.user._id;
-  const { tradeId } = req.params;
-  const updatedData = req.body;
-  const { error } = tradeSchema.validate(updatedData, { abortEarly: false });
+router.put(
+  '/trades/:tradeId',
+  asyncMiddleware(async (req, res) => {
+    const userId = req.user._id;
+    const { tradeId } = req.params;
+    const updatedData = req.body;
+    const { error } = tradeSchema.validate(updatedData, { abortEarly: false });
 
-  if (error) {
-    return res.sendJsonResponse(400, 'Validation errors', {
-      errors: error.details.map((err) => err.message),
-    });
-  }
-  const existingTrade = await TradingJournalService.getTrade(tradeId, userId);
-  if (!existingTrade) {
-    res.sendJsonResponse(400, 'Trade not found or no changes applied');
-  }
-  await TradingJournalService.editTrade(
-    tradeId,
-    existingTrade,
-    updatedData,
-    userId
-  );
-  res.sendJsonResponse(200, 'Trade fetched successfully');
-});
+    if (error) {
+      return res.sendJsonResponse(400, 'Validation errors', {
+        errors: error.details.map((err) => err.message),
+      });
+    }
+    const existingTrade = await TradingJournalService.getTrade(tradeId, userId);
+    if (!existingTrade) {
+      res.sendJsonResponse(400, 'Trade not found or no changes applied');
+    }
+    await TradingJournalService.editTrade(
+      tradeId,
+      existingTrade,
+      updatedData,
+      userId
+    );
+    res.sendJsonResponse(200, 'Trade fetched successfully');
+  })
+);
 
 export default router;
