@@ -50,7 +50,7 @@ router.get(
     const strategies = await StrategyRepository.getAllStrategies(userId);
     res.render('journal/addEditTrade', {
       menu: 'Journal',
-      ...seoHeadTagValues(),
+      ...seoHeadTagValues(PAGE_NAME.HOME),
       strategies,
       trade: null,
     });
@@ -73,7 +73,7 @@ router.get(
 
     return res.render('journal/addEditTrade', {
       menu: 'Journal',
-      ...seoHeadTagValues(),
+      ...seoHeadTagValues(PAGE_NAME.HOME),
       strategies,
       trade: tradeDetails,
     });

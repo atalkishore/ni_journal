@@ -122,7 +122,7 @@ function extractFilters(query) {
 router.get(
   '/trades',
   AuthenticationMiddleware.ensureLoggedInApi(),
-  async (req, res) => {
+  asyncMiddleware(async (req, res) => {
     try {
       const userId = req.user._id;
       const filters = extractFilters(req.query);
@@ -131,32 +131,35 @@ router.get(
     } catch (error) {
       res.sendJsonResponse(500, 'Failed to fetch trades.');
     }
-  }
+  })
 );
 
 // localhost:5110/api/journal/deleteTrade
-router.delete('/trades/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await tradeRepository.deleteTrade(id);
+router.delete(
+  '/trades/:id',
+  asyncMiddleware(async (req, res) => {
+    try {
+      const { id } = req.params;
+      const result = await tradeRepository.deleteTrade(id);
 
-    if (result.modifiedCount > 0) {
-      res.sendJsonResponse(200, 'Trade deleted successfully');
-      // res.status(200).json({ message: 'Trade deleted successfully' });
-    } else {
-      res.sendJsonResponse(400, 'Trade not found');
-      // res.status(404).json({ message: 'Trade not found' });
+      if (result.modifiedCount > 0) {
+        res.sendJsonResponse(200, 'Trade deleted successfully');
+        // res.status(200).json({ message: 'Trade deleted successfully' });
+      } else {
+        res.sendJsonResponse(400, 'Trade not found');
+        // res.status(404).json({ message: 'Trade not found' });
+      }
+    } catch (error) {
+      res.sendJsonResponse(500, 'Failed to delete trade');
+      // res.status(500).json({ message: 'Failed to delete trade' });
     }
-  } catch (error) {
-    res.sendJsonResponse(500, 'Failed to delete trade');
-    // res.status(500).json({ message: 'Failed to delete trade' });
-  }
-});
+  })
+);
 
 router.get(
   '/trades/:tradeid',
   AuthenticationMiddleware.ensureLoggedInApi(),
-  async (req, res) => {
+  asyncMiddleware(async (req, res) => {
     try {
       const trade = await tradeRepository.getTradeById(
         req.params.tradeid,
@@ -172,7 +175,7 @@ router.get(
       res.sendJsonResponse(500, 'Server Error', { error: err.message });
       // res.status(500).json({ message: 'Server Error', error: err.message });
     }
-  }
+  })
 );
 
 router.put(
