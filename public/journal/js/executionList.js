@@ -42,9 +42,6 @@ function fetchTrades(page = 1) {
                 <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-                <button class="btn btn-outline-primary btn-sm link-trade me-1" data-id="${trade._id}">
-                  <i class="uil uil-link-h"></i>
-                </button>
               </td>
             </tr>`;
         tableBody.append(row);
@@ -55,7 +52,6 @@ function fetchTrades(page = 1) {
       renderPaginationControls(totalPages, page);
     },
     error: function (xhr, status, error) {
-      console.error('Error fetching trades:', error);
       alert('Failed to fetch trades. Please try again later.');
     },
   });
