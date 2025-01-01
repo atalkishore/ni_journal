@@ -1,14 +1,14 @@
-const tradeId = '<%= tradeId %>';
 let tradeToDeleteId = null;
 let currentPage = 1;
-const pageSize = 4;
+const tradesPerPage = 4;
 
 function fetchTrades(page = 1) {
   $.ajax({
-    url: `/journal/api/trades?page=${page}&pageSize=${pageSize}`,
+    url: `/journal/api/trades?page=${page}&limit=${tradesPerPage}`,
     type: 'GET',
     success: function (response) {
-      const { trades, total } = response;
+      const trades = response.data.data;
+      const totalPages = response.data.totalPages;
       const tableBody = $('#tradeTable');
       tableBody.empty();
 
@@ -21,37 +21,38 @@ function fetchTrades(page = 1) {
 
       trades.forEach((trade) => {
         const row = `
-          <tr>
-            <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
-            <td>${trade.instrument}</td>
-            <td>${trade.symbol}</td>
-            <td>${trade.quantity}</td>
-            <td>${trade.position}</td>
-            <td>${trade.entryPrice}</td>
-            <td>${trade.account || 'Default account'}</td>
-            <td>${trade.targetPrice || '-'}</td>
-            <td>${trade.strategy || '-'}</td>
-            <td>${trade.tradeNotes || '-'}</td>
-            <td class="text-center">
-              <button class="btn btn-outline-danger btn-sm delete-trade me-1" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-              <button class="btn btn-outline-info btn-sm details-trade me-1" data-id="${trade._id}">
-                <i class="fa-solid fa-circle-info"></i>
-              </button>
-              <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button class="btn btn-outline-primary btn-sm link-trade me-1" data-id="${trade._id}">
-                <i class="uil uil-link-h"></i>
-              </button>
-            </td>
-          </tr>`;
+            <tr>
+              <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
+              <td>${trade.instrument}</td>
+              <td>${trade.symbol}</td>
+              <td>${trade.quantity}</td>
+              <td>${trade.position}</td>
+              <td>${trade.entryPrice}</td>
+              <td>${trade.account || 'Default account'}</td>
+              <td>${trade.targetPrice || '-'}</td>
+              <td>${trade.strategy || '-'}</td>
+              <td>${trade.tradeNotes || '-'}</td>
+              <td class="text-center">
+                <button class="btn btn-outline-danger btn-sm delete-trade me-1" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="btn btn-outline-info btn-sm details-trade me-1" data-id="${trade._id}">
+                  <i class="fa-solid fa-circle-info"></i>
+                </button>
+                <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm link-trade me-1" data-id="${trade._id}">
+                  <i class="uil uil-link-h"></i>
+                </button>
+              </td>
+            </tr>`;
         tableBody.append(row);
       });
 
-      renderPagination(total, page, pageSize);
       attachEventHandlers();
+
+      renderPaginationControls(totalPages, page);
     },
     error: function (xhr, status, error) {
       console.error('Error fetching trades:', error);
@@ -60,40 +61,34 @@ function fetchTrades(page = 1) {
   });
 }
 
-function renderPagination(totalItems, currentPage, pageSize) {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const pagination = $('#pagination');
-  pagination.empty();
+function renderPaginationControls(totalPages, currentPage) {
+  const paginationContainer = $('.pagination');
+  paginationContainer.empty();
 
-  if (totalPages <= 1) return;
-
-  const prevClass = currentPage === 1 ? 'disabled' : '';
-  pagination.append(
-    `<li class="page-item ${prevClass}">
-      <a class="page-link" href="#" tabindex="-1" aria-disabled="${prevClass}" data-page="${currentPage - 1}">Previous</a>
-    </li>`
-  );
+  paginationContainer.append(`
+      <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage - 1}" aria-disabled="${currentPage === 1}">Previous</a>
+      </li>
+    `);
 
   for (let i = 1; i <= totalPages; i++) {
-    const activeClass = currentPage === i ? 'active' : '';
-    pagination.append(
-      `<li class="page-item ${activeClass}">
-        <a class="page-link" href="#" data-page="${i}">${i}</a>
-      </li>`
-    );
+    paginationContainer.append(`
+        <li class="page-item ${i === currentPage ? 'active' : ''}">
+          <a class="page-link" href="#" data-page="${i}">${i}</a>
+        </li>
+      `);
   }
 
-  const nextClass = currentPage === totalPages ? 'disabled' : '';
-  pagination.append(
-    `<li class="page-item ${nextClass}">
-      <a class="page-link" href="#" aria-disabled="${nextClass}" data-page="${currentPage + 1}">Next</a>
-    </li>`
-  );
+  paginationContainer.append(`
+      <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage + 1}" aria-disabled="${currentPage === totalPages}">Next</a>
+      </li>
+    `);
 
-  pagination.find('a').on('click', function (e) {
+  $('.pagination .page-link').on('click', function (e) {
     e.preventDefault();
     const page = $(this).data('page');
-    if (page && !$(this).parent().hasClass('disabled')) {
+    if (page > 0 && page <= totalPages) {
       fetchTrades(page);
     }
   });
@@ -134,16 +129,16 @@ function attachEventHandlers() {
 }
 
 function showToast(message, type) {
-  const toast = $(`
-      <div class="toast align-items-center text-bg-${type} border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
+  const toast = $(
+    `<div class="toast align-items-center text-bg-${type} border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
         <div class="d-flex">
           <div class="toast-body">
             ${message}
           </div>
           <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-      </div>
-    `);
+      </div>`
+  );
 
   $('body').append(toast);
 
@@ -162,5 +157,5 @@ $('#tradeFilter').on('keyup', function () {
 });
 
 $(document).ready(function () {
-  fetchTrades();
+  fetchTrades(currentPage);
 });

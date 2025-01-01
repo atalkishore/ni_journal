@@ -127,19 +127,39 @@ router.get(
     try {
       const userId = req.user._id;
       const filters = extractFilters(req.query);
-      const trades = await tradeRepository.getTrades(userId, filters);
 
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 4;
+      const skip = (page - 1) * limit;
+
+      const totalTrades = await tradeRepository.countTrades(userId, filters);
+
+      const trades = await tradeRepository.getTrades(
+        userId,
+        filters,
+        skip,
+        limit
+      );
+
+      // Get all strategies
       const strategies = await StrategyRepository.getAllStrategies(userId);
       const strategyMap = Object.fromEntries(
         strategies.map((strategy) => [strategy._id, strategy.name]) // Convert array to map
       );
+
+      // Replace strategy IDs with names
       trades.forEach((trade) => {
         if (trade.strategy && strategyMap[trade.strategy]) {
           trade.strategy = strategyMap[trade.strategy]; // Replace _id with the corresponding name
         }
       });
 
-      res.sendJsonResponse(200, 'Trade fetched successfully', trades);
+      res.sendJsonResponse(200, 'Trades fetched successfully', {
+        data: trades,
+        currentPage: page,
+        totalPages: Math.ceil(totalTrades / limit),
+        totalTrades,
+      });
     } catch (error) {
       res.sendJsonResponse(500, 'Failed to fetch trades.');
     }

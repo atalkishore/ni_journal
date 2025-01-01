@@ -23,6 +23,16 @@ export const tradeRepository = {
     );
   },
 
+  async countTrades(userId, filters) {
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    return await collection.countDocuments({
+      status: 'Active',
+      userId: toObjectID(userId),
+      ...filters,
+    });
+  },
+
   async getTradeById(id, userId) {
     return await baseRepository.findOne(collectionName, {
       _id: toObjectID(id),

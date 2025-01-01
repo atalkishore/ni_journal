@@ -66,9 +66,12 @@
           </table>
         </div>
 
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end" id="pagination"></ul>
-        </nav>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div id="paginationInfo"></div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end" id="pagination"></ul>
+          </nav>
+        </div>
       </div>
     </div>
   </div>
@@ -100,5 +103,6 @@
     </div>
   </div>
 </div>
+
 
 <script src="/journal/js/executionList.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
