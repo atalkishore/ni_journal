@@ -299,6 +299,83 @@ function seoHeadTagValues(page, param1_symbol, param2, param3) {
         keywords:
           'nifty investment advice, nifty investment analysis, nifty investment opportunities, nifty put call ratio, how to invest in nifty, pre open market analysis, post market analysis, nifty invest stock news, nifty invest chart, nifty investment insights, nifty investment guide, max pain, option chain, option chain for nifty, nifty invest, put call ratio, historical option chain data, f&o lot size, charts, financial reports, screeners, live stock news, stock technicals',
       };
+    case PAGE_NAME.TRADE_JOURNAL:
+      return {
+        title: 'Trading Journal | Access Your trading journal from here',
+        displayTitle: 'Trading Journal',
+        description:
+          'A trading journal is a way to track your trading performance by recording your trades which you can later review to improve your trading activity by learning from both your successful and not-so-successful trades.',
+        keywords:
+          'Trading Journal, Keep your records, maintain journal, add your daily entries, manage your entries',
+      };
+    case PAGE_NAME.JOURNAL_DASHBOARD:
+      return {
+        title: 'Journal Dashboard | Access Your Jounal Dashboard from here',
+        displayTitle: 'Trading Journal',
+        description:
+          'A journal dashboard is a tool that provides insights into a journal performance and helps users make informed decisions',
+        keywords:
+          'Journal Dashboard, Tool that provided insights, maintain journal performance , Make informed decisions',
+      };
+    case PAGE_NAME.JOURNAL_ANALYSE:
+      return {
+        title:
+          'Analyse your journal | Access Your Jounal Performance from here',
+        displayTitle: 'Analyse',
+        description:
+          'A journal analysis is a written document that analyzes a journal article',
+        keywords: 'Analyse journal',
+      };
+    case PAGE_NAME.JOURNAL_ADD_TRADE:
+      return {
+        title: 'Add your trades | Add trades from here',
+        displayTitle: 'Add trades',
+        description:
+          'A trade journal entry is a record of a trade that includes details such as the date, time, instrument, position ,size, entry and exit points, and the result of the trade.',
+        keywords: 'Add trade, Date and Time, Instrument, Position',
+      };
+    case PAGE_NAME.JOURNAL_EDIT_TRADE:
+      return {
+        title: 'Edit your trades | Edit trades from here',
+        displayTitle: 'Edit trades',
+        description:
+          'The Edit Trades Mode allows the User to view, adjust and submit transactions for recalculation',
+        keywords:
+          'Edit trades,Edit Date and Time, Edit Instrument,Edit Position',
+      };
+    case PAGE_NAME.JOURNAL_TRADE_DETAILS:
+      return {
+        title: 'Trade Details | Fetch your trade details from here',
+        displayTitle: 'Trade Details',
+        description:
+          'From here we can keep the logs of a particular trade and access the details of trade',
+        keywords:
+          'Trade Details, Trade Symbol, Trade Date and Time, Position, Size ',
+      };
+    case PAGE_NAME.JOURNAL_EXECUTION_LIST:
+      return {
+        title: 'Execution List | All your executions are here',
+        displayTitle: 'Execution List',
+        description:
+          'From here we can keep the logs of all the executions done till date',
+        keywords:
+          'Execution Details, Delete execution, Edit execution, Get execution info ',
+      };
+    case PAGE_NAME.JOURNAL_STRATEGY_LIST:
+      return {
+        title: 'Strategy List | All your strategies are here',
+        displayTitle: 'Strategy List',
+        description:
+          'From here we can keep the logs of all the strategies added till date',
+        keywords: 'Add strategy, Edit Strategy, Manage your strategies',
+      };
+    case PAGE_NAME.JOURNAL_TRADE_HISTORY:
+      return {
+        title: 'Trade History | Keep your grouped trade history',
+        displayTitle: 'Trade History',
+        description: 'From here we can keep the history of grouped trades',
+        keywords: 'Trade History,Grouped Trades,Computed Trades',
+      };
   }
 }
 export { seoHeadTagValues };

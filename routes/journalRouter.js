@@ -13,7 +13,7 @@ router.get(
     res.render('journal/Dashboard', {
       menu: 'Journal',
       currentPath: 'journal/dashboard',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_DASHBOARD),
     });
   })
 );
@@ -24,7 +24,7 @@ router.get(
     res.render('journal/journal', {
       menu: 'Journal',
       currentPath: 'journal/journal',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
+      ...seoHeadTagValues(PAGE_NAME.TRADE_JOURNAL),
     });
   })
 );
@@ -35,7 +35,7 @@ router.get(
     res.render('journal/analyse', {
       menu: 'Journal',
       currentPath: '/journal/analyse',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_ANALYSE),
     });
   })
 );
@@ -50,7 +50,7 @@ router.get(
     const strategies = await StrategyRepository.getAllStrategies(userId);
     res.render('journal/addEditTrade', {
       menu: 'Journal',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_ADD_TRADE),
       strategies,
       trade: null,
     });
@@ -73,7 +73,7 @@ router.get(
 
     return res.render('journal/addEditTrade', {
       menu: 'Journal',
-      ...seoHeadTagValues(PAGE_NAME.HOME),
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_EDIT_TRADE),
       strategies,
       trade: tradeDetails,
     });
@@ -98,12 +98,8 @@ router.get(
     return res.render('journal/tradeDetails', {
       menu: 'Journal',
       tradeId,
-      currentPath: `/journal/trades/${tradeId}`,
-      title: 'Trade Details - Nifty Invest',
-      description: 'View trade details.',
-      keywords: 'trade details, investments, stock journal, nifty invest',
-      CANONICAL_URL: `https://niftyinvest.com/journal/tradeDetails/${tradeId}`,
       trade: tradeDetails,
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_TRADE_DETAILS),
     });
   })
 );
@@ -119,11 +115,7 @@ router.get(
     // const trades = await tradeRepository.getTrades(userId);
     res.render('journal/executionList', {
       menu: 'Journal',
-      currentPath: '/journal/trades',
-      title: 'Trades - Nifty Invest',
-      description: 'List of trades.',
-      keywords: 'trades list, investments, stock journal, nifty invest',
-      CANONICAL_URL: 'https://niftyinvest.com/journal/trades',
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_EXECUTION_LIST),
       // trades,
     })
   )
@@ -135,11 +127,7 @@ router.get(
   asyncMiddleware(async (req, res) => {
     res.render('journal/manageStrategies', {
       menu: 'Journal',
-      currentPath: '/journal/manageStrategies',
-      title: 'Add Trade - Nifty Invest',
-      description: 'Easily add your trades.',
-      keywords: 'add trade, investments, stock journal, nifty invest',
-      CANONICAL_URL: 'https://niftyinvest.com/journal/addTrade',
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_STRATEGY_LIST),
     });
   })
 );
@@ -150,11 +138,7 @@ router.get(
   async (req, res) => {
     res.render('journal/tradeHistory', {
       menu: 'Journal',
-      currentPath: '/journal/trade-history',
-      title: 'Trade  - Nifty Invest',
-      description: 'Easily add your trades.',
-      keywords: 'Trade History, investments, stock journal, nifty invest',
-      CANONICAL_URL: 'https://niftyinvest.com/journal/tradeHistory',
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_TRADE_HISTORY),
     });
   }
 );
