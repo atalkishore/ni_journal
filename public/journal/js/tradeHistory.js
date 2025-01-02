@@ -1,17 +1,20 @@
 /* eslint-disable no-undef */
 $(document).ready(function () {
-  function fetchTradeHistory() {
+  let currentPage = 1;
+  const limit = 10;
+
+  function fetchTradeHistory(page = 1) {
     $.ajax({
-      url: '/journal/api/tradeHistory/',
+      url: `/journal/api/tradeHistory?page=${page}&limit=${limit}`,
       method: 'GET',
       success: function (response) {
         if (response.status === 'success') {
           const trades = response.data;
+          const totalPages = response.totalPages;
           let tableBody = '';
-          // const groupedTrades = {};
           const openBadge =
             '<span class="badge badge-phoenix badge-phoenix-warning">Open</span>';
-          // Group trades by group_id
+
           trades.forEach((trade) => {
             tableBody += `
               <tr>
@@ -33,6 +36,8 @@ $(document).ready(function () {
           });
 
           $('#tradeHistoryTableBody').html(tableBody);
+          setupPagination(totalPages, page);
+
           $('.btn-link').on('click', function () {
             const groupId = $(this).data('group-id');
             fetchTrades(groupId);
@@ -52,7 +57,6 @@ $(document).ready(function () {
     $.ajax({
       url: `/journal/api/trades?groupId=${groupId}`,
       type: 'GET',
-      // defaultLoader: false
       success: function (trades) {
         const tableBody = $('#tradeTable');
         tableBody.empty();
@@ -82,5 +86,34 @@ $(document).ready(function () {
     });
   }
 
-  fetchTradeHistory();
+  function setupPagination(totalPages, currentPage) {
+    const pagination = $('#tradeHistoryPagination');
+    pagination.empty();
+
+    if (currentPage > 1) {
+      pagination.append(
+        `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a></li>`
+      );
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      pagination.append(
+        `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`
+      );
+    }
+
+    if (currentPage < totalPages) {
+      pagination.append(
+        `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">Next</a></li>`
+      );
+    }
+
+    pagination.find('a').on('click', function (e) {
+      e.preventDefault();
+      const page = $(this).data('page');
+      fetchTradeHistory(page);
+    });
+  }
+
+  fetchTradeHistory(currentPage);
 });
