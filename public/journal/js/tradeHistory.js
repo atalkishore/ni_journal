@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 $(document).ready(function () {
   let currentPage = 1;
-  const limit = 10;
+  const limit = 4;
 
   function fetchTradeHistory(page = 1) {
     $.ajax({
@@ -9,11 +9,16 @@ $(document).ready(function () {
       method: 'GET',
       success: function (response) {
         if (response.status === 'success') {
-          const trades = response.data;
-          const totalPages = response.totalPages;
+          const trades = response.data.trades;
+          const totalPages = response.data.totalPages;
           let tableBody = '';
           const openBadge =
             '<span class="badge badge-phoenix badge-phoenix-warning">Open</span>';
+
+          if (!Array.isArray(trades)) {
+            alert('Invalid response format from the server.');
+            return;
+          }
 
           trades.forEach((trade) => {
             tableBody += `

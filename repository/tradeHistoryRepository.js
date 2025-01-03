@@ -10,6 +10,7 @@ class TradeHistoryRepository {
   static async getTradeHistoryByGroupId(groupId) {
     return await baseRepository.findOne(collectionName, { groupId });
   }
+
   static async markGroupAsDeleted(groupId) {
     await baseRepository.updateOne(
       collectionName,
@@ -20,6 +21,7 @@ class TradeHistoryRepository {
       }
     );
   }
+
   static async getGroupTrades(userId) {
     return await baseRepository.find(
       collectionName,
@@ -31,27 +33,33 @@ class TradeHistoryRepository {
     );
   }
 
-  static async getPaginatedTrades(userId, page, limit) {
+  static async countTradeHistory(userId, filters) {
     const db = await connect();
-    const skip = (page - 1) * limit;
+    const query = {
+      status: { $ne: 'DELETED' },
+      userId: toObjectID(userId),
+      ...filters,
+    };
+    return await db.collection(collectionName).countDocuments(query);
+  }
+
+  static async getPaginatedTradeHistory(userId, filters, skip, limit) {
+    const db = await connect();
+    const query = {
+      status: { $ne: 'DELETED' },
+      userId: toObjectID(userId),
+      ...filters,
+    };
 
     const trades = await db
       .collection(collectionName)
-      .find({
-        status: { $ne: 'DELETED' },
-        userId: toObjectID(userId),
-      })
+      .find(query)
       .sort({ endDate: -1 })
       .skip(skip)
       .limit(limit)
       .toArray();
 
-    const totalCount = await db.collection(collectionName).countDocuments({
-      status: { $ne: 'DELETED' },
-      userId: toObjectID(userId),
-    });
-
-    return { trades, totalCount };
+    return trades;
   }
 
   static async createGroup(
