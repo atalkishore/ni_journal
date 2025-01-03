@@ -47,7 +47,6 @@ $(document).ready(function () {
         }
       },
       error: function (error) {
-        console.error('Error fetching trade history:', error);
         alert('An error occurred while fetching trade history.');
       },
     });
@@ -80,7 +79,6 @@ $(document).ready(function () {
         });
       },
       error: function (xhr, status, error) {
-        console.error('Error fetching trades:', error);
         alert('Failed to fetch trades. Please try again later.');
       },
     });

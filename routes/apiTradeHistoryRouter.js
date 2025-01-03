@@ -11,6 +11,9 @@ router.get(
   asyncMiddleware(async (req, res) => {
     try {
       const userId = req.user._id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 4;
+
       const tradeHistory = await TradeHistoryRepository.getGroupTrades(userId);
 
       res.sendJsonResponse(
@@ -18,8 +21,17 @@ router.get(
         'Trade history fetched successfully',
         tradeHistory
       );
+
+      const { trades, totalCount } =
+        await TradeHistoryRepository.getPaginatedTrades(userId, page, limit);
+
+      const totalPages = Math.ceil(totalCount / limit);
+      res.sendJsonResponse(200, 'Trade history fetched successfully', {
+        trades,
+        totalPages,
+      });
     } catch (error) {
-      res.sendJsonResponse(500, 'Failed to add trade.');
+      res.sendJsonResponse(500, 'Failed to fetch trade history.');
     }
   })
 );

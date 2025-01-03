@@ -27,8 +27,31 @@ class TradeHistoryRepository {
         status: { $ne: 'DELETED' },
         userId: toObjectID(userId),
       },
-      { sort: { endDate: -1 } } // Sort by endDate in ascending order (1 for ascending, -1 for descending)
+      { sort: { endDate: -1 } }
     );
+  }
+
+  static async getPaginatedTrades(userId, page, limit) {
+    const db = await connect();
+    const skip = (page - 1) * limit;
+
+    const trades = await db
+      .collection(collectionName)
+      .find({
+        status: { $ne: 'DELETED' },
+        userId: toObjectID(userId),
+      })
+      .sort({ endDate: -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    const totalCount = await db.collection(collectionName).countDocuments({
+      status: { $ne: 'DELETED' },
+      userId: toObjectID(userId),
+    });
+
+    return { trades, totalCount };
   }
 
   static async createGroup(
@@ -64,21 +87,17 @@ class TradeHistoryRepository {
   static async findFirstAffectedGroupBySymbol(symbol, userId, tradeDate) {
     try {
       const db = await connect();
-      // Find the first group where the trade date affects its start or end date
       const affectedGroup = await db.collection(collectionName).findOne({
         symbol,
         userId: toObjectID(userId),
         status: 'ACTIVE',
         $or: [
-          { startDate: { $lte: tradeDate }, endDate: { $gte: tradeDate } }, // Trade date is within group
-          { startDate: { $gte: tradeDate }, endDate: { $lte: tradeDate } }, // Trade modifies start/end date
+          { startDate: { $lte: tradeDate }, endDate: { $gte: tradeDate } },
+          { startDate: { $gte: tradeDate }, endDate: { $lte: tradeDate } },
         ],
       });
-      // .sort({ startDate: 1 }); // Sort to get the first group based on startDate
-
       return affectedGroup;
     } catch (error) {
-      // console.error('Error finding affected group:', error);
       throw new Error('Failed to find affected group');
     }
   }
