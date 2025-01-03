@@ -113,5 +113,16 @@ $(document).ready(function () {
     });
   }
 
+  function filterTable() {
+    const query = $('#floatingInput').val().toLowerCase();
+    $('#tradeHistoryTableBody tr').each(function () {
+      const row = $(this);
+      const text = row.text().toLowerCase();
+      row.toggle(text.includes(query));
+    });
+  }
+
+  window.filterTable = filterTable;
+
   fetchTradeHistory(currentPage);
 });

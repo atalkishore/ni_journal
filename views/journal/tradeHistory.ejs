@@ -2,6 +2,10 @@
   <div class="card">
     <div class="card-header p-2 m-0 bg-info-100 text-white d-flex justify-content-between align-items-center">
       <h1 class="fw-bold mb-0 fs-0">Trading History</h1>
+      <div class="form-floating mb-3">
+        <input class="form-control" id="floatingInput" type="text" placeholder="Search" oninput="filterTable()" />
+        <label for="floatingInput">Search</label>
+      </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -61,6 +65,5 @@
     </div>
   </div>
 </div>
-
 
 <script src="/journal/js/tradeHistory.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
