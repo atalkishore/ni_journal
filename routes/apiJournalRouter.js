@@ -96,11 +96,15 @@ router.post(
 );
 
 function extractFilters(query) {
-  const { symbol, startDate, endDate, position, status, groupId } = query;
+  const { symbol, instrument, startDate, endDate, position, status, groupId } =
+    query;
 
   const filters = {};
   if (symbol) {
     filters.symbol = symbol;
+  }
+  if (instrument) {
+    filters.instrument = instrument;
   }
   if (startDate) {
     filters.startDate = new Date(startDate);

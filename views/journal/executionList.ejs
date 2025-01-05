@@ -1,23 +1,64 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
-      <div class="card shadow mb-4">
-        <div class="card-body">
-          <div class="d-flex flex-wrap gap-2 align-items-center">
-            <div>
-              <input
-                type="text"
-                id="tradeFilter"
-                class="form-control"
-                placeholder="Search trades"
-                style="width: 200px"
-              />
-            </div>
+    <div class="card shadow p-3 mb-4">
+      <h5 class="text-primary">Filters</h5>
+      <form id="filtersForm" class="row g-3">
+        <div class="col-md-2">
+          <div class="form-floating">
+            <input class="form-control" id="symbolFilter" type="text" placeholder="Symbol" />
+            <label for="symbolFilter">Symbol</label>
           </div>
         </div>
-      </div>
-
-      <div class="card shadow p-2">
+        <div class="col-md-2">
+          <div class="form-floating">
+            <select class="form-control" id="instrumentFilter">
+              <option value="" selected>All</option>
+              <option value="Stock">Stock</option>
+              <option value="Options">Options</option>
+              <option value="Futures">Futures</option>
+            </select>
+            <label for="instrumentFilter">Instrument</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-floating">
+            <input class="form-control" id="startDateFilter" type="date" placeholder="Start Date" />
+            <label for="startDateFilter">Start Date</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-floating">
+            <input class="form-control" id="endDateFilter" type="date" placeholder="End Date" />
+            <label for="endDateFilter">End Date</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-floating">
+            <select class="form-control" id="positionFilter">
+              <option value="" selected>All</option>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
+            </select>
+            <label for="positionFilter">Position</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-floating">
+            <select class="form-control" id="statusFilter">
+              <option value="" selected>All</option>
+              <option value="Active">Active</option>
+              <option value="Closed">Closed</option>
+            </select>
+            <label for="statusFilter">Status</label>
+          </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-center justify-content-end ms-auto gap-1">
+          <button type="button" class="btn btn-outline-info " id="applyFilters">Apply Filters</button>
+          <button type="button" class="btn btn-outline-secondary " id="resetFilters">Reset</button>
+        </div>
+      </form>
+    </div>
+          <div class="card shadow p-2">
         <div class="mb-3">
           <h5 class="text-primary fw-normal mb-0">Execution List</h5>
         </div>

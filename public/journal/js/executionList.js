@@ -2,9 +2,15 @@ let tradeToDeleteId = null;
 let currentPage = 1;
 const tradesPerPage = 4;
 
-function fetchTrades(page = 1) {
+function fetchTrades(page = 1, filters = {}) {
+  const queryParams = new URLSearchParams({
+    page,
+    limit: tradesPerPage,
+    ...filters,
+  }).toString();
+
   $.ajax({
-    url: `/journal/api/trades?page=${page}&limit=${tradesPerPage}`,
+    url: `/journal/api/trades?${queryParams}`,
     type: 'GET',
     success: function (response) {
       const trades = response.data.data;
@@ -93,7 +99,7 @@ function renderPaginationControls(totalPages, currentPage) {
     e.preventDefault();
     const page = $(this).data('page');
     if (page > 0 && page <= totalPages) {
-      fetchTrades(page);
+      applyFilters(page);
     }
   });
 }
@@ -111,7 +117,7 @@ function attachEventHandlers() {
         success: function (response) {
           $('#deleteTradeModal').modal('hide');
           showToast(response.message, 'success');
-          fetchTrades(currentPage);
+          applyFilters(currentPage);
         },
         error: function () {
           $('#deleteTradeModal').modal('hide');
@@ -133,16 +139,16 @@ function attachEventHandlers() {
 }
 
 function showToast(message, type) {
-  const toast = $(
-    `<div class="toast align-items-center text-bg-${type} border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
-        <div class="d-flex">
-          <div class="toast-body">
-            ${message}
-          </div>
-          <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  const toast = $(`
+    <div class="toast align-items-center text-bg-${type} border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1055;">
+      <div class="d-flex">
+        <div class="toast-body">
+          ${message}
         </div>
-      </div>`
-  );
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `);
 
   $('body').append(toast);
 
@@ -152,12 +158,40 @@ function showToast(message, type) {
   }, 2000);
 }
 
-$('#tradeFilter').on('keyup', function () {
-  const filterText = $(this).val().toLowerCase();
-  $('#tradeTable tr').each(function () {
-    const rowText = $(this).text().toLowerCase();
-    $(this).toggle(rowText.includes(filterText));
-  });
+function applyFilters(page = 1) {
+  const filters = {
+    symbol: $('#symbolFilter').val()?.toUpperCase(),
+    instrument: $('#instrumentFilter').val(),
+    startDate: $('#startDateFilter').val(),
+    endDate: $('#endDateFilter').val(),
+    position: $('#positionFilter').val(),
+    status: $('#statusFilter').val(),
+  };
+
+  if (filters.startDate && filters.endDate) {
+    const startDate = new Date(filters.startDate);
+    const endDate = new Date(filters.endDate);
+
+    if (startDate > endDate) {
+      showToast('Start date cannot be greater than end date.', 'danger');
+      return;
+    }
+  }
+
+  fetchTrades(page, filters);
+}
+
+$('#symbolFilter').on('keyup', function () {
+  this.value = this.value.toUpperCase();
+});
+
+$('#applyFilters').on('click', function () {
+  applyFilters();
+});
+
+$('#resetFilters').on('click', function () {
+  $('#filtersForm')[0].reset();
+  fetchTrades(1);
 });
 
 $(document).ready(function () {
