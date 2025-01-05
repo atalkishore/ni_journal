@@ -9,6 +9,7 @@ function fetchTrades(page = 1) {
     success: function (response) {
       const trades = response.data.data;
       const totalPages = response.data.totalPages;
+      const totalTrades = response.data.totalTrades;
       const tableBody = $('#tradeTable');
       tableBody.empty();
 
@@ -18,6 +19,9 @@ function fetchTrades(page = 1) {
         );
         return;
       }
+
+      const startEntry = (page - 1) * tradesPerPage + 1;
+      const endEntry = Math.min(page * tradesPerPage, totalTrades);
 
       trades.forEach((trade) => {
         const row = `
@@ -50,9 +54,13 @@ function fetchTrades(page = 1) {
       attachEventHandlers();
 
       renderPaginationControls(totalPages, page);
+
+      $('#tradeCountInfo').text(
+        ` ${startEntry} to ${endEntry} of ${totalTrades} Trades`
+      );
     },
     error: function (xhr, status, error) {
-      alert('Failed to fetch trades. Please try again later.');
+      showToast('Failed to fetch trades. Please try again later.', 'danger');
     },
   });
 }

@@ -13,9 +13,6 @@
                 style="width: 200px"
               />
             </div>
-            <div class="ms-auto d-flex align-items-center gap-3">
-              <button class="btn btn-outline-secondary">Advanced</button>
-            </div>
           </div>
         </div>
       </div>
@@ -48,7 +45,7 @@
           </table>
         </div>
 
-        <div class="mt-3">
+        <div class="mt-3 d-none">
           <table class="table table-bordered align-middle text-start">
             <tbody>
               <tr>
@@ -71,6 +68,10 @@
           <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-end" id="pagination"></ul>
           </nav>
+        </div>
+
+        <div class="mt-3">
+          <p id="tradeCountInfo" class="text-muted"></p>
         </div>
       </div>
     </div>
@@ -103,6 +104,5 @@
     </div>
   </div>
 </div>
-
 
 <script src="/journal/js/executionList.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>

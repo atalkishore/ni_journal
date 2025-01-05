@@ -134,7 +134,7 @@ router.get(
 
       const totalTrades = await tradeRepository.countTrades(userId, filters);
 
-      const trades = await tradeRepository.getTrades(
+      const trades = await tradeRepository.getPaginatedTrades(
         userId,
         filters,
         skip,

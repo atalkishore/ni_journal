@@ -33,6 +33,23 @@ export const tradeRepository = {
     });
   },
 
+  async getPaginatedTrades(userId, filters, skip, limit) {
+    const db = await connect();
+    const query = {
+      status: 'Active',
+      userId: toObjectID(userId),
+      ...filters,
+    };
+
+    return await db
+      .collection(collectionName)
+      .find(query)
+      .sort({ tradeDate: -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+  },
+
   async getTradeById(id, userId) {
     return await baseRepository.findOne(collectionName, {
       _id: toObjectID(id),
@@ -51,6 +68,7 @@ export const tradeRepository = {
       status: 'Deleted',
     });
   },
+
   async getTradesBySymbolSinceDate(symbol, userId, startDate = null) {
     const filter = { status: 'Active', symbol, userId: toObjectID(userId) };
     if (startDate) {
@@ -60,6 +78,7 @@ export const tradeRepository = {
     const collection = db.collection(collectionName);
     return await collection.find(filter).sort({ tradeDate: 1 }).toArray();
   },
+
   async updateTradeGroupId(tradeId, groupId) {
     await baseRepository.updateOneById(collectionName, tradeId, { groupId });
   },
