@@ -11,9 +11,16 @@ $(document).ready(function () {
         if (response.status === 'success') {
           const trades = response.data.trades;
           const totalPages = response.data.totalPages;
+          const totalTrades = response.data.totalHistoryCount;
+          const start = (page - 1) * limit + 1;
+          const end = Math.min(page * limit, totalTrades);
           let tableBody = '';
           const openBadge =
             '<span class="badge badge-phoenix badge-phoenix-warning">Open</span>';
+
+          $('#tradeCountInfo').text(
+            ` ${start} to ${end} of ${totalTrades} trades`
+          );
 
           if (!Array.isArray(trades)) {
             alert('Invalid response format from the server.');
