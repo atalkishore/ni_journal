@@ -12,7 +12,7 @@ function extractFilters(query) {
   if (symbol) {
     filters.symbol = symbol;
   }
-  if (startDate) {
+  if (endDate) {
     filters.startDate = { $gte: new Date(startDate) };
   }
   if (endDate) {
@@ -20,12 +20,6 @@ function extractFilters(query) {
   }
   if (position) {
     filters.position = position;
-  }
-  if (status) {
-    filters.status = status;
-  }
-  if (groupId) {
-    filters.groupId = groupId;
   }
 
   return filters;

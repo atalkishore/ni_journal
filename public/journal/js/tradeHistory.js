@@ -4,9 +4,24 @@ $(document).ready(function () {
   const limit = 4;
 
   function fetchTradeHistory(page = 1) {
+    const symbol = $('#symbolFilter').val();
+    const startDate = $('#startDateFilter').val();
+    const endDate = $('#endDateFilter').val();
+    const position = $('#positionFilter').val(); // Ensure this matches server-side values
+
+    const filters = {
+      page,
+      limit,
+      ...(symbol && { symbol }),
+      ...(startDate && { startDate }),
+      ...(endDate && { endDate }),
+      ...(position && { position }),
+    };
+
     $.ajax({
       url: `/journal/api/tradeHistory?page=${page}&limit=${limit}`,
       method: 'GET',
+      data: filters,
       success: function (response) {
         if (response.status === 'success') {
           const trades = response.data.trades;
@@ -19,7 +34,7 @@ $(document).ready(function () {
             '<span class="badge badge-phoenix badge-phoenix-warning">Open</span>';
 
           $('#tradeCountInfo').text(
-            ` ${start} to ${end} of ${totalTrades} trades`
+            `${start} to ${end} of ${totalTrades} trades`
           );
 
           if (!Array.isArray(trades)) {
@@ -125,16 +140,19 @@ $(document).ready(function () {
     });
   }
 
-  function filterTable() {
-    const query = $('#floatingInput').val().toLowerCase();
-    $('#tradeHistoryTableBody tr').each(function () {
-      const row = $(this);
-      const text = row.text().toLowerCase();
-      row.toggle(text.includes(query));
-    });
-  }
+  $('#applyFilter').on('click', function () {
+    currentPage = 1;
+    fetchTradeHistory(currentPage);
+  });
 
-  window.filterTable = filterTable;
+  $('#resetFilters').on('click', function () {
+    $('#symbolFilter').val('');
+    $('#openDateFilter').val('');
+    $('#closeDateFilter').val('');
+    $('#positionFilter').val('');
+    currentPage = 1;
+    fetchTradeHistory(currentPage);
+  });
 
   fetchTradeHistory(currentPage);
 });
