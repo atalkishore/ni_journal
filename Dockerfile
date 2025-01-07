@@ -21,6 +21,8 @@ WORKDIR /app
 # Copy only necessary files from the build stage (i.e., node_modules and source code)
 COPY --from=build /app /app
 
+RUN apk add --no-cache curl
+
 # Expose the production port
 EXPOSE 5001
 
