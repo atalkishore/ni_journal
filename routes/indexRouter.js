@@ -61,7 +61,7 @@ router.get(
 router.get(
   '/health',
   asyncMiddleware(async function (req, res) {
-    res.json({
+    res.sendJsonResponse(200, 'SUCESS', {
       status: 'up',
       version: VERSION,
       app_name: DISP_NAME,
