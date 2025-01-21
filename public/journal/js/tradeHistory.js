@@ -1,13 +1,13 @@
 /* eslint-disable no-undef */
 $(document).ready(function () {
   let currentPage = 1;
-  const limit = 4;
+  const limit = 20;
 
   function fetchTradeHistory(page = 1) {
     const symbol = $('#symbolFilter').val();
     const startDate = $('#startDateFilter').val();
     const endDate = $('#endDateFilter').val();
-    const position = $('#positionFilter').val(); // Ensure this matches server-side values
+    const position = $('#positionFilter').val();
 
     const filters = {
       page,

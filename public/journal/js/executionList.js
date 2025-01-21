@@ -1,6 +1,6 @@
 let tradeToDeleteId = null;
 let currentPage = 1;
-const tradesPerPage = 4;
+const tradesPerPage = 20;
 
 function fetchTrades(page = 1, filters = {}) {
   const queryParams = new URLSearchParams({
