@@ -43,17 +43,18 @@ function fetchTrades(page = 1, filters = {}) {
               <td>${trade.strategy || '-'}</td>
               <td>${trade.tradeNotes || '-'}</td>
               <td class="text-center">
-                <button class="btn btn-outline-danger btn-sm delete-trade me-1" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
+                <button class="btn btn-sm delete-trade text-danger" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
                   <i class="fa-solid fa-trash"></i>
                 </button>
-                <button class="btn btn-outline-info btn-sm details-trade me-1" data-id="${trade._id}">
+                <button class="btn btn-sm details-trade text-info" data-id="${trade._id}">
                   <i class="fa-solid fa-circle-info"></i>
                 </button>
-                <button class="btn btn-outline-warning btn-sm edit-trade me-1" data-id="${trade._id}">
-                  <i class="fa-solid fa-pen-to-square"></i>
+                <button class="btn btn-sm edit-trade text-success" data-id="${trade._id}">
+                  <i class="fa-solid fa-pen-to-square" ></i>
                 </button>
               </td>
             </tr>`;
+
         tableBody.append(row);
       });
 
