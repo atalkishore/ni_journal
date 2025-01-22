@@ -1,143 +1,60 @@
-<style>
-  body {
-    background-color: #f8f9fa;
-  }
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .dashboard-card {
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .chart-container {
+      min-height: 300px;
+      position: relative;
+    }
+  </style>
 
-  .card {
-    border-radius: 12px;
-    transition: transform 0.3s;
-  }
-
-  .card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .dashboard-header {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-  }
-
-  .chart-container {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-  }
-</style>
-<div class="container-fluid p-4">
-  <div class="dashboard-header">Welcome to Your Trading Dashboard</div>
-  <div class="row g-3">
-    <div class="col-lg-3 col-md-6">
-      <div class="card text-center border-0 bg-primary text-white">
-        <div class="card-body">
-          <h5 class="card-title">Total Trades</h5>
-          <p class="card-text fs-4">124</p>
-          <i class="uil uil-chart-line fs-1"></i>
+  <div class="container mt-4">
+    <div class="row mb-3">
+      <div class="col-lg-3 col-sm-6">
+        <div class="dashboard-card text-center">
+          <h5>Balance</h5>
+          <h3>$117.34k</h3>
+          <p class="text-success">↑ 17.46%</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="dashboard-card text-center">
+          <h5>Last Day PnL</h5>
+          <h3>$801.63</h3>
+          <p class="text-success">↑ 0.69%</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="dashboard-card text-center">
+          <h5>PnL This Month</h5>
+          <h3>$0</h3>
+          <p>0%</p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <div class="dashboard-card text-center">
+          <h5>PnL This Year</h5>
+          <h3>$0</h3>
+          <p>0%</p>
         </div>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="card text-center border-0 bg-success text-white">
-        <div class="card-body">
-          <h5 class="card-title">Profitable Trades</h5>
-          <p class="card-text fs-4">87</p>
-          <i class="uil uil-dollar-sign-alt fs-1"></i>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="card text-center border-0 bg-danger text-white">
-        <div class="card-body">
-          <h5 class="card-title">Loss Trades</h5>
-          <p class="card-text fs-4">37</p>
-          <i class="uil uil-arrow-down fs-1"></i>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="card text-center border-0 bg-warning text-dark">
-        <div class="card-body">
-          <h5 class="card-title">Pending Trades</h5>
-          <p class="card-text fs-4">12</p>
-          <i class="uil uil-clock fs-1"></i>
+    <div class="row">
+      <div class="col-12">
+        <div class="dashboard-card">
+          <h5>PNL Evolution for Account Default</h5>
+          <div id="line-chart" class="chart-container"></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="mt-4">
-    <h4>Recent Activity</h4>
-    <table class="table table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>#</th>
-          <th>Stock Name</th>
-          <th>Order Type</th>
-          <th>Price</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>1</th>
-          <td>Apple</td>
-          <td>Buy</td>
-          <td>$150</td>
-          <td><span class="badge bg-success">Profit</span></td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td>Microsoft</td>
-          <td>Sell</td>
-          <td>$250</td>
-          <td><span class="badge bg-danger">Loss</span></td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td>Google</td>
-          <td>Buy</td>
-          <td>$300</td>
-          <td><span class="badge bg-success">Profit</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="chart-container">
-    <h4>Trade Performance</h4>
-    <div id="trade-graph" style="height: 400px;"></div>
-  </div>
-</div>
-<script>
-  const chart = echarts.init(document.getElementById('trade-graph'));
 
-  const options = {
-    title: {
-      text: 'Trade Performance',
-      left: 'center',
-    },
-    tooltip: {
-      trigger: 'item',
-    },
-    xAxis: {
-      type: 'category',
-      data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [{
-      data: [150, 230, -120, 340, 200, -50, 400, 320, 90, -100, 240, 360],
-      type: 'bar',
-      itemStyle: {
-        color: function(params) {
-          return params.data >= 0 ? '#4caf50' : '#f44336';
-        },
-      },
-    }, ],
-  };
-
-  chart.setOption(options);
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.0/echarts.min.js"></script>
+  <script src="charts.js"></script>
+  <script src="/journal/js/tradeDashboard.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
