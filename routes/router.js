@@ -6,6 +6,7 @@ import indexRouter from './indexRouter.js';
 import journalRouter from './journalRouter.js';
 import userRouter from './userRouter.js';
 import { redirectTo404 } from '../utils/helpers.js';
+import apiDashboardRouter from './apiDashboardRouter.js';
 
 function setupRouter(app) {
   app.use('/', indexRouter);
@@ -17,6 +18,7 @@ function setupRouter(app) {
     app.use('/journal/api/strategy', apiStrategyRouter);
     app.use('/journal/api/tradeHistory', apiTradeHistoryRouter);
     app.use('/journal/api/', apiJournalRouter);
+    app.use('/journal/api', apiDashboardRouter);
 
     app.use('*', (req, res) => {
       res.status(404).render('404', {

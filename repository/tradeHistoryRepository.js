@@ -109,6 +109,115 @@ class TradeHistoryRepository {
       throw new Error('Failed to find affected group');
     }
   }
+
+  static async getLastDayPnL(userId) {
+    const db = await connect();
+    try {
+      const latestTrade = await db
+        .collection(collectionName)
+        .find({
+          status: { $ne: 'DELETED' },
+          userId: toObjectID(userId),
+        })
+        .sort({ endDate: -1 })
+        .limit(1)
+        .toArray();
+
+      if (latestTrade.length === 0) {
+        return 0;
+      }
+
+      const lastTrade = latestTrade[0].trades[latestTrade[0].trades.length - 1];
+
+      if (lastTrade.buyPrice && lastTrade.sellPrice) {
+        const pnl = lastTrade.sellPrice - lastTrade.buyPrice;
+        return pnl;
+      }
+
+      return 0;
+    } catch (error) {
+      throw new Error('Failed to calculate last day PnL');
+    }
+  }
+
+  static async getDashboardSummary(userId) {
+    try {
+      const db = await connect();
+      const now = moment().utcOffset(330);
+      const oneDayAgo = now.clone().subtract(1, 'days').toDate();
+      const thirtyDaysAgo = now.clone().subtract(30, 'days').toDate();
+
+      const lastDayTrades = await db
+        .collection(collectionName)
+        .find({
+          userId: toObjectID(userId),
+          status: { $ne: 'DELETED' },
+          tradeDate: { $gte: oneDayAgo },
+        })
+        .toArray();
+
+      let lastDayPnL = 0;
+      lastDayTrades.forEach((trade) => {
+        if (trade.sellPrice && trade.buyPrice && trade.quantity) {
+          lastDayPnL += (trade.sellPrice - trade.buyPrice) * trade.quantity;
+        }
+      });
+
+      const pnlEvolutionPipeline = [
+        {
+          $match: {
+            userId: toObjectID(userId),
+            status: { $ne: 'DELETED' },
+            tradeDate: { $gte: thirtyDaysAgo },
+          },
+        },
+        {
+          $group: {
+            _id: {
+              date: {
+                $dateToString: { format: '%Y-%m-%d', date: '$tradeDate' },
+              },
+            },
+            dailyPnL: {
+              $sum: {
+                $multiply: [
+                  { $subtract: ['$sellPrice', '$buyPrice'] },
+                  '$quantity',
+                ],
+              },
+            },
+          },
+        },
+        { $sort: { '_id.date': 1 } },
+      ];
+
+      const pnlEvolutionData = await db
+        .collection(collectionName)
+        .aggregate(pnlEvolutionPipeline)
+        .toArray();
+
+      const pnlEvolution = {
+        dates: [],
+        dailyPnL: [],
+        totalPnL: [],
+      };
+
+      let totalPnL = 0;
+      pnlEvolutionData.forEach((day) => {
+        pnlEvolution.dates.push(day._id.date);
+        pnlEvolution.dailyPnL.push(day.dailyPnL);
+        totalPnL += day.dailyPnL;
+        pnlEvolution.totalPnL.push(totalPnL);
+      });
+
+      return {
+        lastDayPnL,
+        pnlEvolution,
+      };
+    } catch (error) {
+      throw new Error('Error calculating dashboard summary');
+    }
+  }
 }
 
 export { TradeHistoryRepository };

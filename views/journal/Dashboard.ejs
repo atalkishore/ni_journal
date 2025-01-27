@@ -1,60 +1,61 @@
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .dashboard-card {
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 20px;
-      background-color: #ffffff;
-    }
-    .chart-container {
-      min-height: 300px;
-      position: relative;
-    }
-  </style>
+<style>
+  .chart-container {
+    min-height: 300px;
+    position: relative;
+  }
+</style>
 
-  <div class="container mt-4">
-    <div class="row mb-3">
-      <div class="col-lg-3 col-sm-6">
-        <div class="dashboard-card text-center">
-          <h5>Balance</h5>
-          <h3>$117.34k</h3>
-          <p class="text-success">↑ 17.46%</p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6">
-        <div class="dashboard-card text-center">
-          <h5>Last Day PnL</h5>
-          <h3>$801.63</h3>
-          <p class="text-success">↑ 0.69%</p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6">
-        <div class="dashboard-card text-center">
-          <h5>PnL This Month</h5>
-          <h3>$0</h3>
-          <p>0%</p>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6">
-        <div class="dashboard-card text-center">
-          <h5>PnL This Year</h5>
-          <h3>$0</h3>
-          <p>0%</p>
-        </div>
+<div class="container mt-4">
+  <div class="row mb-3">
+    <div class="col-lg-4 col-sm-6">
+      <div class="dashboard-card text-center" id="dashboard-summary">
+        <h5>Last Day PnL</h5>
+        <h3 id="last-day-pnl-value">Loading...</h3>
+        <p id="last-day-pnl-change">0%</p>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="dashboard-card">
-          <h5>PNL Evolution for Account Default</h5>
-          <div id="line-chart" class="chart-container"></div>
-        </div>
+    <div class="col-lg-4 col-sm-6">
+      <div class="dashboard-card text-center" id="this-month-pnl-card">
+        <h5>PnL This Month</h5>
+        <h3>$0</h3>
+        <p>0%</p>
+      </div>
+    </div>
+    <div class="col-lg-4 col-sm-6">
+      <div class="dashboard-card text-center" id="this-year-pnl-card">
+        <h5>PnL This Year</h5>
+        <h3>$0</h3>
+        <p>0%</p>
       </div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.0/echarts.min.js"></script>
-  <script src="charts.js"></script>
-  <script src="/journal/js/tradeDashboard.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
+  <div class="row">
+    <div class="col-12">
+      <div class="dashboard-card">
+        <h5>PNL Chart</h5>
+        <div id="line-chart" class="chart-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-6">
+    <div class="col-lg-8 col-sm-6">
+      <div class="dashboard-card text-center">
+        <h5>Winning Days</h5>
+        <h3>$801.63</h3>
+        <p class="text-success">↑ 0.69%</p>
+      </div>
+    </div>
+    <div class="col-lg-2 col-sm-6">
+      <div class="dashboard-card text-center">
+        <h5>Losing Days</h5>
+        <h3>$0</h3>
+        <p>0%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/journal/js/tradeDashboard.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
+
