@@ -110,41 +110,12 @@ class TradeHistoryRepository {
     }
   }
 
-  static async getLastDayPnL(userId) {
-    const db = await connect();
-    try {
-      const latestTrade = await db
-        .collection(collectionName)
-        .find({
-          status: { $ne: 'DELETED' },
-          userId: toObjectID(userId),
-        })
-        .sort({ endDate: -1 })
-        .limit(1)
-        .toArray();
-
-      if (latestTrade.length === 0) {
-        return 0;
-      }
-
-      const lastTrade = latestTrade[0].trades[latestTrade[0].trades.length - 1];
-
-      if (lastTrade.buyPrice && lastTrade.sellPrice) {
-        const pnl = lastTrade.sellPrice - lastTrade.buyPrice;
-        return pnl;
-      }
-
-      return 0;
-    } catch (error) {
-      throw new Error('Failed to calculate last day PnL');
-    }
-  }
-
   static async getDashboardSummary(userId) {
     try {
       const db = await connect();
       const now = moment().utcOffset(330);
-      const oneDayAgo = now.clone().subtract(1, 'days').toDate();
+      const oneDayAgo = now.clone().subtract(1, 'days').startOf('day').toDate();
+      const today = now.clone().startOf('day').toDate();
       const thirtyDaysAgo = now.clone().subtract(30, 'days').toDate();
 
       const lastDayTrades = await db
@@ -152,14 +123,21 @@ class TradeHistoryRepository {
         .find({
           userId: toObjectID(userId),
           status: { $ne: 'DELETED' },
-          tradeDate: { $gte: oneDayAgo },
+          endDate: { $gte: oneDayAgo, $lt: today },
+          isOpen: false,
         })
         .toArray();
 
       let lastDayPnL = 0;
       lastDayTrades.forEach((trade) => {
-        if (trade.sellPrice && trade.buyPrice && trade.quantity) {
-          lastDayPnL += (trade.sellPrice - trade.buyPrice) * trade.quantity;
+        if (trade.buyAvg && trade.sellAvg && trade.sellQty) {
+          const buyPrice = parseFloat(trade.buyAvg);
+          const sellPrice = parseFloat(trade.sellAvg);
+          const qty = parseInt(trade.sellQty);
+
+          if (!isNaN(buyPrice) && !isNaN(sellPrice) && !isNaN(qty)) {
+            lastDayPnL += (sellPrice - buyPrice) * qty;
+          }
         }
       });
 
@@ -168,21 +146,25 @@ class TradeHistoryRepository {
           $match: {
             userId: toObjectID(userId),
             status: { $ne: 'DELETED' },
-            tradeDate: { $gte: thirtyDaysAgo },
+            endDate: { $gte: thirtyDaysAgo },
+            isOpen: false,
           },
         },
         {
           $group: {
             _id: {
-              date: {
-                $dateToString: { format: '%Y-%m-%d', date: '$tradeDate' },
-              },
+              date: { $dateToString: { format: '%Y-%m-%d', date: '$endDate' } },
             },
             dailyPnL: {
               $sum: {
                 $multiply: [
-                  { $subtract: ['$sellPrice', '$buyPrice'] },
-                  '$quantity',
+                  {
+                    $subtract: [
+                      { $toDouble: '$sellAvg' },
+                      { $toDouble: '$buyAvg' },
+                    ],
+                  },
+                  { $toInt: '$sellQty' },
                 ],
               },
             },

@@ -19,26 +19,7 @@ apiDashboardRouter.get(
         summary
       );
     } catch (error) {
-      router.get(
-        '/dashboard',
-        AuthenticationMiddleware.ensureLoggedInApi(),
-        asyncMiddleware(async (req, res) => {
-          try {
-            const userId = req.user._id;
-
-            const summary =
-              await TradeHistoryRepository.getDashboardSummary(userId);
-
-            res.sendJsonResponse(
-              200,
-              'Dashboard summary fetched successfully',
-              summary
-            );
-          } catch (error) {
-            res.sendJsonResponse(500, 'Server Error');
-          }
-        })
-      );
+      res.sendJsonResponse(500, 'Server Error');
     }
   })
 );

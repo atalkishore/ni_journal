@@ -4,8 +4,7 @@ function fetchDashboardSummary() {
     method: 'GET',
     dataType: 'json',
     success: function (response) {
-      if (response.success && response.data) {
-        console.log('Dashboard summary fetched successfully:', response.data);
+      if (response.status && response.data) {
         const data = response.data;
 
         $('#last-day-pnl-value').text(`$${data.lastDayPnL?.toFixed(2) || 0}`);
@@ -25,7 +24,6 @@ function fetchDashboardSummary() {
         ) {
           renderPNLChart(data.pnlEvolution);
         } else {
-          console.warn('PnL evolution data is incomplete or missing.');
           displayErrorMessage('line-chart', 'No PnL evolution data available.');
         }
       } else {
@@ -57,7 +55,6 @@ function fetchDashboardSummary() {
 function renderPNLChart(pnlEvolution) {
   const chartDom = document.getElementById('line-chart');
   if (!chartDom) {
-    console.error('Chart container not found.');
     displayErrorMessage('line-chart', 'Failed to render chart.');
     return;
   }
