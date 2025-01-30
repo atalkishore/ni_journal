@@ -35,10 +35,8 @@ $(document).ready(function () {
     }
   });
 
-  // Set max date for the trade datetime input
   const setMaxDateTime = () => {
     const now = new Date();
-    // Ensure the date and time are in local time (not UTC)
     const formattedDateTime = now
       .toLocaleString('sv-SE', { timeZoneName: 'short' })
       .slice(0, 16)
