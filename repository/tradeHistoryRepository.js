@@ -113,8 +113,9 @@ class TradeHistoryRepository {
   static async getDashboardSummary(userId) {
     try {
       const db = await connect();
-      const now = moment().utcOffset(330);
-      const oneDayAgo = now.clone().subtract(1, 'days').startOf('day').toDate();
+
+      const now = moment().utcOffset(330); // Convert to IST
+      const oneDayAgo = now.clone().subtract(7, 'days').startOf('day').toDate();
       const today = now.clone().startOf('day').toDate();
       const thirtyDaysAgo = now.clone().subtract(30, 'days').toDate();
 
@@ -123,22 +124,33 @@ class TradeHistoryRepository {
         .find({
           userId: toObjectID(userId),
           status: { $ne: 'DELETED' },
-          endDate: { $gte: oneDayAgo, $lt: today },
           isOpen: false,
+          $expr: {
+            $and: [
+              {
+                $gte: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(oneDayAgo),
+                ],
+              },
+              {
+                $lt: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(today),
+                ],
+              },
+            ],
+          },
         })
         .toArray();
 
       let lastDayPnL = 0;
       lastDayTrades.forEach((trade) => {
-        if (trade.buyAvg && trade.sellAvg && trade.sellQty) {
-          const buyPrice = parseFloat(trade.buyAvg);
-          const sellPrice = parseFloat(trade.sellAvg);
-          const qty = parseInt(trade.sellQty);
+        const buyPrice = parseFloat(trade.buyAvg) || 0;
+        const sellPrice = parseFloat(trade.sellAvg) || 0;
+        const qty = parseInt(trade.sellQty) || 0;
 
-          if (!isNaN(buyPrice) && !isNaN(sellPrice) && !isNaN(qty)) {
-            lastDayPnL += (sellPrice - buyPrice) * qty;
-          }
-        }
+        lastDayPnL += (sellPrice - buyPrice) * qty;
       });
 
       const pnlEvolutionPipeline = [
@@ -146,14 +158,21 @@ class TradeHistoryRepository {
           $match: {
             userId: toObjectID(userId),
             status: { $ne: 'DELETED' },
-            endDate: { $gte: thirtyDaysAgo },
+            endDate: {
+              $gte: { $dateFromString: { dateString: thirtyDaysAgo } },
+            },
             isOpen: false,
           },
         },
         {
           $group: {
             _id: {
-              date: { $dateToString: { format: '%Y-%m-%d', date: '$endDate' } },
+              date: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: { $dateFromString: { dateString: '$endDate' } },
+                },
+              },
             },
             dailyPnL: {
               $sum: {
@@ -178,12 +197,7 @@ class TradeHistoryRepository {
         .aggregate(pnlEvolutionPipeline)
         .toArray();
 
-      const pnlEvolution = {
-        dates: [],
-        dailyPnL: [],
-        totalPnL: [],
-      };
-
+      const pnlEvolution = { dates: [], dailyPnL: [], totalPnL: [] };
       let totalPnL = 0;
       pnlEvolutionData.forEach((day) => {
         pnlEvolution.dates.push(day._id.date);
@@ -193,7 +207,8 @@ class TradeHistoryRepository {
       });
 
       return {
-        lastDayPnL,
+        lastDayPnL: lastDayPnL.toFixed(2),
+        totalPnL: totalPnL.toFixed(2),
         pnlEvolution,
       };
     } catch (error) {
