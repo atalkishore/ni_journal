@@ -115,7 +115,7 @@ class TradeHistoryRepository {
       const db = await connect();
 
       const now = moment().utcOffset(330); // Convert to IST
-      const oneDayAgo = now.clone().subtract(1, 'days').startOf('day').toDate();
+      const oneDayAgo = now.clone().subtract(7, 'days').startOf('day').toDate();
       const today = now.clone().startOf('day').toDate();
       const thirtyDaysAgo = now.clone().subtract(30, 'days').toDate();
 
