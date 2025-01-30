@@ -10,16 +10,31 @@ apiDashboardRouter.get(
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     try {
+      if (!req.user) {
+        return res.sendJsonResponse(401, 'Unauthorized: User not logged in');
+      }
+
       const userId = req.user._id;
+
+      if (!userId) {
+        return res.sendJsonResponse(400, 'User ID is required');
+      }
+
       const summary = await TradeHistoryRepository.getDashboardSummary(userId);
 
-      res.sendJsonResponse(
+      if (!summary) {
+        return res.sendJsonResponse(404, 'Dashboard summary not found');
+      }
+
+      summary.totalPnLFormatted = `₹ ${summary.totalPnL}`;
+
+      return res.sendJsonResponse(
         200,
         'Dashboard summary fetched successfully',
         summary
       );
     } catch (error) {
-      res.sendJsonResponse(500, 'Server Error');
+      return res.sendJsonResponse(500, `Server Error: ${error.message}`);
     }
   })
 );

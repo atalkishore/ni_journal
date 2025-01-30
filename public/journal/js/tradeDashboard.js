@@ -7,16 +7,17 @@ function fetchDashboardSummary() {
       if (response.status && response.data) {
         const data = response.data;
 
-        $('#last-day-pnl-value').text(`$${data.lastDayPnL?.toFixed(2) || 0}`);
+        const lastDayPnL = parseFloat(data.lastDayPnL) || 0;
+        const lastDayPnLChange = parseFloat(data.lastDayPnLChange) || 0;
+        const pnlThisMonth = parseFloat(data.pnlThisMonth) || 0;
+        const pnlThisYear = parseFloat(data.pnlThisYear) || 0;
+
+        $('#last-day-pnl-value').text(`₹${lastDayPnL.toFixed(2)}`);
         $('#last-day-pnl-change').text(
-          `${data.lastDayPnLChange > 0 ? '↑' : '↓'} ${Math.abs(data.lastDayPnLChange || 0).toFixed(2)}%`
+          `${lastDayPnLChange > 0 ? '↑' : '↓'} ${Math.abs(lastDayPnLChange).toFixed(2)}%`
         );
-        $('#this-month-pnl-card h3').text(
-          `$${data.pnlThisMonth?.toFixed(2) || 0}`
-        );
-        $('#this-year-pnl-card h3').text(
-          `$${data.pnlThisYear?.toFixed(2) || 0}`
-        );
+        $('#this-month-pnl-card h3').text(`$${pnlThisMonth.toFixed(2)}`);
+        $('#this-year-pnl-card h3').text(`$${pnlThisYear.toFixed(2)}`);
 
         if (
           data.pnlEvolution?.dates?.length &&
@@ -27,23 +28,13 @@ function fetchDashboardSummary() {
           displayErrorMessage('line-chart', 'No PnL evolution data available.');
         }
       } else {
-        console.error(
-          'Error fetching dashboard summary:',
-          response.message || 'Unknown error'
-        );
         displayErrorMessage(
           'dashboard-summary',
           response.message || 'Failed to load dashboard summary.'
         );
       }
     },
-
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error('AJAX Error:', {
-        textStatus,
-        errorThrown,
-        responseText: jqXHR.responseText,
-      });
+    error: function () {
       displayErrorMessage(
         'dashboard-summary',
         'Failed to load dashboard summary.'
