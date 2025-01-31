@@ -4,20 +4,28 @@ function fetchDashboardSummary() {
     method: 'GET',
     dataType: 'json',
     success: function (response) {
-      if (response.status && response.data) {
+      if (response.status === 'success' && response.data) {
         const data = response.data;
 
-        const lastDayPnL = parseFloat(data.lastDayPnL) || 0;
-        const lastDayPnLChange = parseFloat(data.lastDayPnLChange) || 0;
-        const pnlThisMonth = parseFloat(data.pnlThisMonth) || 0;
-        const pnlThisYear = parseFloat(data.pnlThisYear) || 0;
+        const lastDayPnL = data.lastDayPnL ? parseFloat(data.lastDayPnL) : 0;
+        const lastDayPnLChange = data.lastDayPnLChange
+          ? parseFloat(data.lastDayPnLChange)
+          : 0;
+        const pnlThisMonth = data.pnlThisMonth
+          ? parseFloat(data.pnlThisMonth)
+          : 0;
+        const pnlThisYear = data.pnlThisYear ? parseFloat(data.pnlThisYear) : 0;
+        const lastMonthPnL = data.lastMonthPnL
+          ? parseFloat(data.lastMonthPnL)
+          : 0;
 
         $('#last-day-pnl-value').text(`₹${lastDayPnL.toFixed(2)}`);
         $('#last-day-pnl-change').text(
-          `${lastDayPnLChange > 0 ? '↑' : '↓'} ${Math.abs(lastDayPnLChange).toFixed(2)}%`
+          `${lastDayPnLChange >= 0 ? '↑' : '↓'} ${Math.abs(lastDayPnLChange).toFixed(2)}%`
         );
-        $('#this-month-pnl-card h3').text(`$${pnlThisMonth.toFixed(2)}`);
-        $('#this-year-pnl-card h3').text(`$${pnlThisYear.toFixed(2)}`);
+        $('#this-month-pnl-card h3').text(`₹${pnlThisMonth.toFixed(2)}`);
+        $('#this-year-pnl-card h3').text(`₹${pnlThisYear.toFixed(2)}`);
+        $('#lastMonthPnL').text(lastMonthPnL.toFixed(2));
 
         if (
           data.pnlEvolution?.dates?.length &&
@@ -34,7 +42,7 @@ function fetchDashboardSummary() {
         );
       }
     },
-    error: function () {
+    error: function (xhr, status, error) {
       displayErrorMessage(
         'dashboard-summary',
         'Failed to load dashboard summary.'
@@ -50,7 +58,11 @@ function renderPNLChart(pnlEvolution) {
     return;
   }
 
+  if (chartDom.echartsInstance) {
+    chartDom.echartsInstance.dispose();
+  }
   const myChart = echarts.init(chartDom);
+  chartDom.echartsInstance = myChart;
 
   const option = {
     tooltip: {

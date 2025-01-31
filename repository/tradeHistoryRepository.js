@@ -114,10 +114,21 @@ class TradeHistoryRepository {
     try {
       const db = await connect();
 
-      const now = moment().utcOffset(330); // Convert to IST
+      const now = moment().utcOffset(330);
       const oneDayAgo = now.clone().subtract(1, 'days').startOf('day').toDate();
       const today = now.clone().startOf('day').toDate();
-      const thirtyDaysAgo = now.clone().subtract(30, 'days').toDate();
+      const thirtyDaysAgo = now.clone().subtract(31, 'days').toDate();
+
+      const startOfLastMonth = now
+        .clone()
+        .subtract(1, 'months')
+        .startOf('month')
+        .toDate();
+      const endOfLastMonth = now
+        .clone()
+        .subtract(1, 'months')
+        .endOf('month')
+        .toDate();
 
       const lastDayTrades = await db
         .collection(collectionName)
@@ -149,8 +160,40 @@ class TradeHistoryRepository {
         const buyPrice = parseFloat(trade.buyAvg) || 0;
         const sellPrice = parseFloat(trade.sellAvg) || 0;
         const qty = parseInt(trade.sellQty) || 0;
-
         lastDayPnL += (sellPrice - buyPrice) * qty;
+      });
+
+      const lastMonthTrades = await db
+        .collection(collectionName)
+        .find({
+          userId: toObjectID(userId),
+          status: { $ne: 'DELETED' },
+          isOpen: false,
+          $expr: {
+            $and: [
+              {
+                $gte: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(startOfLastMonth),
+                ],
+              },
+              {
+                $lte: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(endOfLastMonth),
+                ],
+              },
+            ],
+          },
+        })
+        .toArray();
+
+      let lastMonthPnL = 0;
+      lastMonthTrades.forEach((trade) => {
+        const buyPrice = parseFloat(trade.buyAvg) || 0;
+        const sellPrice = parseFloat(trade.sellAvg) || 0;
+        const qty = parseInt(trade.sellQty) || 0;
+        lastMonthPnL += (sellPrice - buyPrice) * qty;
       });
 
       const pnlEvolutionPipeline = [
@@ -208,6 +251,7 @@ class TradeHistoryRepository {
 
       return {
         lastDayPnL: lastDayPnL.toFixed(2),
+        lastMonthPnL: lastMonthPnL.toFixed(2),
         totalPnL: totalPnL.toFixed(2),
         pnlEvolution,
       };
