@@ -18,6 +18,8 @@ function fetchDashboardSummary() {
         const lastMonthPnL = data.lastMonthPnL
           ? parseFloat(data.lastMonthPnL)
           : 0;
+        const winningDays = data.winningDays ? parseInt(data.winningDays) : 0;
+        const losingDays = data.losingDays ? parseInt(data.losingDays) : 0;
 
         $('#last-day-pnl-value').text(`₹${lastDayPnL.toFixed(2)}`);
         $('#last-day-pnl-change').text(
@@ -26,6 +28,8 @@ function fetchDashboardSummary() {
         $('#this-month-pnl-card h3').text(`₹${pnlThisMonth.toFixed(2)}`);
         $('#this-year-pnl-card h3').text(`₹${pnlThisYear.toFixed(2)}`);
         $('#lastMonthPnL').text(lastMonthPnL.toFixed(2));
+        $('#winning-days').text(winningDays);
+        $('#losing-days').text(losingDays);
 
         if (
           data.pnlEvolution?.dates?.length &&

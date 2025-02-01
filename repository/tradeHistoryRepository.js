@@ -130,6 +130,7 @@ class TradeHistoryRepository {
         .endOf('month')
         .toDate();
 
+      // Last day trades
       const lastDayTrades = await db
         .collection(collectionName)
         .find({
@@ -163,6 +164,7 @@ class TradeHistoryRepository {
         lastDayPnL += (sellPrice - buyPrice) * qty;
       });
 
+      // Last month trades
       const lastMonthTrades = await db
         .collection(collectionName)
         .find({
@@ -196,6 +198,7 @@ class TradeHistoryRepository {
         lastMonthPnL += (sellPrice - buyPrice) * qty;
       });
 
+      // PnL Evolution Query
       const pnlEvolutionPipeline = [
         {
           $match: {
@@ -253,13 +256,23 @@ class TradeHistoryRepository {
         .aggregate(pnlEvolutionPipeline)
         .toArray();
 
+      // PnL Evolution Calculation
       const pnlEvolution = { dates: [], dailyPnL: [], totalPnL: [] };
       let totalPnL = 0;
+      let winningDays = 0;
+      let losingDays = 0;
+
       pnlEvolutionData.forEach((day) => {
         pnlEvolution.dates.push(day._id.date);
         pnlEvolution.dailyPnL.push(day.dailyPnL);
         totalPnL += day.dailyPnL;
         pnlEvolution.totalPnL.push(totalPnL);
+
+        if (day.dailyPnL > 0) {
+          winningDays++;
+        } else if (day.dailyPnL < 0) {
+          losingDays++;
+        }
       });
 
       return {
@@ -267,6 +280,8 @@ class TradeHistoryRepository {
         lastMonthPnL: lastMonthPnL.toFixed(2),
         totalPnL: totalPnL.toFixed(2),
         pnlEvolution,
+        winningDays,
+        losingDays,
       };
     } catch (error) {
       throw new Error('Error calculating dashboard summary');
