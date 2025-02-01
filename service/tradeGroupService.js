@@ -144,33 +144,6 @@ class TradingJournalService {
       await TradeHistoryRepository.markGroupAsDeleted(orphanedGroupId);
     }
   }
-
-  static async getPnLSummary(userId, startDate, endDate) {
-    const trades = await tradeRepository.getTradesByDateRange(
-      userId,
-      startDate,
-      endDate
-    );
-
-    let totalPnL = 0;
-    let groupedPnL = {};
-
-    for (const trade of trades) {
-      if (trade.sellPrice && trade.buyPrice && trade.quantity) {
-        const pnl = (trade.sellPrice - trade.buyPrice) * trade.quantity;
-        totalPnL += pnl;
-
-        if (trade.groupId) {
-          if (!groupedPnL[trade.groupId]) {
-            groupedPnL[trade.groupId] = 0;
-          }
-          groupedPnL[trade.groupId] += pnl;
-        }
-      }
-    }
-
-    return { totalPnL, groupedPnL };
-  }
 }
 
 export { TradingJournalService };

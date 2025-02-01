@@ -201,10 +201,18 @@ class TradeHistoryRepository {
           $match: {
             userId: toObjectID(userId),
             status: { $ne: 'DELETED' },
-            endDate: {
-              $gte: { $dateFromString: { dateString: thirtyDaysAgo } },
-            },
             isOpen: false,
+            $expr: {
+              $gte: [
+                {
+                  $dateFromString: {
+                    dateString: '$endDate',
+                    format: '%Y-%m-%dT%H:%M',
+                  },
+                },
+                new Date(thirtyDaysAgo),
+              ],
+            },
           },
         },
         {
@@ -213,7 +221,12 @@ class TradeHistoryRepository {
               date: {
                 $dateToString: {
                   format: '%Y-%m-%d',
-                  date: { $dateFromString: { dateString: '$endDate' } },
+                  date: {
+                    $dateFromString: {
+                      dateString: '$endDate',
+                      format: '%Y-%m-%dT%H:%M',
+                    },
+                  },
                 },
               },
             },

@@ -50,7 +50,6 @@ function fetchDashboardSummary() {
     },
   });
 }
-
 function renderPNLChart(pnlEvolution) {
   const chartDom = document.getElementById('line-chart');
   if (!chartDom) {
@@ -70,20 +69,32 @@ function renderPNLChart(pnlEvolution) {
       backgroundColor: 'rgba(34, 40, 52, 0.9)',
       borderColor: '#373E53',
       textStyle: { color: '#eff2f6' },
+      formatter: function (params) {
+        let tooltipText = `<strong>${params[0].axisValue}</strong><br>`;
+        params.forEach((item) => {
+          tooltipText += `<span style="color:${item.color}">●</span> ${item.seriesName}: ₹${item.value.toFixed(2)}<br>`;
+        });
+        return tooltipText;
+      },
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
       data: pnlEvolution.dates || [],
+      axisLabel: { rotate: 45 },
     },
-    yAxis: { type: 'value' },
+    yAxis: {
+      type: 'value',
+      axisLabel: { formatter: '₹{value}' },
+    },
     series: [
       {
         name: 'Total PnL',
         type: 'line',
         data: pnlEvolution.totalPnL || [],
-        areaStyle: {},
+        areaStyle: { opacity: 0.2 },
         itemStyle: { color: '#4CAF50' },
+        smooth: true,
       },
       {
         name: 'Daily PnL',
@@ -91,6 +102,7 @@ function renderPNLChart(pnlEvolution) {
         data: pnlEvolution.dailyPnL || [],
         areaStyle: { opacity: 0 },
         itemStyle: { color: '#85a9ff' },
+        smooth: true,
       },
     ],
   };
