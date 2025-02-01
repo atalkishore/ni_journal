@@ -3,6 +3,13 @@
     min-height: 300px;
     position: relative;
   }
+  .dashboard-card {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
 </style>
 
 <div class="container mt-4">
@@ -11,20 +18,19 @@
       <div class="dashboard-card text-center" id="dashboard-summary">
         <h5>Last Day PnL</h5>
         <h3 id="last-day-pnl-value">Loading...</h3>
-        <p id="last-day-pnl-change">Loading...</p>
+        <!-- <p id="last-day-pnl-change">Loading...</p> -->
       </div>
     </div>
     <div class="col-lg-4 col-sm-6">
-      <div class="pnl-card text-center">
+      <div class="dashboard-card text-center">
         <h5>Last Month P&L</h5>
         <h3>₹ <span id="lastMonthPnL">Loading...</span></h3>
       </div>
     </div>
     <div class="col-lg-4 col-sm-6">
-      <div class="dashboard-card text-center" id="this-year-pnl-card">
-        <h5>PnL This Year</h5>
-        <h3>$0</h3>
-        <p>0%</p>
+      <div class="dashboard-card text-center" id="last-year-pnl-card">
+        <h5>PnL Last Year</h5>
+        <h3 id="last-year-pnl-value">Loading...</h3>
       </div>
     </div>
   </div>
@@ -39,7 +45,7 @@
   </div>
 
   <div class="row justify-content-center mt-4 mb-6">
-    <div class="col-lg-6 col-sm-8">
+    <div class="col-lg-6 col-sm-8 mt-4">
       <div class="dashboard-card text-center">
         <h5>Winning & Losing Days</h5>
         <div class="d-flex justify-content-around">
@@ -54,7 +60,7 @@
         </div>
       </div>
     </div>
-  </div>  
+  </div>
 </div>
 
 <script src="/journal/js/tradeDashboard.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>

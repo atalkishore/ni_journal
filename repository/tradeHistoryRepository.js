@@ -130,7 +130,8 @@ class TradeHistoryRepository {
         .endOf('month')
         .toDate();
 
-      // Last day trades
+      const startOfYear = now.clone().startOf('year').toDate();
+
       const lastDayTrades = await db
         .collection(collectionName)
         .find({
@@ -164,7 +165,6 @@ class TradeHistoryRepository {
         lastDayPnL += (sellPrice - buyPrice) * qty;
       });
 
-      // Last month trades
       const lastMonthTrades = await db
         .collection(collectionName)
         .find({
@@ -198,7 +198,39 @@ class TradeHistoryRepository {
         lastMonthPnL += (sellPrice - buyPrice) * qty;
       });
 
-      // PnL Evolution Query
+      const thisYearTrades = await db
+        .collection(collectionName)
+        .find({
+          userId: toObjectID(userId),
+          status: { $ne: 'DELETED' },
+          isOpen: false,
+          $expr: {
+            $and: [
+              {
+                $gte: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(startOfYear),
+                ],
+              },
+              {
+                $lte: [
+                  { $dateFromString: { dateString: '$endDate' } },
+                  new Date(now.toDate()),
+                ],
+              },
+            ],
+          },
+        })
+        .toArray();
+
+      let thisYearPnL = 0;
+      thisYearTrades.forEach((trade) => {
+        const buyPrice = parseFloat(trade.buyAvg) || 0;
+        const sellPrice = parseFloat(trade.sellAvg) || 0;
+        const qty = parseInt(trade.sellQty) || 0;
+        thisYearPnL += (sellPrice - buyPrice) * qty;
+      });
+
       const pnlEvolutionPipeline = [
         {
           $match: {
@@ -256,7 +288,6 @@ class TradeHistoryRepository {
         .aggregate(pnlEvolutionPipeline)
         .toArray();
 
-      // PnL Evolution Calculation
       const pnlEvolution = { dates: [], dailyPnL: [], totalPnL: [] };
       let totalPnL = 0;
       let winningDays = 0;
@@ -278,6 +309,7 @@ class TradeHistoryRepository {
       return {
         lastDayPnL: lastDayPnL.toFixed(2),
         lastMonthPnL: lastMonthPnL.toFixed(2),
+        thisYearPnL: thisYearPnL.toFixed(2),
         totalPnL: totalPnL.toFixed(2),
         pnlEvolution,
         winningDays,

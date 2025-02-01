@@ -11,10 +11,7 @@ function fetchDashboardSummary() {
         const lastDayPnLChange = data.lastDayPnLChange
           ? parseFloat(data.lastDayPnLChange)
           : 0;
-        const pnlThisMonth = data.pnlThisMonth
-          ? parseFloat(data.pnlThisMonth)
-          : 0;
-        const pnlThisYear = data.pnlThisYear ? parseFloat(data.pnlThisYear) : 0;
+        const thisYearPnL = data.thisYearPnL ? parseFloat(data.thisYearPnL) : 0;
         const lastMonthPnL = data.lastMonthPnL
           ? parseFloat(data.lastMonthPnL)
           : 0;
@@ -25,9 +22,8 @@ function fetchDashboardSummary() {
         $('#last-day-pnl-change').text(
           `${lastDayPnLChange >= 0 ? '↑' : '↓'} ${Math.abs(lastDayPnLChange).toFixed(2)}%`
         );
-        $('#this-month-pnl-card h3').text(`₹${pnlThisMonth.toFixed(2)}`);
-        $('#this-year-pnl-card h3').text(`₹${pnlThisYear.toFixed(2)}`);
         $('#lastMonthPnL').text(lastMonthPnL.toFixed(2));
+        $('#last-year-pnl-value').text(`₹${thisYearPnL.toFixed(2)}`);
         $('#winning-days').text(winningDays);
         $('#losing-days').text(losingDays);
 
@@ -46,7 +42,7 @@ function fetchDashboardSummary() {
         );
       }
     },
-    error: function (xhr, status, error) {
+    error: function () {
       displayErrorMessage(
         'dashboard-summary',
         'Failed to load dashboard summary.'
@@ -54,6 +50,7 @@ function fetchDashboardSummary() {
     },
   });
 }
+
 function renderPNLChart(pnlEvolution) {
   const chartDom = document.getElementById('line-chart');
   if (!chartDom) {
