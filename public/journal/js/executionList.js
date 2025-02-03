@@ -31,29 +31,42 @@ function fetchTrades(page = 1, filters = {}) {
 
       trades.forEach((trade) => {
         const row = `
-            <tr>
-              <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
-              <td>${trade.instrument}</td>
-              <td>${trade.symbol}</td>
-              <td>${trade.quantity}</td>
-              <td>${trade.position}</td>
-              <td>${trade.entryPrice}</td>
-              <td>${trade.account || 'Default account'}</td>
-              <td>${trade.targetPrice || '-'}</td>
-              <td>${trade.strategy || '-'}</td>
-              <td>${trade.tradeNotes || '-'}</td>
-              <td class="text-center">
-                <button class="btn btn-sm delete-trade text-danger" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-                <button class="btn btn-sm details-trade text-info" data-id="${trade._id}">
-                  <i class="fa-solid fa-circle-info"></i>
-                </button>
-                <button class="btn btn-sm edit-trade text-success" data-id="${trade._id}">
-                  <i class="fa-solid fa-pen-to-square" ></i>
-                </button>
-              </td>
-            </tr>`;
+        <tr>
+          <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
+          <td>${trade.instrument}</td>
+          <td>${trade.symbol}</td>
+          <td>${trade.quantity}</td>
+          <td>${trade.position}</td>
+          <td>${trade.entryPrice}</td>
+          <td>${trade.account || 'Default account'}</td>
+          <td>${trade.targetPrice || '-'}</td>
+          <td>${trade.strategy || '-'}</td>
+          <td>${trade.tradeNotes || '-'}</td>
+          <td class="text-center">
+            <div class="dropdown">
+              <button class="btn btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item delete-trade text-danger" href="#" data-id="${trade._id}" data-bs-toggle="modal" data-bs-target="#deleteTradeModal">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item details-trade text-info" href="#" data-id="${trade._id}">
+                    <i class="fa-solid fa-circle-info"></i> Details
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item edit-trade text-success" href="#" data-id="${trade._id}">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>`;
 
         tableBody.append(row);
       });
