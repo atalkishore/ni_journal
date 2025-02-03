@@ -1,8 +1,8 @@
 $(document).ready(function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const tradeId = urlParams.get('tradeId');
+  const pathSegments = window.location.pathname.split('/');
+  const tradeId = pathSegments[pathSegments.length - 1];
 
-  if (!tradeId) {
+  if (!tradeId || tradeId.length !== 24) {
     alert('Invalid Trade ID. Please try again.');
     window.location.href = '/journal/trades';
     return;
@@ -10,7 +10,7 @@ $(document).ready(function () {
 
   function fetchTradeDetails() {
     $.ajax({
-      url: `/api/journal/trades/${tradeId}`,
+      url: `/journal/api/trades/${tradeId}`,
       type: 'GET',
       success: function (tradeJson) {
         const trade = tradeJson.data;
@@ -56,7 +56,7 @@ $(document).ready(function () {
 
         $('#tradeDetailsContent').show();
       },
-      error: function () {
+      error: function (xhr) {
         alert('Failed to fetch trade details. Please try again.');
         window.location.href = '/journal/trades';
       },

@@ -6,6 +6,7 @@ import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { StrategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { seoHeadTagValues, PAGE_NAME, redirectTo404 } from '../utils/index.js';
+import { ObjectId } from 'mongodb'; // Ensure ObjectId is imported
 
 router.get(
   '/',
@@ -81,26 +82,37 @@ router.get(
 );
 
 // get- localhost:5110/journal/trades/11111
+
 router.get(
   '/trades/:tradeid',
   AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
-    const tradeId = req.params.tradeid?.toLowerCase();
-    const tradeDetails = await tradeRepository.getTradeById(tradeId);
-    if (!tradeDetails) {
-      return res.status(404).render('error', {
-        status: 'Failure',
-        message: 'Trade not found.',
-        data: null,
-      });
-    }
+    try {
+      const tradeId = req.params.tradeid;
+      const userId = req.user?._id;
 
-    return res.render('journal/tradeDetails', {
-      menu: 'Journal',
-      tradeId,
-      trade: tradeDetails,
-      ...seoHeadTagValues(PAGE_NAME.JOURNAL_TRADE_DETAILS),
-    });
+      if (!tradeId || tradeId.length !== 24 || !ObjectId.isValid(tradeId)) {
+        res.sendJsonResponse(400, 'Invalid Trade  ID');
+      }
+
+      const tradeDetails = await tradeRepository.getTradeById(
+        new ObjectId(tradeId),
+        userId
+      );
+
+      if (!tradeDetails) {
+        res.sendJsonResponse(404, 'Trade not found');
+      }
+
+      return res.render('journal/tradeDetails', {
+        menu: 'Journal',
+        tradeId,
+        trade: tradeDetails,
+        ...seoHeadTagValues(PAGE_NAME.JOURNAL_TRADE_DETAILS),
+      });
+    } catch (error) {
+      res.sendJsonResponse(500, 'Internal server error');
+    }
   })
 );
 
