@@ -3,8 +3,10 @@ $(document).ready(function () {
   const tradeId = pathSegments[pathSegments.length - 1];
 
   if (!tradeId || tradeId.length !== 24) {
-    alert('Invalid Trade ID. Please try again.');
-    window.location.href = '/journal/trades';
+    showToast('Invalid Trade ID. Please try again.', 'danger');
+    setTimeout(() => {
+      window.location.href = '/journal/trades';
+    }, 1000);
     return;
   }
 
@@ -55,10 +57,14 @@ $(document).ready(function () {
         }
 
         $('#tradeDetailsContent').show();
+
+        showToast('Trade details fetched successfully!', 'success');
       },
       error: function (xhr) {
-        alert('Failed to fetch trade details. Please try again.');
-        window.location.href = '/journal/trades';
+        showToast('Failed to fetch trade details. Please try again.', 'danger');
+        setTimeout(() => {
+          window.location.href = '/journal/trades';
+        }, 1500);
       },
     });
   }
@@ -69,3 +75,18 @@ $(document).ready(function () {
 
   fetchTradeDetails();
 });
+
+function showToast(message, type) {
+  const toast = $(`
+    <div class="alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert" style="z-index: 1055;">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `);
+
+  $('body').append(toast);
+
+  setTimeout(() => {
+    toast.alert('close');
+  }, 1000);
+}
