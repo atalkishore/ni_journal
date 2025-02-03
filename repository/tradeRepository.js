@@ -51,10 +51,22 @@ export const tradeRepository = {
   },
 
   async getTradeById(id, userId) {
-    return await baseRepository.findOne(collectionName, {
+    const trade = await baseRepository.findOne(collectionName, {
       _id: toObjectID(id),
       userId: toObjectID(userId),
     });
+
+    if (!trade) return null;
+
+    if (trade.strategy) {
+      const strategy = await baseRepository.findOne('journal_strategies', {
+        _id: toObjectID(trade.strategy),
+      });
+
+      trade.strategy = strategy ? strategy.name : 'Unknown Strategy';
+    }
+
+    return trade;
   },
 
   async updateTrade(id, updateData) {
