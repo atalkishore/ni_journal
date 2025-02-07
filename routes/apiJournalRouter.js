@@ -100,24 +100,27 @@ function extractFilters(query) {
     query;
 
   const filters = {};
+
   if (symbol) {
     filters.symbol = symbol;
   }
   if (instrument) {
     filters.instrument = instrument;
   }
+
   if (startDate) {
-    filters.startDate = new Date(startDate);
+    filters.startDate = new Date(startDate + 'T00:00:00.000Z');
   }
   if (endDate) {
-    filters.endDate = new Date(endDate);
+    filters.endDate = new Date(endDate + 'T23:59:59.999Z');
   }
+
   if (position) {
-    filters.position = position;
-  } // e.g., 'Buy' or 'Sell'
+    filters.position = position; // e.g., 'Buy' or 'Sell'
+  }
   if (status) {
-    filters.status = status;
-  } // e.g., 'Active', 'Closed'
+    filters.status = status; // e.g., 'Active', 'Closed'
+  }
   if (groupId) {
     filters.groupId = groupId;
   }
@@ -165,6 +168,7 @@ router.get(
         totalTrades,
       });
     } catch (error) {
+      console.error('❌ Error in Trades API:', error);
       res.sendJsonResponse(500, 'Failed to fetch trades.');
     }
   })

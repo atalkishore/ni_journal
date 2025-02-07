@@ -34,20 +34,26 @@ export const tradeRepository = {
   },
 
   async getPaginatedTrades(userId, filters, skip, limit) {
-    const db = await connect();
     const query = {
       status: 'Active',
       userId: toObjectID(userId),
-      ...filters,
     };
 
-    return await db
-      .collection(collectionName)
-      .find(query)
-      .sort({ tradeDate: -1 })
-      .skip(skip)
-      .limit(limit)
-      .toArray();
+    if (filters.startDate || filters.endDate) {
+      query.tradeDate = {};
+      if (filters.startDate) {
+        query.tradeDate.$gte = new Date(filters.startDate);
+      }
+      if (filters.endDate) {
+        query.tradeDate.$lte = new Date(filters.endDate);
+      }
+    }
+
+    return await baseRepository.find(collectionName, query, {
+      sort: { tradeDate: -1 },
+      skip,
+      limit,
+    });
   },
 
   async getTradeById(id, userId) {
