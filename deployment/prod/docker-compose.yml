@@ -1,0 +1,28 @@
+x-niftyinvestui_base:
+  &niftyinvestui_base # Define a YAML anchor for the common configuration
+  image: prod_ni_journal_img:latest
+  env_file:
+    - env.list
+  volumes:
+    - /var/myprojects/prod/logs/ni_journal:/app/logs
+  healthcheck:
+    test: ['CMD', 'curl', '-f', 'http://localhost:5001/health']
+    interval: 1m
+    start_period: 30s
+    timeout: 10s
+    retries: 3
+  deploy:
+    replicas: 1
+    resources:
+      limits:
+        cpus: '1'
+        memory: 500M
+
+services:
+  prod_0_ni_journal:
+    <<: *niftyinvestui_base # Use YAML reference to include common settings
+    container_name: prod_0_ni_journal
+    environment:
+      - DISP_NAME=prod_0_ni_journal
+    ports:
+      - '5011:5001'
