@@ -6,10 +6,11 @@ import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { StrategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { seoHeadTagValues, PAGE_NAME, redirectTo404 } from '../utils/index.js';
-import { ObjectId } from 'mongodb'; // Ensure ObjectId is imported
+import { ObjectId } from 'mongodb';
 
 router.get(
   '/',
+  AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
     res.render('journal/Dashboard', {
       menu: 'Journal',
