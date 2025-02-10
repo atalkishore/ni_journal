@@ -80,8 +80,8 @@ openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/uat/env.list 
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/local/www -out deployment/local/www.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .env -out deployment/local/.env.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in env.list -out env.list.enc
+openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/prod/env.list -out .prod/sec1.enc
 
-openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/env.list -out .prod/sec1.enc
 openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/lib/serviceAccountKey.json -out .prod/lib/sec2.enc
 
 # Decryption
@@ -90,8 +90,8 @@ openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/uat/sec1.e
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in lib/sec2.enc -out lib/serviceAccountKey.json
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/local/.env.enc -out .env
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in env.list.enc -out env.list
+openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in deployment/prod/sec1.enc -out deployment/prod/env.list
 
-openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/sec1.enc -out .prod/env.list
 openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in .prod/lib/sec2.enc -out .prod/lib/serviceAccountKey.json
 
 
