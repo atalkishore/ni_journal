@@ -24,11 +24,11 @@ jobs:
             cd /var/myprojects/ni_journal_prod
             git reset --hard
             git clean -df
-            git checkout main
+            git checkout prod-deploy
             git reset --hard
             git clean -df
-            git pull origin main
-            echo "${{ secrets.UAT_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in deployment/prod/sec1.enc -out deployment/prod/env.list
+            git pull origin prod-deploy
+            echo "${{ secrets.PROD_ENC_KEY }}" | openssl enc -d -aes-256-cbc -salt -pbkdf2  -iter 100000 -in deployment/prod/sec1.enc -out deployment/prod/env.list
             mv -f deployment/prod/* .
             cd /var/myprojects/ni_journal_prod
             docker build --build-arg IMAGE_NAME=prod_ni_journal_img --build-arg IMAGE_TAG=latest -t prod_ni_journal_img:latest .
