@@ -27,26 +27,13 @@ function fetchDashboardSummary() {
         $('#winning-days').text(winningDays);
         $('#losing-days').text(losingDays);
 
-        if (
-          data.pnlEvolution?.dates?.length &&
-          data.pnlEvolution.totalPnL?.length
-        ) {
-          renderPNLChart(data.pnlEvolution);
-        } else {
-          displayErrorMessage('line-chart', 'No PnL evolution data available.');
-        }
+        renderPNLChart(data.pnlEvolution || { dates: [], totalPnL: [] });
       } else {
-        displayErrorMessage(
-          'dashboard-summary',
-          response.message || 'Failed to load dashboard summary.'
-        );
+        renderPNLChart({ dates: [], totalPnL: [] });
       }
     },
     error: function () {
-      displayErrorMessage(
-        'dashboard-summary',
-        'Failed to load dashboard summary.'
-      );
+      renderPNLChart({ dates: [], totalPnL: [] });
     },
   });
 }
@@ -54,7 +41,6 @@ function fetchDashboardSummary() {
 function renderPNLChart(pnlEvolution) {
   const chartDom = document.getElementById('line-chart');
   if (!chartDom) {
-    displayErrorMessage('line-chart', 'Failed to render chart.');
     return;
   }
 
@@ -63,6 +49,9 @@ function renderPNLChart(pnlEvolution) {
   }
   const myChart = echarts.init(chartDom);
   chartDom.echartsInstance = myChart;
+
+  const hasData =
+    pnlEvolution.dates.length > 0 && pnlEvolution.totalPnL.length > 0;
 
   const option = {
     tooltip: {
@@ -81,44 +70,46 @@ function renderPNLChart(pnlEvolution) {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: pnlEvolution.dates || [],
+      data: pnlEvolution.dates.length
+        ? pnlEvolution.dates
+        : ['Day 1', 'Day 2', 'Day 3'],
       axisLabel: { rotate: 45 },
     },
     yAxis: {
       type: 'value',
       axisLabel: { formatter: '₹{value}' },
+      min: 0,
+      splitLine: { show: true },
     },
-    series: [
+    series: hasData
+      ? [
+          {
+            name: 'Total PnL',
+            type: 'line',
+            data: pnlEvolution.totalPnL || [],
+            areaStyle: { opacity: 0.2 },
+            itemStyle: { color: '#4CAF50' },
+            smooth: true,
+          },
+        ]
+      : [{ name: 'Total PnL', type: 'line', data: [] }],
+    graphic: [
       {
-        name: 'Total PnL',
-        type: 'line',
-        data: pnlEvolution.totalPnL || [],
-        areaStyle: { opacity: 0.2 },
-        itemStyle: { color: '#4CAF50' },
-        smooth: true,
-      },
-      {
-        name: 'Daily PnL',
-        type: 'line',
-        data: pnlEvolution.dailyPnL || [],
-        areaStyle: { opacity: 0 },
-        itemStyle: { color: '#85a9ff' },
-        smooth: true,
+        type: 'text',
+        left: 'center',
+        top: 'middle',
+        style: {
+          text: hasData ? '' : 'No PnL Data Available',
+          fontSize: 16,
+          fontWeight: 'bold',
+          fill: '#888',
+        },
       },
     ],
   };
 
   myChart.setOption(option);
   window.addEventListener('resize', () => myChart.resize());
-}
-
-function displayErrorMessage(containerId, message) {
-  const container = document.getElementById(containerId);
-  if (container) {
-    container.innerHTML = `<div class="alert alert-danger">${message}</div>`;
-  } else {
-    console.error(`Element with ID "${containerId}" not found.`);
-  }
 }
 
 fetchDashboardSummary();

@@ -27,20 +27,25 @@ $(document).ready(function () {
           const trades = response.data.trades;
           const totalPages = response.data.totalPages;
           const totalTrades = response.data.totalHistoryCount;
+
+          if (!Array.isArray(trades) || trades.length === 0) {
+            $('#tradeHistoryTableBody').html(
+              `<tr><td colspan="9" class="text-center text-muted">No trade history found.</td></tr>`
+            );
+            $('#tradeCountInfo').hide();
+            setupPagination(0, 1);
+            return;
+          }
+
           const start = (page - 1) * limit + 1;
           const end = Math.min(page * limit, totalTrades);
+          $('#tradeCountInfo')
+            .text(`${start} to ${end} of ${totalTrades} trades`)
+            .show();
+
           let tableBody = '';
           const openBadge =
             '<span class="badge badge-phoenix badge-phoenix-warning">Open</span>';
-
-          $('#tradeCountInfo').text(
-            `${start} to ${end} of ${totalTrades} trades`
-          );
-
-          if (!Array.isArray(trades)) {
-            alert('Invalid response format from the server.');
-            return;
-          }
 
           trades.forEach((trade) => {
             tableBody += `
@@ -70,43 +75,19 @@ $(document).ready(function () {
             fetchTrades(groupId);
           });
         } else {
-          alert('Failed to fetch trade history: ' + response.message);
-        }
-      },
-      error: function (error) {
-        alert('An error occurred while fetching trade history.');
-      },
-    });
-  }
-
-  function fetchTrades(groupId) {
-    $.ajax({
-      url: `/journal/api/trades?groupId=${groupId}`,
-      type: 'GET',
-      success: function (trades) {
-        const tableBody = $('#tradeTable');
-        tableBody.empty();
-
-        if (trades.length === 0) {
-          tableBody.append(
-            '<tr><td colspan="11" class="text-center">No trades found.</td></tr>'
+          $('#tradeHistoryTableBody').html(
+            `<tr><td colspan="9" class="text-center text-muted">No trade history found.</td></tr>`
           );
-          return;
+          $('#tradeCountInfo').hide();
+          setupPagination(0, 1);
         }
-
-        trades.data.forEach((trade) => {
-          const row = `
-            <tr>
-              <td>${new Date(trade.tradeDate).toLocaleDateString()} ${new Date(trade.tradeDate).toLocaleTimeString()}</td>
-              <td>${trade.quantity}</td>
-              <td>${trade.position}</td>
-              <td>${trade.entryPrice}</td>
-            </tr>`;
-          tableBody.append(row);
-        });
       },
-      error: function (xhr, status, error) {
-        alert('Failed to fetch trades. Please try again later.');
+      error: function () {
+        $('#tradeHistoryTableBody').html(
+          `<tr><td colspan="9" class="text-center text-danger">Error fetching trade history.</td></tr>`
+        );
+        $('#tradeCountInfo').hide();
+        setupPagination(0, 1);
       },
     });
   }
@@ -114,6 +95,8 @@ $(document).ready(function () {
   function setupPagination(totalPages, currentPage) {
     const pagination = $('#tradeHistoryPagination');
     pagination.empty();
+
+    if (totalPages <= 1) return;
 
     if (currentPage > 1) {
       pagination.append(
@@ -147,8 +130,8 @@ $(document).ready(function () {
 
   $('#resetFilters').on('click', function () {
     $('#symbolFilter').val('');
-    $('#openDateFilter').val('');
-    $('#closeDateFilter').val('');
+    $('#startDateFilter').val('');
+    $('#endDateFilter').val('');
     $('#positionFilter').val('');
     currentPage = 1;
     fetchTradeHistory(currentPage);
