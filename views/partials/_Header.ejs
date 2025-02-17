@@ -5,7 +5,7 @@ let header = [
     {name: "Max Pain", link: "/max-pain", children: []},
     {name: "Put Call Ratio", link: "/put-call-ratio", children: []},
     {name: "Option Chain", link: "/option-chain", children: []},
-    <!-- {name: "Screener", link: "/screener", children: [], isNew: true}, -->
+        <!-- {name: "Screener", link: "/screener", children: [], isNew: true}, -->
     {
       name: "Company", link: "", children: [
       {name: "About", link: "/company?dest=about"},
@@ -28,6 +28,10 @@ let header = [
     ...(!(isAuthenticated && user?.isAdmin)
       ? []  
       : [{ name: "Journal", link: "/journal", children: [] }]),
+    ...(!(isAuthenticated && user?.isAdmin)
+      ? []  
+      : [{ name: "Forum", link: "/forum", children: [] }]),
+
     ...(isAuthenticated && (user?.isSubscribedUser)
       ? []  
       : [{ name: "Pricing", link: "/subscription/pricing", children: [] }]),
@@ -204,6 +208,7 @@ var activeMenu = menu
 
       </ul>
     </div>
+  
     <%- include('./_DualHeader.ejs') %>
 </nav>
 
