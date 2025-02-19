@@ -25,10 +25,11 @@ let header = [
       {name: "Stock News", link: "/stock-news"}
       ]
     },
-    ...(!(isAuthenticated && user?.isAdmin)
+    ...(!(isAuthenticated)
       ? []  
       : [{ name: "Journal", link: "/journal", children: [] }]),
-    ...(!(isAuthenticated && user?.isAdmin)
+<!-- isAdmin -->
+    ...(!(isAuthenticated) 
       ? []  
       : [{ name: "Forum", link: "/forum", children: [] }]),
 
@@ -208,8 +209,8 @@ var activeMenu = menu
 
       </ul>
     </div>
-  
     <%- include('./_DualHeader.ejs') %>
+
 </nav>
 
 

@@ -7,15 +7,37 @@ import { StrategyRepository } from '../repository/strategyRepository.js';
 import { tradeRepository } from '../repository/tradeRepository.js';
 import { seoHeadTagValues, PAGE_NAME, redirectTo404 } from '../utils/index.js';
 import { ObjectId } from 'mongodb';
+import { JournalGuestRepository } from '../repository/journalGuestRepository.js';
 
 router.get(
   '/',
   AuthenticationMiddleware.ensureLoggedIn(),
   asyncMiddleware(async (req, res) => {
-    res.render('journal/Dashboard', {
+    if (req.user?.isAdmin) {
+      return res.render('journal/Dashboard', {
+        menu: 'Journal',
+        currentPath: 'journal/dashboard',
+        ...seoHeadTagValues(PAGE_NAME.JOURNAL_DASHBOARD),
+      });
+    }
+
+    let userId = req.user.encKey;
+    const name = req.user.name;
+    const email = req.user.email;
+
+    if (userId && name && email) {
+      if (!ObjectId.isValid(userId)) {
+        userId = new ObjectId();
+      } else {
+        userId = new ObjectId(userId);
+      }
+      await JournalGuestRepository.findOrCreateGuest(userId, name, email);
+    }
+
+    res.render('journal/dashboard_guest', {
       menu: 'Journal',
       currentPath: 'journal/dashboard',
-      ...seoHeadTagValues(PAGE_NAME.JOURNAL_DASHBOARD),
+      ...seoHeadTagValues(PAGE_NAME.JOURNAL_GUEST),
     });
   })
 );

@@ -80,6 +80,12 @@ const baseRepository = {
       { returnDocument: 'after' }
     );
   },
+
+  async updateOneWithOperators(collectionName, query = {}, updateOperators) {
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    return await collection.updateOne(query, updateOperators);
+  },
 };
 
 export { connect, mongodb, baseRepository };
