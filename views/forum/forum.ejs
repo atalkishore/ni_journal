@@ -1,0 +1,17 @@
+<div class="container mt-4">
+  <h2>Forum</h2>
+
+  <form id="postForm">
+    <textarea
+      id="postMessage"
+      class="form-control mb-2"
+      placeholder="Write a post..."
+    ></textarea>
+    <button type="submit" class="btn btn-primary">Post</button>
+  </form>
+
+  <div id="postsContainer" class="mt-4"></div>
+</div>
+
+<script src="/journal/js/forum.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
+

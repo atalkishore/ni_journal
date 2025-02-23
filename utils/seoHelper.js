@@ -376,6 +376,14 @@ function seoHeadTagValues(page, param1_symbol, param2, param3) {
         description: 'From here we can keep the history of grouped trades',
         keywords: 'Trade History,Grouped Trades,Computed Trades',
       };
+    case PAGE_NAME.JOURNAL_GUEST:
+      return {
+        title: 'Journal Guest | Start using Journal',
+        displayTitle: 'Journal',
+        description:
+          'From here you can add, execute and can maintain your daily trading history and can manage strategies',
+        keywords: 'Add Trade, Execution List, Trade History, Manage Strategy ',
+      };
   }
 }
 export { seoHeadTagValues };
