@@ -1,17 +1,103 @@
-<div class="container mt-4">
-  <h2>Forum</h2>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h2 class="text-center mb-4">🚀 NiftyInvest Forum</h2>
 
-  <form id="postForm">
-    <textarea
-      id="postMessage"
-      class="form-control mb-2"
-      placeholder="Write a post..."
-    ></textarea>
-    <button type="submit" class="btn btn-primary">Post</button>
-  </form>
+      <div class="card shadow-sm p-3 mb-4">
+        <form id="postForm">
+          <textarea
+            id="postMessage"
+            class="form-control mb-3"
+            placeholder="Write something interesting..."
+          ></textarea>
+          <button type="submit" class="btn btn-primary w-100">Post</button>
+        </form>
+      </div>
 
-  <div id="postsContainer" class="mt-4"></div>
+      <div id="postsContainer"></div>
+    </div>
+  </div>
 </div>
 
 <script src="/journal/js/forum.js?v=<%= ENVNAME === 'prod' ? '2' : Math.random() %>"></script>
 
+<style>
+  .card {
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+  .card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .btn {
+    transition: 0.3s;
+  }
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  .comment-section {
+    border-left: 3px solid #007bff;
+  }
+  .container {
+    max-width: 750px;
+  }
+  h2 {
+    font-weight: 700;
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .card {
+    border-radius: 16px;
+    transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(10px);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .btn-primary {
+    background: linear-gradient(45deg, #007bff, #00c6ff);
+    border: none;
+  }
+  .btn-primary:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-outline-primary,
+  .btn-outline-secondary {
+    border-radius: 20px;
+    transition: 0.3s ease;
+  }
+  .btn-outline-primary:hover,
+  .btn-outline-secondary:hover {
+    transform: scale(1.08);
+    box-shadow: 0px 3px 10px rgba(0, 123, 255, 0.3);
+  }
+
+  .comment-section {
+    border-left: 4px solid #007bff;
+    border-radius: 12px;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+  }
+  .comment-section textarea {
+    border-radius: 10px;
+  }
+  .comment-section button {
+    border-radius: 20px;
+    background: linear-gradient(45deg, #28a745, #58d68d);
+    border: none;
+  }
+  .comment-section button:hover {
+    transform: scale(1.05);
+  }
+
+  .uil-user-circle {
+    font-size: 24px;
+    color: #007bff;
+  }
+</style>

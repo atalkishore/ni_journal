@@ -84,4 +84,29 @@ apiForumRouter.get(
   })
 );
 
+apiForumRouter.post(
+  '/posts/:postId/comments/:commentId/commentlike',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  asyncMiddleware(async (req, res) => {
+    const { postId, commentId } = req.params;
+    const userId = req.user?._id;
+
+    if (!postId || !commentId) {
+      return res.sendJsonResponse(400, 'Invalid Post ID or Comment ID');
+    }
+
+    const updatedComment = await forumRepository.likeComment(
+      postId,
+      commentId,
+      userId
+    );
+
+    if (!updatedComment) {
+      return res.sendJsonResponse(500, 'Failed to like comment');
+    }
+
+    res.sendJsonResponse(200, 'Comment liked successfully', updatedComment);
+  })
+);
+
 export default apiForumRouter;
