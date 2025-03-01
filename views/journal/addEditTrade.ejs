@@ -68,23 +68,22 @@
 
               <div class="col-md-4">
                 <label for="strategies" class="form-label">Strategies*</label>
-                <div class="input-group">
-                  <select id="strategies" name="strategies" class="form-select" required>
-                    <option selected disabled value="">Choose...</option>
-                    <% strategies.forEach(function(strategy) { %>
-                      <option value="<%= strategy._id %>" <%=strategy._id==trade?.strategy ? 'selected' : '' %>><%=
-                          strategy.name %>
-                      </option>
-                      <% }); %>
-                  </select>
-                  <a href="/journal/manage-strategy" class="input-group-text bg-white text-primary"
+                <select id="strategies" name="strategies" class="form-select" required>
+                  <option selected disabled value="">Choose...</option>
+                  <% strategies.forEach(function(strategy) { %>
+                    <option value="<%= strategy._id %>" <%= strategy._id == trade?.strategy ? 'selected' : '' %>><%= strategy.name %></option>
+                  <% }); %>
+                </select>
+                <div class="invalid-feedback">Please select a valid strategy.</div>
+                
+                <div class="text-end mt-1">
+                  <a href="/journal/manage-strategy" class="text-primary small d-inline-flex align-items-center" 
                     data-bs-toggle="tooltip" data-bs-placement="top" title="Manage Your Strategies">
-                    <i class="uil uil-analysis"></i>
+                    <i class="uil uil-analysis me-1" style="font-size: 0.85rem;"></i> <span style="font-size: 0.85rem;">Add Strategy</span>
                   </a>
                 </div>
-                <div class="invalid-feedback">Please select a valid strategy.</div>
               </div>
-
+                            
 
 
               <div class="col-md-4">
