@@ -16,7 +16,7 @@ jobs:
       - name: SSH into remote server
         uses: appleboy/ssh-action@master
         with:
-          host: 91.108.105.210
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
