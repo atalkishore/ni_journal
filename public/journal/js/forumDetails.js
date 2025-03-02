@@ -11,7 +11,17 @@ $(document).ready(function () {
       url: `/forum/api/posts/${postId}/like`,
       method: 'POST',
       success: function (response) {
-        btn.text(`Like (${response.data.likes})`);
+        if (response.status === 'success' && response.data) {
+          let likeCount = response.data.likes;
+          let liked = response.data.liked;
+
+          btn.text(`${liked ? 'Unlike' : 'Like'} (${likeCount})`);
+        } else {
+          alert('⚠ Failed to like the post.');
+        }
+      },
+      error: function (xhr, status, error) {
+        alert('Error liking post. Check console for details.');
       },
     });
   });
@@ -27,13 +37,28 @@ $(document).ready(function () {
       contentType: 'application/json',
       data: JSON.stringify({ postId, comment: commentText }),
       success: function (response) {
-        $('.comments-list').append(`
-                    <div class="p-2 border-bottom">
-                        <strong>${response.data.userName}</strong>: ${response.data.comment}
-                        <small class="text-muted">${new Date(response.data.timestamp).toLocaleString()}</small>
-                    </div>
-                `);
-        $('.comment-text').val('');
+        let newComment = response?.data?.data?.data;
+
+        if (newComment) {
+          let userName = newComment.userName || 'Unknown';
+          let comment = newComment.comment || 'No content';
+          let timestamp = newComment.createdAt
+            ? new Date(newComment.createdAt).toLocaleString()
+            : 'No Date';
+
+          $('.comments-list').append(`
+            <div class="p-2 border-bottom">
+                <strong>${userName}</strong>: ${comment}
+                <small class="text-muted">${timestamp}</small>
+            </div>
+          `);
+          $('.comment-text').val('');
+        } else {
+          alert('Failed to add comment. Please try again.');
+        }
+      },
+      error: function (xhr, status, error) {
+        alert('Error posting comment.');
       },
     });
   });

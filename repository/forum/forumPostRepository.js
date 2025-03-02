@@ -48,30 +48,39 @@ export const forumPostRepository = {
       collectionName,
       postId
     );
-    if (!existingPost) return null;
+    if (!existingPost) {
+      return { success: false, message: 'Post not found' };
+    }
 
     let updatedLikes = existingPost.likes || 0;
     let likedBy = existingPost.likedBy || [];
 
     const userIndex = likedBy.indexOf(userId);
-    const liked = userIndex === -1;
+    const isLiked = userIndex === -1;
 
-    liked ? likedBy.push(userId) : likedBy.splice(userIndex, 1);
-    updatedLikes = liked ? updatedLikes + 1 : updatedLikes - 1;
+    if (isLiked) {
+      likedBy.push(userId);
+      updatedLikes += 1;
+    } else {
+      likedBy.splice(userIndex, 1);
+      updatedLikes -= 1;
+    }
 
     const result = await baseRepository.updateOneById(collectionName, postId, {
       likes: updatedLikes,
       likedBy,
     });
 
-    return result.modifiedCount
-      ? {
-          success: true,
-          message: liked ? 'Post liked!' : 'Post unliked!',
-          likes: updatedLikes,
-          liked,
-        }
-      : null;
+    if (result.modifiedCount) {
+      return {
+        success: true,
+        message: isLiked ? 'Post liked!' : 'Post unliked!',
+        likes: updatedLikes,
+        liked: isLiked,
+      };
+    } else {
+      return { success: false, message: 'Failed to update like status' };
+    }
   },
 
   async getPostById(postId) {
