@@ -60,15 +60,23 @@ apiForumRouter.post(
     const userId = req.user?._id;
     const userName = req.user?.name || 'Anonymous';
 
-    if (!postId || !comment) return res.sendJsonResponse(400, 'Invalid data');
+    console.log('Received Data:', { postId, userId, userName, comment });
 
-    const updatedPost = await forumCommentsRepository.addComment(
+    if (!postId || !comment) {
+      return res.sendJsonResponse(400, 'Invalid data', { success: false });
+    }
+
+    const newComment = await forumCommentsRepository.addComment(
       postId,
       userId,
       userName,
       comment
     );
-    res.sendJsonResponse(200, 'Comment added successfully', updatedPost);
+
+    res.sendJsonResponse(200, 'Comment added successfully', {
+      success: true,
+      data: newComment,
+    });
   })
 );
 
@@ -82,13 +90,13 @@ apiForumRouter.get(
       return res.sendJsonResponse(400, 'Post ID is required');
     }
 
-    const comments = await forumCommentsRepository.getCommentsByPost(postId);
+    const post = await forumCommentsRepository.getCommentsByPost(postId);
 
-    if (!comments || comments.length === 0) {
+    if (!post || !post.comments || post.comments.length === 0) {
       return res.sendJsonResponse(404, 'No comments found for this post');
     }
 
-    res.sendJsonResponse(200, 'Comments retrieved successfully', comments);
+    res.sendJsonResponse(200, 'Comments retrieved successfully', post.comments);
   })
 );
 

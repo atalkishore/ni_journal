@@ -1,28 +1,18 @@
 import { baseRepository } from '../baseMongoDbRepository.js';
 import { ObjectId } from 'mongodb';
+import { toObjectID } from '../../utils/helpers.js';
 
 const collectionName = 'forum_comments';
 
 export const forumCommentsRepository = {
   async addComment(postId, userId, userName, comment) {
     try {
-      if (!ObjectId.isValid(postId)) {
-        return { success: false, message: 'Invalid Post ID format!' };
-      }
-
-      const objectId = new ObjectId(postId);
-
-      const existingPost = await baseRepository.findOne(collectionName, {
-        _id: objectId,
-      });
-
-      if (!existingPost) {
-        return { success: false, message: 'Post not found!' };
-      }
+      const postObjectId = toObjectID(postId); // Convert postId to ObjectId
 
       const commentData = {
         _id: new ObjectId(),
-        userId,
+        postId: postObjectId, // Store postId for reference
+        userId: toObjectID(userId),
         userName,
         comment,
         likes: 0,
@@ -30,18 +20,12 @@ export const forumCommentsRepository = {
         createdAt: new Date(),
       };
 
-      const updateQuery = {
-        $push: { comments: commentData },
-        $set: { updatedAt: new Date() },
-      };
-
-      const updateResult = await baseRepository.updateOneWithOperators(
+      const result = await baseRepository.insertOne(
         collectionName,
-        { _id: objectId },
-        updateQuery
+        commentData
       );
 
-      if (!updateResult.modifiedCount) {
+      if (!result.insertedId) {
         return { success: false, message: 'Failed to add comment!' };
       }
 
@@ -51,7 +35,23 @@ export const forumCommentsRepository = {
         data: commentData,
       };
     } catch (error) {
+      console.error('🚨 Error adding comment:', error);
       return { success: false, message: 'Internal server error' };
+    }
+  },
+
+  async getCommentsByPost(postId) {
+    try {
+      const postObjectId = toObjectID(postId); // Ensure postId is valid ObjectId
+
+      const comments = await baseRepository.findMany(collectionName, {
+        postId: postObjectId,
+      });
+
+      return comments;
+    } catch (error) {
+      console.error('🚨 Error fetching comments:', error);
+      return null;
     }
   },
 };
