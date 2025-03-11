@@ -5,6 +5,8 @@ import { forumPostRepository } from '../repository/forum/forumPostRepository.js'
 import { forumCommentsRepository } from '../repository/forum/forumCommentRepository.js';
 import { forumCommentLikesRepository } from '../repository/forum/forumCommentLikesRepository.js';
 import { forumCommentsReplyRepository } from '../repository/forum/forumCommentReplyRepository.js';
+import { baseRepository } from '../repository/baseMongoDbRepository.js';
+import { toObjectID } from '../utils/helpers.js';
 import { ObjectId } from 'mongodb';
 
 const apiForumRouter = Router();
@@ -117,8 +119,17 @@ apiForumRouter.post(
       return res.sendJsonResponse(400, 'Invalid Post ID or Comment ID');
     }
 
-    const updatedComment = await forumCommentLikesRepository.likeComment(
-      postId,
+    const convertedPostId = toObjectID(postId);
+
+    const postExists = await baseRepository.findOne('forum_post', {
+      _id: convertedPostId,
+    });
+
+    if (!postExists) {
+      return res.sendJsonResponse(404, 'Post not found!');
+    }
+
+    const updatedComment = await forumCommentsRepository.likeComment(
       commentId,
       userId
     );

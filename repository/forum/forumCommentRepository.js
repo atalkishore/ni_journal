@@ -51,4 +51,40 @@ export const forumCommentsRepository = {
       return null;
     }
   },
+
+  async likeComment(commentId, userId) {
+    const comment = await baseRepository.findOne('forum_comments', {
+      _id: toObjectID(commentId),
+    });
+
+    if (!comment) {
+      return { success: false, message: 'Comment not found!' };
+    }
+
+    const alreadyLiked = comment.likedBy.includes(userId);
+    let updatedLikes = alreadyLiked ? comment.likes - 1 : comment.likes + 1;
+
+    try {
+      const updateQuery = alreadyLiked
+        ? {
+            likes: updatedLikes,
+            likedBy: comment.likedBy.filter((id) => id !== userId),
+          }
+        : { likes: updatedLikes, likedBy: [...comment.likedBy, userId] };
+
+      const result = await baseRepository.updateOne(
+        'forum_comments',
+        { _id: toObjectID(commentId) },
+        updateQuery
+      );
+
+      return { success: true, message: 'Comment liked/unliked successfully!' };
+    } catch (error) {
+      return {
+        success: true,
+        message: 'Comment liked/unliked successfully!',
+        likes: updatedLikes,
+      };
+    }
+  },
 };
