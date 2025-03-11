@@ -7,11 +7,10 @@ const collectionName = 'forum_comments';
 export const forumCommentsRepository = {
   async addComment(postId, userId, userName, comment) {
     try {
-      const postObjectId = toObjectID(postId); // Convert postId to ObjectId
-
+      const postObjectId = toObjectID(postId);
       const commentData = {
         _id: new ObjectId(),
-        postId: postObjectId, // Store postId for reference
+        postId: postObjectId,
         userId: toObjectID(userId),
         userName,
         comment,
@@ -35,22 +34,20 @@ export const forumCommentsRepository = {
         data: commentData,
       };
     } catch (error) {
-      console.error('🚨 Error adding comment:', error);
       return { success: false, message: 'Internal server error' };
     }
   },
 
   async getCommentsByPost(postId) {
     try {
-      const postObjectId = toObjectID(postId); // Ensure postId is valid ObjectId
+      const postObjectId = toObjectID(postId);
 
-      const comments = await baseRepository.findMany(collectionName, {
+      const comments = await baseRepository.find(collectionName, {
         postId: postObjectId,
       });
 
       return comments;
     } catch (error) {
-      console.error('🚨 Error fetching comments:', error);
       return null;
     }
   },

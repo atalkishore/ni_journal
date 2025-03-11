@@ -5,6 +5,7 @@ import { forumPostRepository } from '../repository/forum/forumPostRepository.js'
 import { forumCommentsRepository } from '../repository/forum/forumCommentRepository.js';
 import { forumCommentLikesRepository } from '../repository/forum/forumCommentLikesRepository.js';
 import { forumCommentsReplyRepository } from '../repository/forum/forumCommentReplyRepository.js';
+import { ObjectId } from 'mongodb';
 
 const apiForumRouter = Router();
 
@@ -60,10 +61,12 @@ apiForumRouter.post(
     const userId = req.user?._id;
     const userName = req.user?.name || 'Anonymous';
 
-    console.log('Received Data:', { postId, userId, userName, comment });
+    if (!postId) {
+      return res.sendJsonResponse(400, 'Error: Post ID is missing');
+    }
 
-    if (!postId || !comment) {
-      return res.sendJsonResponse(400, 'Invalid data', { success: false });
+    if (!comment) {
+      return res.sendJsonResponse(400, 'Comment text is required');
     }
 
     const newComment = await forumCommentsRepository.addComment(
@@ -84,19 +87,22 @@ apiForumRouter.get(
   '/comment/:postId',
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
-    const { postId } = req.params;
+    let { postId } = req.params;
 
-    if (!postId) {
-      return res.sendJsonResponse(400, 'Post ID is required');
+    if (!ObjectId.isValid(postId)) {
+      return res.sendJsonResponse(400, 'Invalid Post ID format');
     }
 
-    const post = await forumCommentsRepository.getCommentsByPost(postId);
+    const objectIdPostId = new ObjectId(postId);
 
-    if (!post || !post.comments || post.comments.length === 0) {
+    const comments =
+      await forumCommentsRepository.getCommentsByPost(objectIdPostId);
+
+    if (!comments || comments.length === 0) {
       return res.sendJsonResponse(404, 'No comments found for this post');
     }
 
-    res.sendJsonResponse(200, 'Comments retrieved successfully', post.comments);
+    res.sendJsonResponse(200, 'Comments retrieved successfully', comments);
   })
 );
 
@@ -150,6 +156,45 @@ apiForumRouter.post(
       res.sendJsonResponse(200, 'Reply  successfully', newReply);
     })
   )
+);
+
+apiForumRouter.post(
+  '/reply',
+  asyncMiddleware(async (req, res) => {
+    const { postId, commentId, replyText, userName } = req.body;
+
+    if (!postId || !commentId || !replyText || !userName) {
+      return res.json({ success: false, message: 'Missing required fields' });
+    }
+
+    const post = await baseRepository.findOneById('forum_posts', postId);
+    if (!post) return res.json({ success: false, message: 'Post not found' });
+
+    const comment = post.comments.find((c) => c._id.toString() === commentId);
+    if (!comment)
+      return res.json({ success: false, message: 'Comment not found' });
+
+    const newReply = {
+      userName,
+      text: replyText,
+      timestamp: new Date(),
+    };
+    comment.replies.push(newReply);
+
+    const result = await baseRepository.updateOneById('forum_posts', postId, {
+      comments: post.comments,
+    });
+
+    if (result.modifiedCount) {
+      return res.json({
+        success: true,
+        message: 'Reply added!',
+        data: newReply,
+      });
+    } else {
+      return res.json({ success: false, message: 'Failed to add reply' });
+    }
+  })
 );
 
 export default apiForumRouter;
