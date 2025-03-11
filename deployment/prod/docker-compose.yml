@@ -11,6 +11,7 @@ x-niftyinvestui_base:
     start_period: 30s
     timeout: 10s
     retries: 3
+  restart: always
   deploy:
     replicas: 1
     resources:
