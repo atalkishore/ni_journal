@@ -139,72 +139,56 @@ apiForumRouter.post(
     }
 
     res.sendJsonResponse(200, 'Comment liked successfully', updatedComment);
-  }),
-
-  apiForumRouter.post(
-    '/posts/:postId/comments/:commentId/reply',
-    AuthenticationMiddleware.ensureLoggedInApi(),
-    asyncMiddleware(async (req, res) => {
-      const { postId, commentId } = req.params;
-      const { reply } = req.body;
-      const userId = req.user.id;
-
-      if (!reply) {
-        return res.sendJsonResponse(400, 'Reply cannot be empty');
-      }
-
-      const newReply = await forumCommentsReplyRepository.addReplyToComment(
-        postId,
-        commentId,
-        userId,
-        reply
-      );
-
-      if (!newReply) {
-        return res.sendJsonResponse(500, 'Failed to add reply');
-      }
-
-      res.sendJsonResponse(200, 'Reply  successfully', newReply);
-    })
-  )
+  })
 );
 
 apiForumRouter.post(
-  '/reply',
+  '/posts/:postId/comments/:commentId/reply',
+  AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
-    const { postId, commentId, replyText, userName } = req.body;
+    const { postId, commentId } = req.params;
+    const { reply } = req.body;
+    const userId = req.user?._id;
+    const userName = req.user?.name || 'Anonymous';
 
-    if (!postId || !commentId || !replyText || !userName) {
-      return res.json({ success: false, message: 'Missing required fields' });
+    if (!userId) {
+      return res.sendJsonResponse(400, 'Error: userId is undefined!');
     }
 
-    const post = await baseRepository.findOneById('forum_posts', postId);
-    if (!post) return res.json({ success: false, message: 'Post not found' });
-
-    const comment = post.comments.find((c) => c._id.toString() === commentId);
-    if (!comment)
-      return res.json({ success: false, message: 'Comment not found' });
-
-    const newReply = {
-      userName,
-      text: replyText,
-      timestamp: new Date(),
-    };
-    comment.replies.push(newReply);
-
-    const result = await baseRepository.updateOneById('forum_posts', postId, {
-      comments: post.comments,
-    });
-
-    if (result.modifiedCount) {
-      return res.json({
-        success: true,
-        message: 'Reply added!',
-        data: newReply,
-      });
-    } else {
-      return res.json({ success: false, message: 'Failed to add reply' });
+    if (!reply) {
+      return res.sendJsonResponse(400, 'Reply cannot be empty');
     }
+
+    const newReply = await forumCommentsReplyRepository.addReplyToComment(
+      postId,
+      commentId,
+      userId,
+      reply,
+      userName
+    );
+
+    if (!newReply) {
+      return res.sendJsonResponse(500, 'Failed to add reply');
+    }
+
+    res.sendJsonResponse(200, 'Reply added successfully', newReply);
+  })
+);
+
+apiForumRouter.get(
+  '/posts/:postId/comments/:commentId/replies',
+  AuthenticationMiddleware.ensureLoggedInApi(),
+  asyncMiddleware(async (req, res) => {
+    const { commentId } = req.params;
+
+    if (!commentId) {
+      return res.sendJsonResponse(400, 'Comment ID is required');
+    }
+
+    const replies =
+      await forumCommentsReplyRepository.getRepliesByCommentId(commentId);
+
+    res.sendJsonResponse(200, 'Replies fetched successfully', replies);
   })
 );
 
