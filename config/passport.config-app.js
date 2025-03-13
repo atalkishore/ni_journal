@@ -40,6 +40,7 @@ function config(app) {
       saveUninitialized: false,
       cookie: {
         secure: false, // Set to true if using HTTPS
+        sameSite: 'none',
         maxAge: 30 * 60 * 1000, // 30 min (session expiration time)
       },
     })
