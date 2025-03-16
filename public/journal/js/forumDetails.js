@@ -222,7 +222,7 @@ $(document).ready(function () {
     let btn = $(this);
 
     if (!postId) {
-      alert(' Error: Post ID is missing.');
+      alert('Error: Post ID is missing.');
       return;
     }
 
@@ -231,12 +231,12 @@ $(document).ready(function () {
       method: 'POST',
       success: function (response) {
         if (response.status === 'success' && response.data) {
-          let likeCount = response.data.likes;
-          let liked = response.data.liked;
+          let likeCount = response.data.likeCount ?? 0;
+          let liked = response.data.liked ?? false;
 
           btn.text(`${liked ? 'Unlike' : 'Like'} (${likeCount})`);
         } else {
-          alert('⚠ Failed to like the post.');
+          alert('Failed to like the post.');
         }
       },
       error: function (xhr) {

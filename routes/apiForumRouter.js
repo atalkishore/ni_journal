@@ -3,7 +3,7 @@ import asyncMiddleware from '../config/asyncMiddleware.config.js';
 import { AuthenticationMiddleware } from '../config/ensureUserRole.config.js';
 import { forumPostRepository } from '../repository/forum/forumPostRepository.js';
 import { forumCommentsRepository } from '../repository/forum/forumCommentRepository.js';
-import { forumCommentLikesRepository } from '../repository/forum/forumCommentLikesRepository.js';
+import { forumPostLikesRepository } from '../repository/forum/forumPostLikesRepository.js';
 import { forumCommentsReplyRepository } from '../repository/forum/forumCommentReplyRepository.js';
 import { baseRepository } from '../repository/baseMongoDbRepository.js';
 import { toObjectID } from '../utils/helpers.js';
@@ -44,14 +44,22 @@ apiForumRouter.post(
   AuthenticationMiddleware.ensureLoggedInApi(),
   asyncMiddleware(async (req, res) => {
     const { postId } = req.params;
+    const userId = req.user?._id;
 
-    const updatedPost = await forumPostRepository.likePost(postId);
+    const updatedLikes = await forumPostLikesRepository.getLikeCount(postId);
+    const isLiked = await forumPostLikesRepository.isPostLiked(postId, userId);
 
-    if (!updatedPost) {
-      return res.sendJsonResponse(500, 'Failed to like post');
+    if (isLiked) {
+      await forumPostLikesRepository.removeLike(postId, userId);
+    } else {
+      await forumPostLikesRepository.addLike(postId, userId);
     }
 
-    res.sendJsonResponse(200, 'Post liked successfully', updatedPost);
+    const likeCount = await forumPostLikesRepository.getLikeCount(postId);
+
+    res.sendJsonResponse(200, 'Like status updated successfully', {
+      likeCount,
+    });
   })
 );
 

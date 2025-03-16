@@ -1,5 +1,6 @@
 import { baseRepository } from '../baseMongoDbRepository.js';
 import { ObjectId } from 'mongodb';
+import { forumPostLikesRepository } from './forumPostLikesRepository.js';
 
 const collectionName = 'forum_post';
 // get all post withour filter
@@ -18,15 +19,15 @@ export const forumPostRepository = {
       { sort: { createdAt: -1 } }
     );
 
-    posts.forEach((post) => {
-      post.likes = post.likes || 0;
+    for (const post of posts) {
+      post.likes = await forumPostLikesRepository.getLikeCount(post._id);
       post.comments = post.comments || [];
 
       post.comments.forEach((comment) => {
         comment.likes = comment.likes || 0;
         comment.likedBy = comment.likedBy || [];
       });
-    });
+    }
 
     return posts;
   },

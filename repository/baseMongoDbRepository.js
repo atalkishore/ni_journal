@@ -86,6 +86,17 @@ const baseRepository = {
     const collection = db.collection(collectionName);
     return await collection.updateOne(query, updateOperators);
   },
+
+  async countDocuments(collectionName, query = {}) {
+    const db = await connect();
+    return await db.collection(collectionName).countDocuments(query);
+  },
+
+  async deleteOneByFilter(collectionName, filter) {
+    const db = await connect();
+    const collection = db.collection(collectionName);
+    return await collection.deleteOne(filter);
+  },
 };
 
 export { connect, mongodb, baseRepository };
