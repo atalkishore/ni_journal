@@ -1,5 +1,4 @@
 import { baseRepository } from '../baseMongoDbRepository.js';
-import { ObjectId } from 'mongodb';
 import { forumPostLikesRepository } from './forumPostLikesRepository.js';
 
 const collectionName = 'forum_post';
@@ -37,9 +36,7 @@ export const forumPostRepository = {
       userId,
       userName,
       content,
-      likes: 0,
-      likedBy: [],
-      comments: [],
+      status: 'Active',
       createdAt: new Date(),
     });
   },
