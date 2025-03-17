@@ -41,46 +41,6 @@ export const forumPostRepository = {
     });
   },
 
-  async likePost(postId, userId) {
-    const existingPost = await baseRepository.findOneById(
-      collectionName,
-      postId
-    );
-    if (!existingPost) {
-      return { success: false, message: 'Post not found' };
-    }
-
-    let updatedLikes = existingPost.likes || 0;
-    let likedBy = existingPost.likedBy || [];
-
-    const userIndex = likedBy.indexOf(userId);
-    const isLiked = userIndex === -1;
-
-    if (isLiked) {
-      likedBy.push(userId);
-      updatedLikes += 1;
-    } else {
-      likedBy.splice(userIndex, 1);
-      updatedLikes -= 1;
-    }
-
-    const result = await baseRepository.updateOneById(collectionName, postId, {
-      likes: updatedLikes,
-      likedBy,
-    });
-
-    if (result.modifiedCount) {
-      return {
-        success: true,
-        message: isLiked ? 'Post liked!' : 'Post unliked!',
-        likes: updatedLikes,
-        liked: isLiked,
-      };
-    } else {
-      return { success: false, message: 'Failed to update like status' };
-    }
-  },
-
   async getPostById(postId) {
     return await baseRepository.findOneById(collectionName, postId);
   },

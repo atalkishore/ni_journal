@@ -134,10 +134,12 @@ $(document).ready(function () {
       success: function (response) {
         if (response.status === 'success' && response.data) {
           let likeCount =
-            response.data.likes !== undefined ? response.data.likes : 0;
-          let liked = response.data.liked;
+            response.data.likeCount !== undefined ? response.data.likeCount : 0;
+
+          let isLiked = likeCount > 0;
+
           btn.html(
-            `<i class="uil uil-thumbs-up"></i> ${liked ? 'Unlike' : 'Like'} (${likeCount})`
+            `<i class="uil uil-thumbs-up"></i> ${isLiked ? 'Unlike' : 'Like'} (${likeCount})`
           );
         } else {
           alert('Failed to like the comment.');

@@ -8,6 +8,7 @@ import { forumCommentsReplyRepository } from '../repository/forum/forumCommentRe
 import { baseRepository } from '../repository/baseMongoDbRepository.js';
 import { toObjectID } from '../utils/helpers.js';
 import { ObjectId } from 'mongodb';
+import { forumCommentLikesRepository } from '../repository/forum/forumCommentLikesRepository.js';
 
 const apiForumRouter = Router();
 
@@ -127,26 +128,20 @@ apiForumRouter.post(
       return res.sendJsonResponse(400, 'Invalid Post ID or Comment ID');
     }
 
-    const convertedPostId = toObjectID(postId);
-
-    const postExists = await baseRepository.findOne('forum_post', {
-      _id: convertedPostId,
+    const commentExists = await baseRepository.findOne('forum_comments', {
+      _id: toObjectID(commentId),
+      postId: toObjectID(postId),
     });
 
-    if (!postExists) {
-      return res.sendJsonResponse(404, 'Post not found!');
+    if (!commentExists) {
+      return res.sendJsonResponse(404, 'Comment not found!');
     }
 
-    const updatedComment = await forumCommentsRepository.likeComment(
+    const updatedLikeData = await forumCommentLikesRepository.toggleLike(
       commentId,
       userId
     );
-
-    if (!updatedComment) {
-      return res.sendJsonResponse(500, 'Failed to like comment');
-    }
-
-    res.sendJsonResponse(200, 'Comment liked successfully', updatedComment);
+    res.sendJsonResponse(200, 'Comment like status updated', updatedLikeData);
   })
 );
 
