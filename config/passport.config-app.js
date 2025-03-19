@@ -28,19 +28,15 @@ function config(app) {
   LOGGER.debug(`ENVIRONMENT : ${ENVNAME}`);
   app.use(
     session({
-      store:
-        ENVNAME !== 'dev'
-          ? new RedisStore({
-              client: redisClient,
-              prefix: `${ENVNAME}:`, // Unique prefix for each app
-            })
-          : undefined, // Unique prefix for each app
+      store: new RedisStore({
+        client: redisClient,
+        prefix: `${ENVNAME}:`,
+      }), // Unique prefix for each app
       secret: SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
         secure: false, // Set to true if using HTTPS
-        sameSite: 'none',
         maxAge: 30 * 60 * 1000, // 30 min (session expiration time)
       },
     })

@@ -12,7 +12,7 @@ let redisClientInstance = null;
 
 // Create and configure Redis client
 const createRedisClient = async () => {
-  if (ENVNAME !== 'dev' && !redisClientInstance) {
+  if (!redisClientInstance) {
     const redisURL = `redis://default:${REDISDB_PASSWORD}@${REDISDB_URL}:${REDISDB_PORT}`;
 
     redisClientInstance = redis.createClient({ url: redisURL });

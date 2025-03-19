@@ -28,9 +28,7 @@ const app = express();
 connectMongoDb();
 (async () => {
   const redisClient = await createRedisClient();
-  if (ENVNAME !== 'dev') {
-    await redisClient.ping();
-  }
+  await redisClient.ping();
 })();
 // console.log(import.meta.env.REDISDB_PASSWORD);
 // Middleware setup
