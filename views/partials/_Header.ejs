@@ -29,7 +29,7 @@ let header = [
       ? []  
       : [{ name: "Journal", link: "/journal", children: [] }]),
 <!-- isAdmin -->
-    ...(!(isAuthenticated) 
+    ...(!(isAuthenticated && user?.isAdmin) 
       ? []  
       : [{ name: "Forum", link: "/forum", children: [] }]),
 

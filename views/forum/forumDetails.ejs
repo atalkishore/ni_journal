@@ -9,11 +9,11 @@
                 <hr>
 
                 <button class="btn btn-outline-primary like-btn" data-id="<%= post._id %>">Like (<%= post.likes %>)</button>
-                <button class="btn btn-outline-secondary comment-toggle">Comments (<%= post.comments.length %>)</button>
+                <button class="btn btn-outline-secondary comment-toggle">Comments (<%= (post.comments || []).length %>)</button>
 
                 <div class="comment-section mt-2" style="display:none;">
                     <div class="comments-list">
-                        <% post.comments.forEach(comment => { %>
+                        <% (post.comments || []).forEach(comment => { %>  
                             <div class="p-2 border-bottom">
                                 <strong><%= comment.userName %></strong>: <%= comment.text %>
                                 <small class="text-muted"><%= new Date(comment.timestamp).toLocaleString() %></small>
@@ -21,7 +21,7 @@
                         <% }) %>
                     </div>
                     <textarea class="form-control mt-2 comment-text" placeholder="Write a comment..."></textarea>
-                    <button class="btn btn-sm btn-success mt-2 add-comment" data-id="<%= post._id %>">Post Comment</button>
+                    <button class="btn btn-sm btn-success mt-2 add-comment" data-post-id="<%= post._id %>">Post Comment</button>
                 </div>
             </div>
         </div>

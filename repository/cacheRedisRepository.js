@@ -52,8 +52,7 @@ async function getFromCache(
 
     // Check if the result exists in Redis cache
     if (ENVNAME !== 'dev') {
-      throw Error('NO redis');
-      // cacheResult = await redisClient.get(redisCacheKey);
+      cacheResult = await redisClient.get(redisCacheKey);
     }
 
     if (!cacheResult) {

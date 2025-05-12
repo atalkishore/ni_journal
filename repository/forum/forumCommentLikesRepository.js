@@ -1,80 +1,64 @@
 import { baseRepository } from '../baseMongoDbRepository.js';
-import { ObjectId } from 'mongodb';
+import { toObjectID } from '../../utils/helpers.js';
 
-const collectionName = 'forum_comments_likes';
+const collectionName = 'forum_comment_likes';
 
 export const forumCommentLikesRepository = {
-  async likeComment(postId, commentId, userId) {
-    try {
-      if (!ObjectId.isValid(postId)) {
-        return { success: false, message: 'Invalid Post ID format!' };
-      }
+  async getLikeCount(commentId) {
+    const count = await baseRepository.countDocuments(collectionName, {
+      commentId: toObjectID(commentId),
+    });
+    return count;
+  },
 
-      if (!ObjectId.isValid(commentId)) {
-        return { success: false, message: 'Invalid Comment ID format!' };
-      }
+  async isCommentLiked(commentId, userId) {
+    return await baseRepository.findOne(collectionName, {
+      commentId: toObjectID(commentId),
+      userId: toObjectID(userId),
+    });
+  },
 
-      const objectId = new ObjectId(postId);
-      const commentObjectId = new ObjectId(commentId);
+  async addLike(commentId, userId) {
+    return await baseRepository.insertOne(collectionName, {
+      commentId: toObjectID(commentId),
+      userId: toObjectID(userId),
+      createdAt: new Date(),
+    });
+  },
 
-      const post = await baseRepository.findOne(collectionName, {
-        _id: objectId,
+  async removeLike(commentId, userId) {
+    return await baseRepository.deleteOneByFilter(collectionName, {
+      commentId: toObjectID(commentId),
+      userId: toObjectID(userId),
+    });
+  },
+
+  async toggleLike(commentId, userId) {
+    const commentObjectId = toObjectID(commentId);
+    const userObjectId = toObjectID(userId);
+
+    const existingLike = await baseRepository.findOne(collectionName, {
+      commentId: commentObjectId,
+      userId: userObjectId,
+    });
+
+    if (existingLike) {
+      await baseRepository.deleteOneByFilter(collectionName, {
+        commentId: commentObjectId,
+        userId: userObjectId,
       });
-
-      if (!post) {
-        return { success: false, message: 'Post not found!' };
-      }
-
-      const comments = post.comments || [];
-      const commentIndex = comments.findIndex(
-        (c) => c._id.toString() === commentId
-      );
-
-      if (commentIndex === -1) {
-        return { success: false, message: 'Comment not found!' };
-      }
-
-      let comment = comments[commentIndex];
-      let updatedLikes = comment.likes || 0;
-      let likedBy = comment.likedBy.map((id) => id.toString());
-
-      let liked = false;
-
-      if (likedBy.includes(userId.toString())) {
-        updatedLikes -= 1;
-        likedBy = likedBy.filter((id) => id !== userId.toString());
-        liked = false;
-      } else {
-        updatedLikes += 1;
-        likedBy.push(userId.toString());
-        liked = true;
-      }
-
-      const updateQuery = {
-        $set: {
-          [`comments.${commentIndex}.likes`]: updatedLikes,
-          [`comments.${commentIndex}.likedBy`]: likedBy,
-        },
-      };
-
-      const updateResult = await baseRepository.updateOneWithOperators(
-        collectionName,
-        { _id: objectId },
-        updateQuery
-      );
-
-      if (!updateResult.modifiedCount) {
-        return { success: false, message: 'Failed to like/unlike comment!' };
-      }
-
-      return {
-        success: true,
-        message: liked ? 'Comment liked!' : 'Comment unliked!',
-        likes: updatedLikes,
-        liked,
-      };
-    } catch (error) {
-      return { success: false, message: 'Internal server error' };
+    } else {
+      await baseRepository.insertOne(collectionName, {
+        commentId: commentObjectId,
+        userId: userObjectId,
+        createdAt: new Date(),
+      });
     }
+
+    const likeCount = await baseRepository.countDocuments(collectionName, {
+      commentId: commentObjectId,
+    });
+
+    return { likeCount };
   },
 };

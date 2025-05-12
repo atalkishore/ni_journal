@@ -21,7 +21,7 @@ function encryptData(data, secretKey) {
 
   // Return encrypted data along with IV and optionally _data based on environment
   return {
-    ...(ENVNAME !== 'prod1' ? { ...data } : {}), // Conditionally add _data if not 'prod'
+    ...(ENVNAME !== 'prod' ? { ...data } : {}), // Conditionally add _data if not 'prod'
     __i: iv.toString(CryptoJS.enc.Hex), // IV in hex
     __d: encrypted.toString(), // Encrypted data
   };
